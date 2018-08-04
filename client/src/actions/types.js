@@ -1,0 +1,2 @@
+export const ITEMS_LOADING = "ITEMS_LOADING";
+export const GET_LECTURES = "GET_LECTURES";
