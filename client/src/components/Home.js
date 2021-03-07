@@ -1,72 +1,68 @@
-import React, { Component } from "react";
-import { Container, ListGroup, ListGroupItem, Button } from "reactstrap";
+import React, { Component } from "react"
+import { Container } from "reactstrap"
 import {
   Carousel,
   CarouselItem,
   CarouselControl,
   CarouselIndicators,
   CarouselCaption
-} from "reactstrap";
+} from "reactstrap"
 
 const items = [
   {
     src: "/images/trees.jpg"
-    //altText: 'Slide 1',
-    //caption: 'Slide 1'
   },
   {
     src: "/images/plants.jpg"
-    //altText: 'Slide 1',
-    //caption: 'Slide 1'
   }
-];
+]
 
 class Home extends Component {
   constructor(props) {
-    super(props);
-    this.state = { activeIndex: 0 };
-    this.next = this.next.bind(this);
-    this.previous = this.previous.bind(this);
-    this.goToIndex = this.goToIndex.bind(this);
-    this.onExiting = this.onExiting.bind(this);
-    this.onExited = this.onExited.bind(this);
+    super(props)
+    this.state = { activeIndex: 0 }
+    this.next = this.next.bind(this)
+    this.previous = this.previous.bind(this)
+    this.goToIndex = this.goToIndex.bind(this)
+    this.onExiting = this.onExiting.bind(this)
+    this.onExited = this.onExited.bind(this)
   }
 
   onExiting() {
-    this.animating = true;
+    this.animating = true
   }
 
   onExited() {
-    this.animating = false;
+    this.animating = false
   }
 
   next() {
-    if (this.animating) return;
+    if (this.animating) return
     const nextIndex =
       this.state.activeIndex === items.length - 1
         ? 0
-        : this.state.activeIndex + 1;
-    this.setState({ activeIndex: nextIndex });
+        : this.state.activeIndex + 1
+    this.setState({ activeIndex: nextIndex })
   }
 
   previous() {
-    if (this.animating) return;
+    if (this.animating) return
     const nextIndex =
       this.state.activeIndex === 0
         ? items.length - 1
-        : this.state.activeIndex - 1;
-    this.setState({ activeIndex: nextIndex });
+        : this.state.activeIndex - 1
+    this.setState({ activeIndex: nextIndex })
   }
 
   goToIndex(newIndex) {
-    if (this.animating) return;
-    this.setState({ activeIndex: newIndex });
+    if (this.animating) return
+    this.setState({ activeIndex: newIndex })
   }
 
   render() {
-    const { activeIndex } = this.state;
+    const { activeIndex } = this.state
 
-    const slides = items.map(item => {
+    const slides = items.map((item) => {
       return (
         <CarouselItem
           onExiting={this.onExiting}
@@ -81,8 +77,8 @@ class Home extends Component {
             captionHeader={item.caption}
           />
         </CarouselItem>
-      );
-    });
+      )
+    })
 
     return (
       <Container>
@@ -97,7 +93,7 @@ class Home extends Component {
           I'm a software developer from Minneapolis, interested in learning new
           technologies, sailing, and making music. I plan to use this site to
           collect together various projects that I'm working on and as a vehicle
-          for experimenting with back-end and ui frameworks.
+          for experimenting with backend and UI frameworks.
         </div>
 
         <Carousel
@@ -128,8 +124,8 @@ class Home extends Component {
         <br />
         <br />
       </Container>
-    );
+    )
   }
 }
 
-export default Home;
+export default Home

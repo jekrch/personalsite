@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component } from "react"
 import {
   Button,
   Modal,
@@ -8,42 +8,42 @@ import {
   FormGroup,
   Label,
   Input
-} from "reactstrap";
+} from "reactstrap"
 
-import { connect } from "react-redux";
-import { addItem } from "../actions/itemActions";
+import { connect } from "react-redux"
+import { addItem } from "../actions/itemActions"
 
 class ItemModal extends Component {
   state = {
     modal: false,
     name: ""
-  };
+  }
 
   toggle = () => {
     this.setState({
       modal: !this.state.modal
-    });
-  };
+    })
+  }
 
-  onChange = e => {
+  onChange = (e) => {
     this.setState({
       [e.target.name]: e.target.value
-    });
-  };
+    })
+  }
 
-  onSubmit = e => {
-    e.preventDefault();
+  onSubmit = (e) => {
+    e.preventDefault()
 
     const newItem = {
       name: this.state.name
-    };
+    }
 
     // add item via addItem action
-    this.props.addItem(newItem);
+    this.props.addItem(newItem)
 
     // close modal
-    this.toggle();
-  };
+    this.toggle()
+  }
 
   render() {
     return (
@@ -77,15 +77,12 @@ class ItemModal extends Component {
           </ModalBody>
         </Modal>
       </div>
-    );
+    )
   }
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   item: state.item
-});
+})
 
-export default connect(
-  mapStateToProps,
-  { addItem }
-)(ItemModal);
+export default connect(mapStateToProps, { addItem })(ItemModal)

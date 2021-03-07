@@ -2,15 +2,7 @@ import React, { Component } from "react"
 import { Container, ListGroup, ListGroupItem, Button } from "reactstrap"
 import { CSSTransition, TransitionGroup } from "react-transition-group"
 import { connect } from "react-redux"
-import {
-  Modal,
-  ModalHeader,
-  ModalBody,
-  Form,
-  FormGroup,
-  Label,
-  Input
-} from "reactstrap"
+import { Modal, ModalHeader, ModalBody } from "reactstrap"
 import { getLectures } from "../actions/lectureActions"
 import PropTypes from "prop-types"
 
@@ -20,8 +12,6 @@ class LectureList extends Component {
   }
 
   onOpenClick = (id, name, url) => {
-    //this.props.deleteItem(id);
-
     this.lectureName = name
     this.url = url
 
