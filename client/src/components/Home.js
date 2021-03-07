@@ -11,9 +11,13 @@ import {
 const items = [
   {
     src: "/images/trees.jpg"
+    //altText: 'Slide 1',
+    //caption: 'Slide 1'
   },
   {
     src: "/images/plants.jpg"
+    //altText: 'Slide 1',
+    //caption: 'Slide 1'
   }
 ];
 

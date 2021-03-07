@@ -16,6 +16,10 @@ a:link:hover {
   background-color: #4e6268 !important;
 }
 
+/* .slide-modal {
+  min-width: 80vw;
+} */
+
 .view-btn {
   margin-right: 1.2rem;
   margin-bottom: 0.5rem;

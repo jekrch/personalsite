@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import "../App.css";
 import LectureList from "./LectureList";
+import ItemModal from "./ItemModal";
 import { Provider } from "react-redux";
 import store from "../store";
 import { Container } from "reactstrap";

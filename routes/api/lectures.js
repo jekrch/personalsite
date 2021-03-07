@@ -1,12 +1,12 @@
 const express = require('express');
 const router = express.Router();
 
-// lecture Model
+// Item Model
 const Lecture = require('../../models/Lecture');
 
 
-// @route GET api/lectures
-// @desc get all lectures 
+// @route GET api/items
+// @desc get all items 
 // @access public 
 router.get('/', (req, res) => {
     Item.find()

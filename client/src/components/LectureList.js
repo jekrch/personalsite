@@ -1,47 +1,57 @@
-import React, { Component } from "react";
-import { Container, ListGroup, ListGroupItem, Button } from "reactstrap";
-import { CSSTransition, TransitionGroup } from "react-transition-group";
-import { connect } from "react-redux";
-import { Modal, ModalHeader, ModalBody } from "reactstrap";
-import { getLectures } from "../actions/lectureActions";
-import PropTypes from "prop-types";
+import React, { Component } from "react"
+import { Container, ListGroup, ListGroupItem, Button } from "reactstrap"
+import { CSSTransition, TransitionGroup } from "react-transition-group"
+import { connect } from "react-redux"
+import {
+  Modal,
+  ModalHeader,
+  ModalBody,
+  Form,
+  FormGroup,
+  Label,
+  Input
+} from "reactstrap"
+import { getLectures } from "../actions/lectureActions"
+import PropTypes from "prop-types"
 
 class LectureList extends Component {
   componentDidMount() {
-    this.props.getLectures();
+    this.props.getLectures()
   }
 
   onOpenClick = (id, name, url) => {
-    this.lectureName = name;
-    this.url = url;
+    //this.props.deleteItem(id);
+
+    this.lectureName = name
+    this.url = url
 
     this.setState({
       modal: !this.state.modal
-    });
-  };
+    })
+  }
 
   state = {
     modal: false,
     name: ""
-  };
+  }
 
   toggle = () => {
     this.setState({
       modal: !this.state.modal
-    });
-  };
+    })
+  }
 
-  onChange = e => {
+  onChange = (e) => {
     this.setState({
       [e.target.name]: e.target.value
-    });
-  };
+    })
+  }
 
   render() {
-    const lectureName = "";
-    const url = "";
+    const lectureName = ""
+    const url = ""
 
-    const { lectures } = this.props.lecture;
+    const { lectures } = this.props.lecture
 
     return (
       <Container style={{ fontFamily: "helvetica", fontSize: 14 }}>
@@ -70,31 +80,30 @@ class LectureList extends Component {
               presentation, powered by{" "}
               <a target="_blank" href="https://office.com/webapps">
                 Office Online
-              </a>.
+              </a>
+              .
             </iframe>
           </ModalBody>
         </Modal>
-
         <div style={{ marginBottom: "30px", marginTop: "-25px" }}>
           I created these lecture slides for a logic course that I designed and
           taught while in graduate school at the University of
           Wisconsin-Madison. They compliment readings taken from what I judged
-          at the time to be the best available logic textbook: Virginia Klenk's <i
-          >
-            Understanding Symbolic Logic. 5th ed.
-          </i>
+          at the time to be the best available logic textbook: Virginia Klenk's 
+          <i>Understanding Symbolic Logic. 5th ed.</i>
           <br />
-          <br />If you are a student or logic instructor, I encourage you to
-          make whatever use you want of these, with or without attribution. If
-          you would like to use the quizes, assignments, and exams that I
-          created for this course, please feel free to contact me. My only
-          request to instructors is that you try to make logic fun for your
-          students!
+          <br />
+          If you are a student or logic instructor, I encourage you to make
+          whatever use you want of these, with or without attribution. If you
+          would like to use the quizes, assignments, and exams that I created
+          for this course, please feel free to contact me. My only request to
+          instructors is that you try to make logic fun for your students!
           <br />
           <br />
           <div style={{ marginLeft: "20px" }}>
             <b>
               <a
+                download="211Syllabus.docx"
                 class="btn btn-primary active"
                 style={{
                   margin: "0 auto",
@@ -133,20 +142,17 @@ class LectureList extends Component {
         <br />
         <br />
       </Container>
-    );
+    )
   }
 }
 
 LectureList.propTypes = {
   getLectures: PropTypes.func.isRequired,
   lecture: PropTypes.object.isRequired
-};
+}
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   lecture: state.lecture
-});
+})
 
-export default connect(
-  mapStateToProps,
-  { getLectures }
-)(LectureList);
+export default connect(mapStateToProps, { getLectures })(LectureList)
