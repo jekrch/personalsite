@@ -75,7 +75,7 @@ class ChordBuildr extends Component {
           onExited={this.onExited}
           key={item.src}
         >
-          <div style={{ overflow: "hidden", height: "400px" }}>
+          <div style={{ overflow: "hidden", height: "500px" }}>
             <img src={item.src} alt={item.altText} width="100%" />
           </div>
           <CarouselCaption
@@ -140,7 +140,10 @@ class ChordBuildr extends Component {
                 directionText="Next"
                 onClickHandler={this.next}
               />
-            </Carousel>
+            </Carousel>{" "}
+            <br />
+            <br />
+            <br />
           </Container>
         </div>
       </Provider>
