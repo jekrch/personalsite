@@ -86,8 +86,7 @@ class LectureList extends Component {
           If you are a student or logic instructor, I encourage you to make
           whatever use you want of these, with or without attribution. If you
           would like to use the quizes, assignments, and exams that I created
-          for this course, please feel free to contact me. My only request to
-          instructors is that you try to make logic fun for your students!
+          for this course, please feel free to contact me.
           <br />
           <br />
           <div style={{ marginLeft: "20px" }}>
