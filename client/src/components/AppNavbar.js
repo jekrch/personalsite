@@ -50,9 +50,7 @@ class AppNavbar extends Component {
                   </NavLink>
                 </NavItem>
                 <NavItem>
-                  <NavLink href="https://github.com/jekrch">
-                    github repo
-                  </NavLink>
+                  <NavLink href="https://github.com/jekrch">github</NavLink>
                 </NavItem>
                 <NavItem>
                   <NavLink href="/logiclectures">logic lectures</NavLink>

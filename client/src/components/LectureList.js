@@ -78,7 +78,7 @@ class LectureList extends Component {
         <div style={{ marginBottom: "30px", marginTop: "-25px" }}>
           I created these lecture slides for a logic course that I designed and
           taught while in graduate school at the University of
-          Wisconsin-Madison. They compliment readings taken from what I judged
+          Wisconsin-Madison. They complement readings taken from what I judged
           at the time to be the best available logic textbook: Virginia Klenk's 
           <i>Understanding Symbolic Logic. 5th ed.</i>
           <br />
