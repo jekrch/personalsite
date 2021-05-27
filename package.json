@@ -17,7 +17,7 @@
     "axios": "^0.21.1",
     "body-parser": "^1.19.0",
     "bootstrap": "4.6.0",
-    "browserslist": "^4.16.3",
+    "browserslist": "^4.16.5",
     "concurrently": "^3.6.1",
     "express": "^4.17.1",
     "mongodb": "^3.6.4",
