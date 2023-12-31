@@ -9,17 +9,17 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 
 ReactDOM.render(
     <>
-           <AppNavbar />
-    <Router >
-      <Switch>
-        <Route exact path="/">
-          <Home />
-        </Route>
-            <Route path="/logiclectures" exact component={LogicLectures} />
-            <Route path="/chordbuildr" exact component={ChordBuildr} />
-            <Route path="/eurovision-ranker" exact component={EurovisionRanker} />
-  
-      </Switch>
-    </Router>
+        <AppNavbar />
+        <Router >
+            <Switch>
+                <Route exact path="/">
+                    <Home />
+                </Route>
+                <Route path="/logiclectures" exact component={LogicLectures} />
+                <Route path="/chordbuildr" exact component={ChordBuildr} />
+                <Route path="/eurovision-ranker" exact component={EurovisionRanker} />
+
+            </Switch>
+        </Router>
     </>,
-  document.getElementById('root'));
+    document.getElementById('root'));
