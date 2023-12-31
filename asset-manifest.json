@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/your-repository-name/static/css/main.cccf8251.css",
+    "main.js": "/your-repository-name/static/js/main.51f224a7.js",
+    "index.html": "/your-repository-name/index.html",
+    "main.cccf8251.css.map": "/your-repository-name/static/css/main.cccf8251.css.map",
+    "main.51f224a7.js.map": "/your-repository-name/static/js/main.51f224a7.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.cccf8251.css",
+    "static/js/main.51f224a7.js"
+  ]
+}
