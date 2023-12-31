@@ -90,7 +90,7 @@ class Home extends Component {
             fontSize: 14
           }}
         >
-          I'm a software engineer from Minneapolis, interested in music, technology, and philosophy. Check out the links to see some of my current and past projects.
+          I'm a software engineer from Minneapolis who's interested in music, technology, and philosophy. Check out the links to see some of my current and past projects.
         </div>
 
         <Carousel

@@ -5,7 +5,7 @@ import ChordBuildr from "./components/ChordBuildr"
 import EurovisionRanker from "./components/Eurovision"
 import Home from "./components/Home"
 import AppNavbar from "./components/AppNavbar"
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
+import { HashRouter  as Router, Switch, Route } from 'react-router-dom'
 
 ReactDOM.render(
     <>

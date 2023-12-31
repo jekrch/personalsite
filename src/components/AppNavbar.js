@@ -9,6 +9,7 @@ import {
   NavLink,
   Container
 } from "reactstrap"
+import { NavLink as RRNavLink } from 'react-router-dom';
 
 class AppNavbar extends Component {
   state = {
@@ -32,7 +33,7 @@ class AppNavbar extends Component {
         >
           <Container>
             <NavbarBrand>
-              <NavLink href="/">
+              <NavLink href="/#">
                 <img
                   src="/images/jacob-krch.png"
                   height="110"
@@ -53,13 +54,13 @@ class AppNavbar extends Component {
                   <NavLink href="https://github.com/jekrch">github</NavLink>
                 </NavItem>
                 <NavItem>
-                  <NavLink href="/logiclectures">logic lectures</NavLink>
+                  <NavLink href="/#logiclectures">logic lectures</NavLink>
                 </NavItem>
                 <NavItem>
-                  <NavLink href="/eurovision-ranker">eurovision ranker</NavLink>
+                  <NavLink href="/#eurovision-ranker">eurovision ranker</NavLink>
                 </NavItem>
                 <NavItem>
-                  <NavLink href="/chordbuildr">chord buildr</NavLink>
+                  <NavLink href="/#chordbuildr">chord buildr</NavLink>
                 </NavItem>
               </Nav>
             </Collapse>
