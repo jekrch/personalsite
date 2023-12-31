@@ -56,6 +56,9 @@ class AppNavbar extends Component {
                   <NavLink href="/logiclectures">logic lectures</NavLink>
                 </NavItem>
                 <NavItem>
+                  <NavLink href="/eurovision-ranker">eurovision ranker</NavLink>
+                </NavItem>
+                <NavItem>
                   <NavLink href="/chordbuildr">chord buildr</NavLink>
                 </NavItem>
               </Nav>

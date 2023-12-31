@@ -4,6 +4,7 @@ import "./App.css"
 
 import LogicLectures from "./components/LogicLectures"
 import ChordBuildr from "./components/ChordBuildr"
+import EurovisionRanker from "./components/Eurovision"
 import Home from "./components/Home"
 import "bootstrap/dist/css/bootstrap.min.css"
 
@@ -19,6 +20,7 @@ class App extends Component {
             <Route path="/" exact component={Home} />
             <Route path="/logiclectures" exact component={LogicLectures} />
             <Route path="/chordbuildr" exact component={ChordBuildr} />
+            <Route path="/eurovision-ranker" exact component={EurovisionRanker} />
           </Switch>
         </Router>
       </div>
