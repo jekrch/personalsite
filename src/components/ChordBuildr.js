@@ -138,6 +138,7 @@ class ChordBuildr extends Component {
                 onClickHandler={this.next}
               />
             </Carousel>
+            <br/><br/>
           </Container>
         </div>
     )

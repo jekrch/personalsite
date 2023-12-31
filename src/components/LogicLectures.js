@@ -11,7 +11,6 @@ class LogicLectures extends Component {
         <div className="App">
           <Container>
             <br />
-            <br />
 
             <LectureList />
           </Container>

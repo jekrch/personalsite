@@ -13,15 +13,15 @@ class App extends Component {
   render() {
     return (
       <div>
-        <AppNavbar />
-        <Router>
+        {/* <AppNavbar /> */}
+        {/* <Router>
           <Switch>
             <Route path="/" exact component={Home} />
             <Route path="/logiclectures" exact component={LogicLectures} />
             <Route path="/chordbuildr" exact component={ChordBuildr} />
             <Route path="/eurovision-ranker" exact component={EurovisionRanker} />
           </Switch>
-        </Router>
+        </Router> */}
       </div>
     )
   }
