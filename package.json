@@ -1,8 +1,8 @@
 {
-  "name": "jacob-krch-site",
+  "homepage": "https://jekrch.github.io/personalsite",
+  "name": "personalsite",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://jekrch.github.io/personalsite",
   "dependencies": {
     "bootstrap": "4.1.3",
     "react": "^17.0.1",
