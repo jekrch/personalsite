@@ -2,7 +2,7 @@
   "name": "jacob-krch-site",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://yourusername.github.io/your-repository-name",
+  "homepage": "https://jekrch.github.io/personalsite",
   "dependencies": {
     "bootstrap": "4.1.3",
     "react": "^17.0.1",
