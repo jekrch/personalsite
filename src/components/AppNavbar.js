@@ -9,7 +9,6 @@ import {
   NavLink,
   Container
 } from "reactstrap"
-import { NavLink as RRNavLink } from 'react-router-dom';
 
 class AppNavbar extends Component {
   state = {
@@ -24,27 +23,29 @@ class AppNavbar extends Component {
 
   render() {
     return (
-      <div>
+      <div
+        style={{ backgroundColor: "#5b8592" }}
+      >
         <Navbar
-          style={{ backgroundColor: "#5b8592" }}
           dark
           expand="sm"
-          className="mb-5"
+          className="mb-5 content-max-width"
         >
-          <Container>
-            <NavbarBrand>
-              <NavLink href="/#">
-                <img
-                  src="/images/jacob-krch.png"
-                  height="110"
-                  style={{ marginTop: "-40" }}
-                />
-              </NavLink>
+          <Container className="d-flex justify-content-between">
+            <NavbarBrand href="/#">
+              <img
+                src="/images/jacob-krch.png" // Ensure this path is correct
+                height="110"
+                style={{ marginTop: "5px", marginBottom: "5px" }}
+                alt="Jacob Krch Logo" // Alt text for accessibility
+              />
             </NavbarBrand>
+            <NavbarToggler onClick={this.toggle} className="ml-auto my-auto" />
+          </Container>
 
-            <NavbarToggler onClick={this.toggle} />
-            <Collapse isOpen={this.state.isOpen} navbar>
-              <Nav className="ml-auto" navbar>
+          <Collapse isOpen={this.state.isOpen} navbar>
+            <Container className="">
+              <Nav className="ms-auto" navbar>
                 <NavItem>
                   <NavLink href="https://www.linkedin.com/in/jacob-krch-60541a61">
                     linkedin
@@ -63,12 +64,12 @@ class AppNavbar extends Component {
                   <NavLink href="/#chordbuildr">chord buildr</NavLink>
                 </NavItem>
               </Nav>
-            </Collapse>
-          </Container>
+            </Container>
+          </Collapse>
         </Navbar>
       </div>
     )
   }
 }
 
-export default AppNavbar
+export default AppNavbar;

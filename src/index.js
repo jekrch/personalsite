@@ -5,21 +5,22 @@ import ChordBuildr from "./components/ChordBuildr"
 import EurovisionRanker from "./components/Eurovision"
 import Home from "./components/Home"
 import AppNavbar from "./components/AppNavbar"
-import { HashRouter  as Router, Switch, Route } from 'react-router-dom'
+import { HashRouter as Router, Routes, Route } from 'react-router-dom'
+import "./App.css"
 
 ReactDOM.render(
     <>
         <AppNavbar />
-        <Router >
-            <Switch>
-                <Route exact path="/">
-                    <Home />
-                </Route>
-                <Route path="/logiclectures" exact component={LogicLectures} />
-                <Route path="/chordbuildr" exact component={ChordBuildr} />
-                <Route path="/eurovision-ranker" exact component={EurovisionRanker} />
-
-            </Switch>
-        </Router>
+        <div className="app content-max-width">
+            <Router>
+                <Routes>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/logiclectures" element={<LogicLectures />} />
+                    <Route path="/chordbuildr" element={<ChordBuildr />} />
+                    <Route path="/eurovision-ranker" element={<EurovisionRanker />} />
+                </Routes>
+            </Router>
+        </div>
     </>,
-    document.getElementById('root'));
+    document.getElementById('root')
+);

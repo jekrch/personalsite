@@ -1,45 +1,48 @@
-a:link {
+.app a:link {
   color: #2a92af;
 }
-a:link:hover {
+
+.app a:hover {
   color: #4e6268;
 }
 
-.btn-primary,
-.btn-primary:active,
-.btn-primary:visited {
-  background-color: #5b8592 !important;
-  border-color: #6d8791 !important;
+.app .btn-primary,
+.app .btn-primary:active,
+.app .btn-primary:visited {
+  background-color: #5b8592;
+  border-color: #6d8791;
 }
 
-.btn-primary:hover {
-  background-color: #4e6268 !important;
+.app .btn-primary:hover {
+  background-color: #4e6268;
 }
 
-/* .slide-modal {
-  min-width: 80vw;
-} */
-
-.view-btn {
+.app .view-btn {
   margin-right: 1.2rem;
   margin-bottom: 0.5rem;
   margin-top: 0.5rem;
 }
 
-.fade-enter {
+.app .fade-enter {
   opacity: 0.01;
 }
 
-.fade-enter-active {
+.app .fade-enter-active {
   opacity: 1;
   transition: opacity 500ms ease-in;
 }
 
-.fade-exit {
+.app .fade-exit {
   opacity: 1;
 }
 
-.fade-exit-active {
+.app .fade-exit-active {
   opacity: 0.01;
   transition: opacity 500ms ease-in;
+}
+
+.content-max-width {
+  max-width: 700px; /* Narrower maximum width */
+  margin-left: auto;
+  margin-right: auto;
 }

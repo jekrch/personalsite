@@ -77,13 +77,12 @@ class LectureList extends Component {
           taught while in graduate school at the University of
           Wisconsin-Madison. They complement readings taken from: Virginia Klenk's 
           <i>Understanding Symbolic Logic. 5th ed.</i>
-          <br />
-          <br />
-          <div style={{ marginLeft: "20px" }}>
+
+          <div style={{ marginLeft: "20px", marginTop: "30px" }}>
             <b>
               <a
                 download="211Syllabus.docx"
-                class="btn btn-primary active"
+                class="btn view-btn active"
                 style={{
                   margin: "0 auto",
                   display: "block",
