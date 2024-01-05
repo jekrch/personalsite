@@ -35,8 +35,8 @@ class AppNavbar extends Component {
             <NavbarBrand href="/#">
               <img
                 src="/images/jacob-krch.png" // Ensure this path is correct
+                className="h-[110px] my-[5px]"
                 height="110"
-                style={{ marginTop: "5px", marginBottom: "5px" }}
                 alt="Jacob Krch Logo" // Alt text for accessibility
               />
             </NavbarBrand>
