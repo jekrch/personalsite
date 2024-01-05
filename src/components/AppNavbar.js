@@ -12,7 +12,20 @@ import {
 
 class AppNavbar extends Component {
   state = {
-    isOpen: false
+    isOpen: false,
+    currentAnimation: ''
+  }
+
+  componentDidMount() {
+    // default animation on load
+    this.triggerLogoAnimation('tada-animation', 1000); 
+  }
+
+  triggerLogoAnimation = (animationName, duration) => {
+    this.setState({ currentAnimation: animationName });
+    setTimeout(() => {
+      this.setState({ currentAnimation: '' });
+    }, duration);
   }
 
   toggle = () => {
@@ -21,7 +34,11 @@ class AppNavbar extends Component {
     })
   }
 
+
+
   render() {
+    const { currentAnimation } = this.state;
+
     return (
       <div
         style={{ backgroundColor: "#5b8592" }}
@@ -32,12 +49,15 @@ class AppNavbar extends Component {
           className="mb-5 content-max-width"
         >
           <Container className="d-flex justify-content-between">
-            <NavbarBrand href="/#">
+            <NavbarBrand 
+              href="/#"
+              onClick={() => this.triggerLogoAnimation('bouncy-animation', 1000)}
+            >
               <img
-                src="/images/jacob-krch.png" // Ensure this path is correct
-                className="h-[110px] my-[5px]"
+                src="/images/jacob-krch.png" 
+                className={`h-[110px] my-[5px] z-50 ${currentAnimation}`}
                 height="110"
-                alt="Jacob Krch Logo" // Alt text for accessibility
+                alt="Jacob Krch Logo" 
               />
             </NavbarBrand>
             <NavbarToggler onClick={this.toggle} className="ml-auto my-auto" />
@@ -55,13 +75,23 @@ class AppNavbar extends Component {
                   <NavLink href="https://github.com/jekrch">github</NavLink>
                 </NavItem>
                 <NavItem>
-                  <NavLink href="/#logiclectures">logic lectures</NavLink>
+                  <NavLink 
+                    href="/#logiclectures" 
+                    onClick={() => this.triggerLogoAnimation('side-to-side-animation', 1000)}
+                  >logic lectures</NavLink>
                 </NavItem>
                 <NavItem>
-                  <NavLink href="/#eurovision-ranker">eurovision ranker</NavLink>
+                  <NavLink 
+                    href="/#eurovision-ranker"
+                    onClick={() => this.triggerLogoAnimation('shiver-animation', 1000)}
+                  >eurovision ranker</NavLink>
                 </NavItem>
                 <NavItem>
-                  <NavLink href="/#chordbuildr">chord buildr</NavLink>
+                  <NavLink 
+                    href="/#chordbuildr"
+                    onClick={() => this.triggerLogoAnimation('rotate-animation', 1000)}
+                  >
+                  chord buildr</NavLink>
                 </NavItem>
               </Nav>
             </Container>
