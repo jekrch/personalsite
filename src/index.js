@@ -2,6 +2,7 @@ import ReactDOM from 'react-dom';
 import App from './App';
 import LogicLectures from "./components/LogicLectures"
 import ChordBuildr from "./components/ChordBuildr"
+import Music from "./components/Music"
 import EurovisionRanker from "./components/Eurovision"
 import Home from "./components/Home"
 import AppNavbar from "./components/AppNavbar"
@@ -18,6 +19,7 @@ ReactDOM.render(
                     <Route path="/logiclectures" element={<LogicLectures />} />
                     <Route path="/chordbuildr" element={<ChordBuildr />} />
                     <Route path="/eurovision-ranker" element={<EurovisionRanker />} />
+                    <Route path="/music" element={<Music />} />
                 </Routes>
             </Router>
         </div>

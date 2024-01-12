@@ -1,21 +1,91 @@
 import React, { Component } from "react";
 import "../App.css";
-import LectureList from "./LectureList";
-import { Container } from "reactstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { Container, ListGroup, ListGroupItem, Button } from "reactstrap"
+import { CSSTransition, TransitionGroup } from "react-transition-group"
+import lectures from "./lectures"
+import LectureModal from "./LectureModal"
 
 class LogicLectures extends Component {
-  render() {
-    return (
-      
-        <div className="App">
-          <Container>
-            <br />
+  state = {
+    modal: false,
+    lectureName: '',
+    url: ''
+  };
 
-            <LectureList />
-          </Container>
+  onOpenClick = (name, url) => {
+    this.setState({
+      modal: true,
+      lectureName: name,
+      url: url
+    });
+  };
+
+  toggle = () => {
+    this.setState({
+      modal: !this.state.modal
+    });
+  };
+
+  render() {
+    const lectureName = ""
+    const url = ""
+
+    return (
+      <Container className="content-text pb-[6em]">
+
+        <LectureModal
+          isOpen={this.state.modal}
+          toggle={this.toggle}
+          lectureName={this.state.lectureName}
+          url={this.state.url}
+        />
+
+        <div className="mb-[30px] -mt-[25px]" >
+          I created these lecture slides for a logic course that I designed and
+          taught while in graduate school at the University of
+          Wisconsin-Madison. They complement readings taken from: Virginia Klenk's
+          <i>Understanding Symbolic Logic. 5th ed.</i>
+
+          <div className="ml-[20px] mt-[30px]">
+            <b>
+              <a
+                download="211Syllabus.docx"
+                class="btn view-btn active"
+                style={{
+                  margin: "0 auto",
+                  display: "block",
+                  maxWidth: "150px"
+                }}
+                href="/files/211Syllabus.docx"
+              >
+                Syllabus
+              </a>
+            </b>
+          </div>
         </div>
-    );
+
+        <ListGroup>
+          <TransitionGroup className="lecture-list">
+            {lectures.map(({ _id, name, number, url }) => (
+              <CSSTransition key={_id} timeout={500} classNames="fade">
+                <ListGroupItem>
+                  <Button
+                    className="view-btn"
+                    color="primary"
+                    size="sm"
+                    onClick={() => this.onOpenClick(name, url)}
+                  >
+                    view
+                  </Button>
+                  {number}. {name}
+                </ListGroupItem>
+              </CSSTransition>
+            ))}
+          </TransitionGroup>
+        </ListGroup>
+      </Container>
+    )
   }
 }
 

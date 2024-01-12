@@ -4,7 +4,8 @@ import ImageCarousel from "./ImageCarousel"
 
 const imagePaths = [
   "/images/trees.jpg",
-  "/images/plants.jpg"
+  "/images/plants.jpg",
+  "/images/sky.jpg"
 ]
 
 class Home extends Component {
@@ -14,19 +15,12 @@ class Home extends Component {
 
   render() {
     return (
-      <Container style={{paddingBottom: '3em'}}> 
-        <div
-          style={{
-            marginTop: "3em",
-            marginBottom: "3em",
-            fontFamily: "helvetica",
-            fontSize: 14
-          }}
-        >
-          I'm a software engineer from Minneapolis who's interested in music, technology, and philosophy. Check out the links to see some of my current and past projects.
+      <Container className="pb-[3em]">
+        <div className="content-text my-[3em]">
+          I'm a software engineer in Minneapolis who's interested in music, technology, and philosophy. Check out the links to see some of my current and past projects.
         </div>
 
-        <ImageCarousel items={imagePaths}/>
+        <ImageCarousel items={imagePaths} />
 
       </Container>
     )

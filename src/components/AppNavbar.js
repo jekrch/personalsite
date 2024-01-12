@@ -55,7 +55,7 @@ class AppNavbar extends Component {
             >
               <img
                 src="/images/jacob-krch.png" 
-                className={`h-[110px] my-[5px] z-50 ${currentAnimation}`}
+                className={`h-[110px] w-[110px] object-cover my-[5px] z-50 ${currentAnimation}`}
                 height="110"
                 alt="Jacob Krch Logo" 
               />
@@ -92,6 +92,13 @@ class AppNavbar extends Component {
                     onClick={() => this.triggerLogoAnimation('rotate-animation', 1000)}
                   >
                   chord buildr</NavLink>
+                </NavItem>
+                <NavItem>
+                  <NavLink 
+                    href="/#music"
+                    onClick={() => this.triggerLogoAnimation('bouncy-dance-animation', 1000)}
+                  >
+                  music</NavLink>
                 </NavItem>
               </Nav>
             </Container>

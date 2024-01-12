@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+body {
+  @apply font-sans;
+}
+
 .app a:link {
   color: #2a92af;
 }
@@ -89,6 +93,27 @@
   }
 }
 
+@keyframes bouncy-dance {
+  0%, 100% { 
+    transform: scale(1) translateX(0) rotate(0);
+  }
+  10% { 
+    transform: scale(1.03) translateX(-5px) rotate(-3deg);
+  }
+  30% { 
+    transform: scale(0.97) translateX(5px) rotate(3deg);
+  }
+  50% { 
+    transform: scale(1.02) translateX(-3px) rotate(-2deg);
+  }
+  70% { 
+    transform: scale(0.98) translateX(3px) rotate(2deg);
+  }
+  90% { 
+    transform: scale(1.01) translateX(-1px) rotate(-1deg);
+  }
+}
+
 .tada-animation {
   animation: tada 1s;
 }
@@ -107,4 +132,14 @@
 
 .rotate-animation {
   animation: rotate-with-quiver 1s;
+}
+
+.bouncy-dance-animation {
+  animation: bouncy-dance 1s infinite;
+}
+
+.content-text {
+  font-family: Helvetica, Arial, sans-serif; 
+  font-size: 14px; 
+  line-height: 1.5; 
 }
