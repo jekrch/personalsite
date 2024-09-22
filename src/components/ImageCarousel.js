@@ -54,7 +54,7 @@ class ImageCarousel extends Component {
           onExited={this.onExited}
           key={src}
         >
-          <div style={{ overflow: "hidden", height: "400px" }}>
+          <div style={{ overflow: "hidden", height: "410px" }}>
             <img src={src} alt="" width="100%" />
           </div>
         </CarouselItem>
