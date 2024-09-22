@@ -11,7 +11,10 @@ const imagePaths = [
   "/images/eurovision-ranker2.png",
   "/images/eurovision-ranker3.png",
   "/images/eurovision-ranker4.png",
-  "/images/eurovision-ranker5.png"
+  "/images/eurovision-ranker5.png",
+  "/images/eurovision-ranker6.png",
+  "/images/eurovision-ranker7.png",
+  "/images/eurovision-ranker8.png"
 ]
 
 class EurovisionRanker extends Component {
