@@ -1,5 +1,4 @@
 import ReactDOM from 'react-dom';
-import App from './App';
 import LogicLectures from "./components/LogicLectures"
 import ChordBuildr from "./components/ChordBuildr"
 import Music from "./components/Music"
@@ -10,7 +9,7 @@ import { HashRouter as Router, Routes, Route } from 'react-router-dom'
 import "./App.css"
 
 ReactDOM.render(
-    <>
+    <div className="pb-[6em] min-h-screen h-full">
         <AppNavbar />
         <div className="app content-max-width">
             <Router>
@@ -23,6 +22,6 @@ ReactDOM.render(
                 </Routes>
             </Router>
         </div>
-    </>,
+    </div>,
     document.getElementById('root')
 );

@@ -1,4 +1,4 @@
-import React, { Component } from "react"
+import React, { useState, useEffect, useCallback } from "react"
 import {
   Carousel,
   CarouselItem,
@@ -7,87 +7,73 @@ import {
 } from "reactstrap"
 import "bootstrap/dist/css/bootstrap.min.css"
 
-class ImageCarousel extends Component {
-  constructor(props) {
-    super(props)
-    this.state = { activeIndex: 0 }
-    this.next = this.next.bind(this)
-    this.previous = this.previous.bind(this)
-    this.goToIndex = this.goToIndex.bind(this)
-    this.onExiting = this.onExiting.bind(this)
-    this.onExited = this.onExited.bind(this)
+const ImageCarousel = ({ items }) => {
+  const [activeIndex, setActiveIndex] = useState(0)
+  const [animating, setAnimating] = useState(false)
+
+  const next = () => {
+    if (animating) return
+    const nextIndex = activeIndex === items.length - 1 ? 0 : activeIndex + 1
+    setActiveIndex(nextIndex)
   }
 
-  onExiting() {
-    this.animating = true
+  const previous = () => {
+    if (animating) return
+    const nextIndex = activeIndex === 0 ? items.length - 1 : activeIndex - 1
+    setActiveIndex(nextIndex)
   }
 
-  onExited() {
-    this.animating = false
+  const goToIndex = (newIndex) => {
+    if (animating) return
+    setActiveIndex(newIndex)
   }
 
-  next() {
-    if (this.animating) return
-    const nextIndex = this.state.activeIndex === this.props.items.length - 1 ? 0 : this.state.activeIndex + 1
-    this.setState({ activeIndex: nextIndex })
-  }
+  const slides = items.map((src) => (
+    <CarouselItem
+      onExiting={() => setAnimating(true)}
+      onExited={() => setAnimating(false)}
+      key={src}
+      className="flex items-center justify-center"
+    >
+      <img 
+        src={src} 
+        alt="" 
+        className="w-full h-auto max-h-full object-contain"
+      />
+    </CarouselItem>
+  ))
 
-  previous() {
-    if (this.animating) return
-    const nextIndex = this.state.activeIndex === 0 ? this.props.items.length - 1 : this.state.activeIndex - 1
-    this.setState({ activeIndex: nextIndex })
-  }
-
-  goToIndex(newIndex) {
-    if (this.animating) return
-    this.setState({ activeIndex: newIndex })
-  }
-
-  render() {
-    const { activeIndex } = this.state
-    const { items } = this.props
-
-    const slides = items.map((src) => {
-      return (
-        <CarouselItem
-          onExiting={this.onExiting}
-          onExited={this.onExited}
-          key={src}
-        >
-          <div style={{ overflow: "hidden", height: "410px" }}>
-            <img src={src} alt="" width="100%" />
-          </div>
-        </CarouselItem>
-      )
-    })
-
-    return (
+  return (
+    <div className="relative w-full h-auto">
       <Carousel
         activeIndex={activeIndex}
-        next={this.next}
-        previous={this.previous}
-        ride="carousel"  
-        interval={5000} 
+        next={next}
+        previous={previous}
+        className="shadow-[5px_6px_11px_0px_rgba(0,_0,_0,_0.3)] overflow-hidden rounded-sm hover:duration-200 hover:shadow-[rgba(0,_0,_0,_0.4)]"
+        interval={5000}
       >
         <CarouselIndicators
           items={items.map((src) => ({ src }))}
           activeIndex={activeIndex}
-          onClickHandler={this.goToIndex}
+          onClickHandler={goToIndex}
+          className="z-10"
         />
         {slides}
         <CarouselControl
           direction="prev"
           directionText="Previous"
-          onClickHandler={this.previous}
+          onClickHandler={previous}
+          className="z-10"
         />
         <CarouselControl
           direction="next"
           directionText="Next"
-          onClickHandler={this.next}
+          onClickHandler={next}
+          className="z-10"
         />
       </Carousel>
-    )
-  }
+    </div>
+  )
 }
 
 export default ImageCarousel
