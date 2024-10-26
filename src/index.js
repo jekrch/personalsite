@@ -5,11 +5,12 @@ import Music from "./components/Music"
 import EurovisionRanker from "./components/Eurovision"
 import Home from "./components/Home"
 import AppNavbar from "./components/AppNavbar"
+import SocialIconBar from "./components/SocialIconBar"
 import { HashRouter as Router, Routes, Route } from 'react-router-dom'
 import "./App.css"
 
 ReactDOM.render(
-    <div className="pb-[6em] min-h-screen h-full">
+    <div className="pb-[2em] min-h-screen h-full relative">
         <AppNavbar />
         <div className="app content-max-width">
             <Router>
@@ -22,6 +23,7 @@ ReactDOM.render(
                 </Routes>
             </Router>
         </div>
+        <SocialIconBar/>
     </div>,
     document.getElementById('root')
 );

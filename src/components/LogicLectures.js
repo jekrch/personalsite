@@ -32,7 +32,7 @@ class LogicLectures extends Component {
     const url = ""
 
     return (
-      <Container className="content-text pb-[6em]">
+      <Container className="content-text pb-[2em]">
 
         <LectureModal
           isOpen={this.state.modal}

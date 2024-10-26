@@ -5,7 +5,6 @@ import {
 } from "reactstrap"
 import "bootstrap/dist/css/bootstrap.min.css"
 import ImageCarousel from "./ImageCarousel"
-import GitHubButton from "react-github-btn"
 
 const imagePaths = [
   "/images/chordbuildr.png",

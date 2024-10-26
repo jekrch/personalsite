@@ -6,18 +6,16 @@ body {
   @apply font-sans;
 }
 
-.app a:link {
-  color: #2a92af;
-}
 
-.app a:hover {
-  color: #4e6268;
+
+:root {
+  --jk-teal: #5b8592;
 }
 
 .app .btn-primary,
 .app .btn-primary:active,
 .app .btn-primary:visited {
-  background-color: #5b8592;
+  background-color: var(--jk-teal);
   border-color: #6d8791;
 }
 
@@ -142,4 +140,11 @@ body {
   font-family: Helvetica, Arial, sans-serif; 
   font-size: 14px; 
   line-height: 1.5; 
+}
+
+/* #5b8592 */
+@layer base {
+  a:not([class*="nav"]) {
+    @apply text-[#527882] hover:text-[#354d53];
+  }
 }

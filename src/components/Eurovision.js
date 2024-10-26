@@ -25,7 +25,7 @@ class EurovisionRanker extends Component {
   render() {
     return (
 
-      <div className="App">
+      <div className="App mb-[6em]">
         <Container style={{ fontFamily: "helvetica", fontSize: 14 }}>
           <div>
             <div className="mb-6">
