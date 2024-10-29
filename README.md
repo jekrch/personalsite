@@ -1,5 +1,3 @@
-# Getting Started 
-
-Install dependencies with `npm run install` 
+ Install dependencies with `npm run install` 
 
 Start app `npm run start`
