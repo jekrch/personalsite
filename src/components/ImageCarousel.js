@@ -38,7 +38,7 @@ const ImageCarousel = ({ items }) => {
       <img 
         src={src} 
         alt="" 
-        className="w-full h-auto max-h-full object-contain max-h-[45em] bg-jk-teal"
+        className="w-full h-auto object-contain max-h-[41.5em] bg-jk-teal"
       />
     </CarouselItem>
   ))
