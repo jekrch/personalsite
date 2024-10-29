@@ -1,3 +1,3 @@
- Install dependencies with `npm run install` 
+ Install dependencies with `npm install` 
 
 Start app `npm run start`
