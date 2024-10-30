@@ -148,3 +148,8 @@ body {
     @apply text-[#527882] hover:text-[#354d53];
   }
 }
+
+::selection {
+  background: var(--jk-teal);
+  color: white;
+}
