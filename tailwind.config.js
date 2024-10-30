@@ -7,7 +7,7 @@ module.exports = {
         'jk-teal': 'var(--jk-teal)'
       },
       fontFamily: {
-        //sans: ['Helvetica', 'Arial', 'sans-serif'],
+        sans: ['Helvetica', 'Arial', 'sans-serif'],
       },
     },
   },
