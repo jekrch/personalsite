@@ -1,4 +1,4 @@
-import React, { Component } from "react"
+import { Component } from "react"
 import "../App.css"
 import {
   Container,
@@ -7,7 +7,7 @@ import "bootstrap/dist/css/bootstrap.min.css"
 import SoundCloudPlayer from "./SoundCloudPlayer"
 
 class Music extends Component {
-  constructor(props) {
+  constructor(props: any) {
     super(props)
   }
 

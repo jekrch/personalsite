@@ -1,4 +1,4 @@
-import React, { Component } from "react"
+import { Component } from "react"
 import { Container } from "reactstrap"
 import ImageCarousel from "./ImageCarousel"
 
@@ -9,7 +9,7 @@ const imagePaths = [
 ]
 
 class Home extends Component {
-  constructor(props) {
+  constructor(props: any) {
     super(props)
   }
 

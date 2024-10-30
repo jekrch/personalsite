@@ -1,4 +1,4 @@
-import React, { Component } from "react"
+import { Component } from "react"
 import "../App.css"
 import {
   Container,
@@ -19,7 +19,7 @@ const imagePaths = [
 ]
 
 class EurovisionRanker extends Component {
-  constructor(props) {
+  constructor(props: any) {
     super(props)
   }
 

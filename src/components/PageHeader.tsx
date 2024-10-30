@@ -1,7 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Container } from 'reactstrap';
 
-const PageHeader = ({ mainLink, mainLinkText, githubLink, githubText }) => {
+interface PageHeaderProps {
+  mainLink: string,
+  mainLinkText: string,
+  githubLink: string,
+  githubText: string
+}
+
+const PageHeader = ({ mainLink, mainLinkText, githubLink, githubText }: PageHeaderProps) => {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
