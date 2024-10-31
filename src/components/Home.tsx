@@ -1,4 +1,4 @@
-import { Component } from "react"
+import { FC } from "react"
 import { Container } from "reactstrap"
 import ImageCarousel from "./ImageCarousel"
 
@@ -8,23 +8,19 @@ const imagePaths = [
   "/images/sky.jpg"
 ]
 
-class Home extends Component {
-  constructor(props: any) {
-    super(props)
-  }
+const Home: FC = (props: any) => {
 
-  render() {
-    return (
-      <Container className="pb-[1em]">
-        <div className="content-text my-[3em]">
-          I'm a software engineer in Minneapolis who's interested in music, technology, and philosophy. Check out the links to see some of my current and past projects.
-        </div>
+  return (
+    <Container className="pb-[1em]">
+      <div className="content-text my-[3em]">
+        I'm a software engineer in Minneapolis who's interested in music, technology, and philosophy. Check out the links to see some of my current and past projects.
+      </div>
 
-        <ImageCarousel items={imagePaths} />
+      <ImageCarousel items={imagePaths} />
 
-      </Container>
-    )
-  }
+    </Container>
+  )
 }
+
 
 export default Home
