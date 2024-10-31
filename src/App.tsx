@@ -1,4 +1,4 @@
-import { createRoot } from 'react-dom/client';
+import { Container, createRoot } from 'react-dom/client';
 import LogicLectures from "./components/LogicLectures"
 import ChordBuildr from "./components/ChordBuildr"
 import Music from "./components/Music"
@@ -9,7 +9,7 @@ import SocialIconBar from "./components/SocialIconBar"
 import { HashRouter as Router, Routes, Route } from 'react-router-dom'
 import "./App.css"
 
-const rootElement = document.getElementById('root');
+const rootElement = document.getElementById('root') as Container;
 const root = createRoot(rootElement);
 
 root.render(
