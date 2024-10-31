@@ -8,16 +8,14 @@ const imagePaths = [
   "/images/sky.jpg"
 ]
 
-const Home: FC = (props: any) => {
+const Home: FC = () => {
 
   return (
     <Container className="pb-[1em]">
       <div className="content-text my-[3em]">
         I'm a software engineer in Minneapolis who's interested in music, technology, and philosophy. Check out the links to see some of my current and past projects.
       </div>
-
       <ImageCarousel items={imagePaths} />
-
     </Container>
   )
 }
