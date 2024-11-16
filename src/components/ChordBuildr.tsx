@@ -12,7 +12,7 @@ const imagePaths = [
   "/images/chordbuildrios.jpg"
 ]
 
-const ChordBuildr: FC = (props: any) => {
+const ChordBuildr: FC = () => {
 
   return (
     <div className="App">

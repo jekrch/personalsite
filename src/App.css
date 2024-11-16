@@ -23,6 +23,10 @@ body {
   background-color: #4e6268;
 }
 
+.app .btn-primary:active {
+  background-color: #3f4e53 !important;
+}
+
 .app .view-btn {
   margin-right: 1.2rem;
   margin-bottom: 0.5rem;

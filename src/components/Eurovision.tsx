@@ -18,7 +18,7 @@ const imagePaths = [
   "/images/eurovision-ranker8.png"
 ]
 
-const EurovisionRanker: FC = (props: any) => {
+const EurovisionRanker: FC = () => {
   return (
     <div className="App mb-24">
 

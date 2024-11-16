@@ -61,7 +61,7 @@ const LogicLectures = () => {
         <div className="ml-[20px] mt-[30px]">
           <a
             download="211Syllabus.docx"
-            className="btn view-btn active"
+            className="btn view-btn active text-white !bg-[#5b8592] hover:!bg-[#4e6268]"
             style={{
               margin: "0 auto",
               display: "block",

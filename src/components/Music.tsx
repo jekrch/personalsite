@@ -1,4 +1,4 @@
-import { Component, FC } from "react"
+import { FC } from "react"
 import "../App.css"
 import {
   Container,
@@ -6,7 +6,7 @@ import {
 import "bootstrap/dist/css/bootstrap.min.css"
 import SoundCloudPlayer from "./SoundCloudPlayer"
 
-const Music: FC = (props: any) => {
+const Music: FC = () => {
 
   return (
 
@@ -14,10 +14,10 @@ const Music: FC = (props: any) => {
       <Container style={{ fontFamily: "helvetica", fontSize: 14 }}>
 
         <p>
-          I've made music most of my life with family and friends. Since I was a teenager, I've probably been in a dozen bands, each with their own personality: rock, pop, experimental, hip-hop, dixieland jazz, bluegrass. Sadly, I've been on a bandless run for the last several years. My wife joked once that I should join a support group for people who want to be in a band, but it occurred to me that that just <i>is</i> a band, right?
+          I've made music most of my life with family and friends. Since I was a teenager, I've probably been in a dozen bands, each with their own personality: rock, pop, experimental, hip-hop, dixieland jazz, bluegrass. Sadly, I've been on a bandless run for the last several years.
         </p>
         <p className="mb-10">
-          Anyways, to keep myself distracted while I'm in between bands, I've gotten into recording little bite-sized songs. Here are a few from my soundcloud:
+          So to keep myself distracted while I'm between bands, I've gotten into recording little bite-sized songs. Here are a few from my soundcloud:
         </p>
 
         <SoundCloudPlayer />
