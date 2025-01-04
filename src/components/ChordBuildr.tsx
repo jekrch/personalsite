@@ -8,8 +8,11 @@ import ImageCarousel from "./ImageCarousel"
 import PageHeader from "./PageHeader"
 
 const imagePaths = [
-  "/images/chordbuildr.png",
-  "/images/chordbuildrios.jpg"
+  "/images/chordbuildr1.png",
+  "/images/chordbuildr2.png",
+  "/images/chordbuildr3.png",
+  "/images/chordbuildr4.png",
+  "/images/chordbuildr5.png",
 ]
 
 const ChordBuildr: FC = () => {
@@ -31,7 +34,10 @@ const ChordBuildr: FC = () => {
           to make it easy for musicians and music enthusiasts to create,
           share, and experiment with chord progressions.
         </div>
-        <ImageCarousel items={imagePaths} />
+        <ImageCarousel 
+          items={imagePaths} 
+          className="!min-h-[30em] !max-h-[30em]" 
+        />
         <br /><br />
       </Container>
     </div>

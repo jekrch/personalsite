@@ -6,16 +6,18 @@ import {
   CarouselIndicators,
 } from "reactstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
+import classNames from "classnames";
 
 interface ImageCarouselProps {
   items: string[];
+  className?: string;
 }
 
 interface CarouselIndicatorItem {
   src: string;
 }
 
-const ImageCarousel: FC<ImageCarouselProps> = ({ items }) => {
+const ImageCarousel: FC<ImageCarouselProps> = ({ items, className }) => {
   const [activeIndex, setActiveIndex] = useState<number>(0);
   const [animating, setAnimating] = useState<boolean>(false);
 
@@ -49,7 +51,7 @@ const ImageCarousel: FC<ImageCarouselProps> = ({ items }) => {
       <img 
         src={src} 
         alt="" 
-        className="w-full h-auto object-contain max-h-[41.5em] bg-jk-teal"
+        className={classNames("w-full h-auto object-contain max-h-[41.5em] bg-jk-teal", className)}
       />
     </CarouselItem>
   ));
