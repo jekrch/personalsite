@@ -24,7 +24,7 @@ const EurovisionRanker: FC = () => {
 
       <PageHeader
         mainLink="https://www.eurovision-ranker.com"
-        mainLinkText="www.eurovision-ranker.com"
+        mainLinkText="eurovision-ranker.com"
         githubLink="https://github.com/jekrch/eurovision-ranker"
         githubText="(github)"
       />

@@ -46,6 +46,7 @@ const AppNavbar: FC = () => {
     { href: "/#logiclectures", text: "logic lectures", animation: "side-to-side-animation" },
     { href: "/#eurovision-ranker", text: "eurovision ranker", animation: "shiver-animation" },
     { href: "/#chordbuildr", text: "chord buildr", animation: "rotate-animation" },
+    { href: "/#criterion-club", text: "criterion club", animation: "shiver-animation" },
     { href: "/#music", text: "music", animation: "bouncy-dance-animation" }
   ];
 

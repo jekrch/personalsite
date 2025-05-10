@@ -21,7 +21,7 @@ const ChordBuildr: FC = () => {
     <div className="App">
       <PageHeader
         mainLink="https://chordbuildr.com/"
-        mainLinkText="www.chordbuildr.com"
+        mainLinkText="chordbuildr.com"
         githubLink="https://github.com/jekrch/chord-buildr"
         githubText="(github)"
       />

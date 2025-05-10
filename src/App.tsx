@@ -8,6 +8,7 @@ import AppNavbar from "./components/AppNavbar"
 import SocialIconBar from "./components/SocialIconBar"
 import { HashRouter as Router, Routes, Route } from 'react-router-dom'
 import "./App.css"
+import FilmClub from './components/FilmClub';
 
 const rootElement = document.getElementById('root') as Container;
 const root = createRoot(rootElement);
@@ -23,6 +24,7 @@ root.render(
           <Route path="/chordbuildr" element={<ChordBuildr />} />
           <Route path="/eurovision-ranker" element={<EurovisionRanker />} />
           <Route path="/music" element={<Music />} />
+          <Route path="/criterion-club" element={<FilmClub />} />
         </Routes>
       </Router>
     </div>
