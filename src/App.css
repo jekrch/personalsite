@@ -157,3 +157,7 @@ body {
   background: var(--jk-teal);
   color: white;
 }
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
