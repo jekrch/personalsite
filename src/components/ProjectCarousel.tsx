@@ -9,7 +9,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 interface ProjectItem {
   name: string;
   imageUrl: string;
-  pageLink: string;
+  pageLink?: string;
   url?: string; // Optional external URL
 }
 
@@ -21,7 +21,12 @@ interface ProjectCarouselProps {
 const ProjectCarousel: FC<ProjectCarouselProps> = ({ projects, backgroundImages = [] }) => {
   const [activeIndex, setActiveIndex] = useState<number>(0);
   const [animating, setAnimating] = useState<boolean>(false);
+  const [buttonsOverflow, setButtonsOverflow] = useState<boolean>(false);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const buttonsContainerRef = useRef<HTMLDivElement>(null);
+
+  const onExiting = useCallback(() => setAnimating(true), []);
+  const onExited = useCallback(() => setAnimating(false), []);
 
   const next = useCallback(() => {
     if (animating) return;
@@ -40,37 +45,104 @@ const ProjectCarousel: FC<ProjectCarouselProps> = ({ projects, backgroundImages 
     setActiveIndex(newIndex);
   }, [animating]);
 
-  const onExiting = useCallback(() => setAnimating(true), []);
-  const onExited = useCallback(() => setAnimating(false), []);
-
-
-
-  useEffect(() => {
-    if (scrollContainerRef.current) {
-      const container = scrollContainerRef.current;
-      const innerDiv = container.firstChild as HTMLElement;
-      const activeButton = innerDiv?.children[activeIndex] as HTMLElement;
+  // Function to scroll to active button
+  const scrollToActiveButton = useCallback(() => {
+    if (!scrollContainerRef.current || !buttonsContainerRef.current || !buttonsOverflow) return;
+    
+    const container = scrollContainerRef.current;
+    const innerDiv = buttonsContainerRef.current;
+    const activeButton = innerDiv.children[activeIndex] as HTMLElement;
+    
+    if (!activeButton) return;
+    
+    // Get button and container dimensions
+    const buttonRect = activeButton.getBoundingClientRect();
+    const containerRect = container.getBoundingClientRect();
+    
+    // Calculate mask area (15% on each side)
+    const maskSize = containerRect.width * 0.15;
+    const safeAreaLeft = containerRect.left + maskSize;
+    const safeAreaRight = containerRect.right - maskSize;
+    
+    // Check if button is fully visible in safe area
+    const buttonIsVisible = buttonRect.left >= safeAreaLeft && buttonRect.right <= safeAreaRight;
+    
+    if (!buttonIsVisible) {
+      // Calculate scroll needed to make button visible
+      const buttonLeft = activeButton.offsetLeft;
+      const buttonWidth = activeButton.offsetWidth;
+      const containerWidth = container.offsetWidth;
+      const currentScroll = container.scrollLeft;
       
-      if (activeButton) {
-        // Get button position and dimensions
-        const buttonLeft = activeButton.offsetLeft;
-        const buttonWidth = activeButton.clientWidth;
-        const containerWidth = container.clientWidth;
-        
-        // Calculate the scroll position that centers the button
-        const buttonCenter = buttonLeft + (buttonWidth / 2);
-        const containerCenter = containerWidth / 2;
-        const scrollPosition = buttonCenter - containerCenter;
-        
-        // Scroll to center the button
-        container.scrollTo({
-          left: Math.max(0, scrollPosition),
-          behavior: 'smooth'
-        });
+      let targetScroll = currentScroll;
+      
+      // If button is too far left
+      if (buttonRect.left < safeAreaLeft) {
+        // Scroll so button appears just after the left mask
+        let padding = 30;
+        if (activeIndex === 0) {
+            padding = -30;
+        }
+        targetScroll = buttonLeft - maskSize - padding; // 30px padding
       }
+      // If button is too far right
+      else if (buttonRect.right > safeAreaRight) {
+        // Scroll so button appears just before the right mask
+        targetScroll = buttonLeft + buttonWidth - containerWidth + maskSize + 30; // 30px padding
+      }
+      
+      // Ensure we don't scroll past boundaries
+      const maxScroll = innerDiv.scrollWidth - containerWidth;
+      targetScroll = Math.max(0, Math.min(targetScroll, maxScroll));
+      
+      container.scrollTo({
+        left: targetScroll,
+        behavior: 'smooth'
+      });
     }
-  }, [activeIndex]);
+  }, [activeIndex, buttonsOverflow]);
 
+  // Check if buttons overflow the container
+  useEffect(() => {
+    const checkOverflow = () => {
+      if (scrollContainerRef.current && buttonsContainerRef.current) {
+        const containerWidth = scrollContainerRef.current.clientWidth;
+        const buttonsWidth = buttonsContainerRef.current.scrollWidth;
+        setButtonsOverflow(buttonsWidth > containerWidth);
+      }
+    };
+
+    // Initial check
+    checkOverflow();
+    
+    // Check again after layouts stabilize
+    const timeout = setTimeout(checkOverflow, 100);
+    
+    // Listen for resize events
+    window.addEventListener('resize', checkOverflow);
+    
+    return () => {
+      clearTimeout(timeout);
+      window.removeEventListener('resize', checkOverflow);
+    };
+  }, [projects]);
+
+  // Scroll when active index changes
+  useEffect(() => {
+    scrollToActiveButton();
+  }, [activeIndex, scrollToActiveButton]);
+
+  // Ensure buttons are properly positioned on mount and when overflow changes
+  useEffect(() => {
+    if (buttonsOverflow) {
+      // Wait for mask to be applied, then scroll
+      requestAnimationFrame(() => {
+        setTimeout(() => {
+          scrollToActiveButton();
+        }, 50);
+      });
+    }
+  }, [buttonsOverflow, scrollToActiveButton]);
   
   // Rotate through background images if provided
   const getBackgroundImage = (index: number) => {
@@ -82,7 +154,7 @@ const ProjectCarousel: FC<ProjectCarouselProps> = ({ projects, backgroundImages 
     <CarouselItem
       onExiting={onExiting}
       onExited={onExited}
-      key={project.pageLink}
+      key={project.name}
       className="relative"
     >
       {/* Background layer with subtle overlay */}
@@ -105,8 +177,15 @@ const ProjectCarousel: FC<ProjectCarouselProps> = ({ projects, backgroundImages 
       {/* Project content - contained within bounds to not overlap controls */}
       <div className="relative z-[5] flex flex-col items-center justify-center min-h-[500px] p-8 pointer-events-none">
         <a 
-          href={project.pageLink}
+          href={project.pageLink || '#'}
           className="group cursor-pointer flex flex-col items-center pointer-events-auto"
+          onClick={(e) => {
+            // If it's an external URL without pageLink, open in new tab
+            if (!project.pageLink && project.url) {
+              e.preventDefault();
+              window.open(project.url.startsWith('http') ? project.url : `https://${project.url}`, '_blank');
+            }
+          }}
         >
           {/* Project image container with hover effects */}
           <div className="relative mb-6 transform transition-all duration-300 ">
@@ -147,44 +226,46 @@ const ProjectCarousel: FC<ProjectCarouselProps> = ({ projects, backgroundImages 
 
   return (
     <div className="relative w-full select-none">
-      {/* Scrollable button navigation at the top with blurred background */}
-      <div className="relative overflow-hidden">
-        {/* Background image that matches the current slide */}
-        {backgroundImages.length > 0 && (
-          <div className="absolute inset-0">
-            <img 
-              src={getBackgroundImage(activeIndex)} 
-              alt="" 
-              className="w-full h-full object-cover"
-            />
-            {/* Blur overlay */}
-            <div className="absolute inset-0 backdrop-blur-md bg-black/40"></div>
-          </div>
-        )}
-        {backgroundImages.length === 0 && (
-          <div className="absolute inset-0 bg-gradient-to-br from-gray-900 to-gray-800"></div>
-        )}
-        
-        {/* Gradient fade edges */}
-        <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-black/60 to-transparent z-10 pointer-events-none"></div>
-        <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-black/60 to-transparent z-10 pointer-events-none"></div>
-        
+      {/* Container with mask gradient */}
+      <div 
+        className="relative overflow-hidden -mx-[50vw] left-[50%] right-[50%] w-screen"
+        style={{
+          marginLeft: '-50vw',
+          marginRight: '-50vw',
+          left: '50%',
+          right: '50%',
+          width: '100vw',
+          position: 'relative'
+        }}
+      >
+
         <div 
           ref={scrollContainerRef}
-          className="relative z-10 overflow-x-auto scrollbar-hide scroll-smooth"
+          className="relative z-10 overflow-x-auto scrollbar-hide scroll-smooth bg-[#5b8592]"
           style={{
             scrollbarWidth: 'none',
             msOverflowStyle: 'none',
-            WebkitOverflowScrolling: 'touch'
+            WebkitOverflowScrolling: 'touch',
           }}
         >
-          <div className="flex gap-2 px-12 py-3 justify-center items-center w-[50em] sm:w-auto">
+          <div 
+            ref={buttonsContainerRef}
+            className={`
+              flex gap-2 py-3
+              ${buttonsOverflow ? 'px-[20%]' : 'justify-center px-12'}
+            `}
+            style={{
+              minWidth: buttonsOverflow ? 'max-content' : 'auto'
+            }}
+          >
             {projects.map((project, index) => (
+              <>
               <button
-                key={project.pageLink}
+                key={project.name}
                 onClick={() => goToIndex(index)}
                 className={`
                   whitespace-nowrap
+                  border-white border-1
                   px-4 py-2 rounded-sm text-sm font-medium transition-all duration-300 flex-shrink-0
                   ${activeIndex === index 
                     ? 'bg-[#5b8592]/80 text-white shadow-lg' 
@@ -194,6 +275,8 @@ const ProjectCarousel: FC<ProjectCarouselProps> = ({ projects, backgroundImages 
               >
                 {project.name}
               </button>
+            
+            </>
             ))}
           </div>
         </div>

@@ -7,6 +7,7 @@ const projects = [
   {
     name: "Chord Buildr",
     imageUrl: "/images/chordbuildr3.png", 
+    pageLink: "/#chordbuildr",
     url: "chordbuildr.com"
   },
   {
@@ -20,6 +21,12 @@ const projects = [
     imageUrl: "/images/filmclub1.png", 
     pageLink: "/#criterion-club",
     url: "criterionclub.org"
+  },
+  {
+    name: "JuxtaGlobe",
+    imageUrl: "/images/juxtaglobe1.png", 
+    pageLink: "/#juxtaglobe",
+    url: "juxtaglobe.com"
   }
 ];
 
@@ -40,7 +47,7 @@ const Home: FC = () => {
       {/* Project showcase carousel */}
       <div className="mb-5">
         <ProjectCarousel 
-          projects={projects}
+          projects={projects as any}
           backgroundImages={backgroundImages}
         />
       </div>
