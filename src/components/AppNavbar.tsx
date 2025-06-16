@@ -110,9 +110,6 @@ const AppNavbar: FC = () => {
                       aria-label={link.label}
                       className="px-2 py-1"
                     >
-                      {/* 4. Styled icons to be subtle with a hover effect for a modern feel.
-                        The styling is inspired by your gutter buttons but adapted for a navbar.
-                      */}
                       <FontAwesomeIcon 
                         icon={link.icon} 
                         className="h-5 text-slate-300 hover:text-white transition-colors duration-200" 

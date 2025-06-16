@@ -81,7 +81,7 @@ const ProjectCarousel: FC<ProjectCarouselProps> = ({ projects, backgroundImages 
         // Scroll so button appears just after the left mask
         let padding = 30;
         if (activeIndex === 0) {
-            padding = -30;
+            padding = -50;
         }
         targetScroll = buttonLeft - maskSize - padding; // 30px padding
       }
@@ -194,7 +194,7 @@ const ProjectCarousel: FC<ProjectCarouselProps> = ({ projects, backgroundImages 
               <img 
                 src={project.imageUrl} 
                 alt={project.name}
-                className="w-full max-w-md h-auto object-contain rounded-md shadow-lg"
+                className="w-full max-w-md h-auto -mt-10 object-contain rounded-md shadow-lg"
                 style={{ maxHeight: '300px' }}
               />
             </div>
@@ -241,7 +241,7 @@ const ProjectCarousel: FC<ProjectCarouselProps> = ({ projects, backgroundImages 
 
         <div 
           ref={scrollContainerRef}
-          className="relative z-10 overflow-x-auto scrollbar-hide scroll-smooth bg-[#5b8592]"
+          className="relative z-10 overflow-x-auto scrollbar-hide scroll-smooth bg-[#5b8592] border-white border-b-[0.1em]"
           style={{
             scrollbarWidth: 'none',
             msOverflowStyle: 'none',
@@ -252,7 +252,7 @@ const ProjectCarousel: FC<ProjectCarouselProps> = ({ projects, backgroundImages 
             ref={buttonsContainerRef}
             className={`
               flex gap-2 py-3
-              ${buttonsOverflow ? 'px-[20%]' : 'justify-center px-12'}
+              ${buttonsOverflow ? 'px-[10%]' : 'justify-center px-12'}
             `}
             style={{
               minWidth: buttonsOverflow ? 'max-content' : 'auto'
