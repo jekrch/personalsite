@@ -98,8 +98,8 @@ const AppNavbar: FC = () => {
                 ))}
               </Nav>
 
-              {/* 3. Added a new Nav section for social icons */}
-             <Nav navbar className={classNames("flex-row flex-sm-column align-items-center align-items-sm-end mt-2 mt-sm-0 duration-1000 ", state.isOpen ? '-ml-2 border-slate-300 border-t-[.05em] pt-2' : 'ml-2')}>
+              {/* section for social icons */}
+             <Nav navbar className={classNames("flex-row flex-sm-column align-items-center align-items-sm-end mt-2 mt-sm-0 duration-1000 ", state.isOpen ? '-ml-2 border-slate-300 border-t-[.05em] pt-2' : 'ml-2 pt-2')}>
                 {socialLinks.map((link) => (
                   <NavItem key={link.href}>
                     {/* Use target="_blank" for external links and add padding for spacing */}
@@ -108,7 +108,7 @@ const AppNavbar: FC = () => {
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label={link.label}
-                      className="px-2 py-1"
+                      className={classNames("px-2 py-1", !state.isOpen && link.href.includes('github') ? ' -mr-[0.08em]' : '')}
                     >
                       <FontAwesomeIcon 
                         icon={link.icon} 

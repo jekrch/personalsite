@@ -22,6 +22,7 @@ const ProjectCarousel: FC<ProjectCarouselProps> = ({ projects, backgroundImages 
   const [activeIndex, setActiveIndex] = useState<number>(0);
   const [animating, setAnimating] = useState<boolean>(false);
   const [buttonsOverflow, setButtonsOverflow] = useState<boolean>(false);
+  const [hasAnimated, setHasAnimated] = useState<boolean>(false);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const buttonsContainerRef = useRef<HTMLDivElement>(null);
 
@@ -143,6 +144,13 @@ const ProjectCarousel: FC<ProjectCarouselProps> = ({ projects, backgroundImages 
       });
     }
   }, [buttonsOverflow, scrollToActiveButton]);
+
+  // Trigger animation on mount
+  useEffect(() => {
+    requestAnimationFrame(() => {
+      setHasAnimated(true);
+    });
+  }, []);
   
   // Rotate through background images if provided
   const getBackgroundImage = (index: number) => {
@@ -164,7 +172,7 @@ const ProjectCarousel: FC<ProjectCarouselProps> = ({ projects, backgroundImages 
             <img 
               src={getBackgroundImage(index)} 
               alt="" 
-              className="w-full h-full object-cover scale-105"
+              className="w-full h-full object-cover scale-100"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/50 to-black/30"></div>
           </>
@@ -175,7 +183,7 @@ const ProjectCarousel: FC<ProjectCarouselProps> = ({ projects, backgroundImages 
       </div>
 
       {/* Project content - contained within bounds to not overlap controls */}
-      <div className="relative z-[5] flex flex-col items-center justify-center min-h-[500px] p-8 pointer-events-none">
+      <div className="relative z-[5] flex flex-col items-center justify-center h-[450px] min-h-[300px] p-8 pointer-events-none">
         <a 
           href={project.pageLink || '#'}
           className="group cursor-pointer flex flex-col items-center pointer-events-auto"
@@ -190,12 +198,12 @@ const ProjectCarousel: FC<ProjectCarouselProps> = ({ projects, backgroundImages 
           {/* Project image container with hover effects */}
           <div className="relative mb-6 transform transition-all duration-300 ">
             <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500 to-teal-500 rounded-lg blur opacity-25 group-hover:opacity-75 transition duration-300"></div>
-            <div className="relative bg-white/10 backdrop-blur-sm rounded-lg p-2 shadow-2xl">
+            <div className="relative bg-white/10 backdrop-blur-sm rounded-lg p-2 shadow-xl">
               <img 
                 src={project.imageUrl} 
                 alt={project.name}
-                className="w-full max-w-md h-auto -mt-10 object-contain rounded-md shadow-lg"
-                style={{ maxHeight: '300px' }}
+                className="w-full max-w-md h-auto object-contain rounded-md shadow-lg"
+                style={{ maxHeight: '500px' }}
               />
             </div>
           </div>
@@ -224,8 +232,33 @@ const ProjectCarousel: FC<ProjectCarouselProps> = ({ projects, backgroundImages 
     </CarouselItem>
   ));
 
+  // CSS for the sleek fade-in animation
+  const glideAnimationStyles = `
+    .button-initial {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    
+    @keyframes smoothReveal {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .smooth-reveal {
+      animation: smoothReveal 0.3s ease-out both;
+    }
+  `;
+
   return (
-    <div className="relative w-full select-none">
+    <div className="relative w-full select-none shadow-[5px_6px_11px_0px_rgba(0,_0,_0,_0.3)] rounded-sm hover:duration-200 hover:shadow-[rgba(0,_0,_0,_0.4)]">
+      <style>{glideAnimationStyles}</style>
+      
       {/* Container with mask gradient */}
       <div 
         className="relative overflow-hidden -mx-[50vw] left-[50%] right-[50%] w-screen"
@@ -251,7 +284,7 @@ const ProjectCarousel: FC<ProjectCarouselProps> = ({ projects, backgroundImages 
           <div 
             ref={buttonsContainerRef}
             className={`
-              flex gap-2 py-3
+              flex gap-2 py-3 pb-3
               ${buttonsOverflow ? 'px-[10%]' : 'justify-center px-12'}
             `}
             style={{
@@ -259,24 +292,36 @@ const ProjectCarousel: FC<ProjectCarouselProps> = ({ projects, backgroundImages 
             }}
           >
             {projects.map((project, index) => (
-              <>
-              <button
-                key={project.name}
-                onClick={() => goToIndex(index)}
-                className={`
-                  whitespace-nowrap
-                  border-white border-1
-                  px-4 py-2 rounded-sm text-sm font-medium transition-all duration-300 flex-shrink-0
-                  ${activeIndex === index 
-                    ? 'bg-[#5b8592]/80 text-white shadow-lg' 
-                    : 'bg-white/20 text-white/90 hover:bg-white/30 hover:text-white backdrop-blur-sm'
-                  }
-                `}
-              >
-                {project.name}
-              </button>
-            
-            </>
+              <div key={project.name} className="relative">
+                <button
+                  onClick={() => goToIndex(index)}
+                  className={`
+                    whitespace-nowrap
+                    border-white border-1
+                    px-4 py-2 rounded-sm text-sm font-medium transition-all duration-1000 flex-shrink-0
+                    ${activeIndex === index 
+                      ? 'bg-[#5b8592]/80 text-white shadow-lg' 
+                      : 'bg-white/20 text-white/90 hover:bg-white/30 hover:text-white backdrop-blur-sm'
+                    }
+                    ${hasAnimated ? 'smooth-reveal' : 'button-initial'}
+                  `}
+                  style={{
+                    animationDelay: hasAnimated ? `${index * 0.05}s` : '0s',
+                    animationFillMode: 'both'
+                  }}
+                >
+                  {project.name}
+                </button>
+                {/* White dot indicator */}
+                <div 
+                  className={`
+                    absolute -bottom-2.5 left-1/2 transform -translate-x-1/2 
+                    w-1.5 h-1.5 bg-slate-300 rounded-full shadow-sm
+                    transition-all duration-300 ease-out
+                    ${activeIndex === index ? 'opacity-100 scale-100' : 'opacity-0 scale-0'}
+                  `}
+                />
+              </div>
             ))}
           </div>
         </div>
