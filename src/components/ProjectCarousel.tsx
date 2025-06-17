@@ -23,8 +23,11 @@ const ProjectCarousel: FC<ProjectCarouselProps> = ({ projects, backgroundImages 
   const [animating, setAnimating] = useState<boolean>(false);
   const [buttonsOverflow, setButtonsOverflow] = useState<boolean>(false);
   const [hasAnimated, setHasAnimated] = useState<boolean>(false);
+  const [showDot, setShowDot] = useState<boolean>(false);
+  const [dotPosition, setDotPosition] = useState<number>(0);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const buttonsContainerRef = useRef<HTMLDivElement>(null);
+  const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
   const onExiting = useCallback(() => setAnimating(true), []);
   const onExited = useCallback(() => setAnimating(false), []);
@@ -45,6 +48,21 @@ const ProjectCarousel: FC<ProjectCarouselProps> = ({ projects, backgroundImages 
     if (animating) return;
     setActiveIndex(newIndex);
   }, [animating]);
+
+  // Function to update dot position based on active button
+  const updateDotPosition = useCallback(() => {
+    if (!buttonsContainerRef.current || !buttonRefs.current[activeIndex]) return;
+    
+    const activeButton = buttonRefs.current[activeIndex];
+    const container = buttonsContainerRef.current;
+    
+    if (activeButton && container) {
+
+      // Calculate position relative to the container
+      const buttonCenter = activeButton.offsetLeft + (activeButton.offsetWidth / 2);
+      setDotPosition(buttonCenter);
+    }
+  }, [activeIndex]);
 
   // Function to scroll to active button
   const scrollToActiveButton = useCallback(() => {
@@ -133,6 +151,15 @@ const ProjectCarousel: FC<ProjectCarouselProps> = ({ projects, backgroundImages 
     scrollToActiveButton();
   }, [activeIndex, scrollToActiveButton]);
 
+  // Update dot position when active index changes or after scrolling
+  useEffect(() => {
+    // Small delay to ensure any scrolling animation is complete
+    const timeout = setTimeout(() => {
+      updateDotPosition();
+    }, 100);
+    return () => clearTimeout(timeout);
+  }, [activeIndex, updateDotPosition, buttonsOverflow]);
+
   // Ensure buttons are properly positioned on mount and when overflow changes
   useEffect(() => {
     if (buttonsOverflow) {
@@ -140,17 +167,42 @@ const ProjectCarousel: FC<ProjectCarouselProps> = ({ projects, backgroundImages 
       requestAnimationFrame(() => {
         setTimeout(() => {
           scrollToActiveButton();
+          updateDotPosition();
         }, 50);
       });
     }
-  }, [buttonsOverflow, scrollToActiveButton]);
+  }, [buttonsOverflow, scrollToActiveButton, updateDotPosition]);
 
-  // Trigger animation on mount
+  // Trigger animation on mount and show dot after 1s delay
   useEffect(() => {
     requestAnimationFrame(() => {
       setHasAnimated(true);
     });
-  }, []);
+    
+    // Show dot after 1 second delay
+    const dotTimeout = setTimeout(() => {
+      setShowDot(true);
+      // Update dot position after showing it
+      setTimeout(() => {
+        updateDotPosition();
+      }, 50);
+    }, 1000);
+    
+    return () => clearTimeout(dotTimeout);
+  }, [updateDotPosition]);
+
+  // Update dot position on scroll
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+    
+    const handleScroll = () => {
+      updateDotPosition();
+    };
+    
+    container.addEventListener('scroll', handleScroll);
+    return () => container.removeEventListener('scroll', handleScroll);
+  }, [updateDotPosition]);
   
   // Rotate through background images if provided
   const getBackgroundImage = (index: number) => {
@@ -232,26 +284,85 @@ const ProjectCarousel: FC<ProjectCarouselProps> = ({ projects, backgroundImages 
     </CarouselItem>
   ));
 
-  // CSS for the sleek fade-in animation
+  // CSS for the sleek fade-in animation with iOS fixes
   const glideAnimationStyles = `
     .button-initial {
       opacity: 0;
       transform: translateY(8px);
+      -webkit-transform: translateY(8px);
     }
     
     @keyframes smoothReveal {
       from {
         opacity: 0;
         transform: translateY(8px);
+        -webkit-transform: translateY(8px);
       }
       to {
         opacity: 1;
         transform: translateY(0);
+        -webkit-transform: translateY(0);
+      }
+    }
+    
+    @-webkit-keyframes smoothReveal {
+      from {
+        opacity: 0;
+        -webkit-transform: translateY(8px);
+      }
+      to {
+        opacity: 1;
+        -webkit-transform: translateY(0);
       }
     }
     
     .smooth-reveal {
-      animation: smoothReveal 0.3s ease-out both;
+      animation: smoothReveal 1s ease-out both;
+      -webkit-animation: smoothReveal 1s ease-out both;
+    }
+    
+    @keyframes dotFadeIn {
+      from {
+        opacity: 0;
+        transform: translateX(-50%) scale(0);
+        -webkit-transform: translateX(-50%) scale(0);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(-50%) scale(1);
+        -webkit-transform: translateX(-50%) scale(1);
+      }
+    }
+    
+    @-webkit-keyframes dotFadeIn {
+      from {
+        opacity: 0;
+        -webkit-transform: translateX(-50%) scale(0);
+      }
+      to {
+        opacity: 1;
+        -webkit-transform: translateX(-50%) scale(1);
+      }
+    }
+    
+    .dot-fade-in {
+      animation: dotFadeIn 0.3s ease-out both;
+      -webkit-animation: dotFadeIn 0.3s ease-out both;
+    }
+    
+    /* iOS optimization styles */
+    .ios-optimize {
+      -webkit-backface-visibility: hidden;
+      -webkit-transform: translateZ(0);
+      backface-visibility: hidden;
+      transform: translateZ(0);
+      will-change: transform, opacity;
+    }
+    
+    /* Prevent backdrop-filter flicker on iOS */
+    .button-backdrop {
+      -webkit-backdrop-filter: blur(4px);
+      backdrop-filter: blur(4px);
     }
   `;
 
@@ -284,7 +395,7 @@ const ProjectCarousel: FC<ProjectCarouselProps> = ({ projects, backgroundImages 
           <div 
             ref={buttonsContainerRef}
             className={`
-              flex gap-2 py-3 pb-3
+              flex gap-2 py-3 pb-3 relative
               ${buttonsOverflow ? 'px-[10%]' : 'justify-center px-12'}
             `}
             style={{
@@ -292,37 +403,46 @@ const ProjectCarousel: FC<ProjectCarouselProps> = ({ projects, backgroundImages 
             }}
           >
             {projects.map((project, index) => (
-              <div key={project.name} className="relative">
-                <button
-                  onClick={() => goToIndex(index)}
-                  className={`
-                    whitespace-nowrap
-                    border-white border-1
-                    px-4 py-2 rounded-sm text-sm font-medium transition-all duration-1000 flex-shrink-0
-                    ${activeIndex === index 
-                      ? 'bg-[#5b8592]/80 text-white shadow-lg' 
-                      : 'bg-white/20 text-white/90 hover:bg-white/30 hover:text-white backdrop-blur-sm'
-                    }
-                    ${hasAnimated ? 'smooth-reveal' : 'button-initial'}
-                  `}
-                  style={{
-                    animationDelay: hasAnimated ? `${index * 0.05}s` : '0s',
-                    animationFillMode: 'both'
-                  }}
-                >
-                  {project.name}
-                </button>
-                {/* White dot indicator */}
-                <div 
-                  className={`
-                    absolute -bottom-2.5 left-1/2 transform -translate-x-1/2 
-                    w-1.5 h-1.5 bg-slate-300 rounded-full shadow-sm
-                    transition-all duration-300 ease-out
-                    ${activeIndex === index ? 'opacity-100 scale-100' : 'opacity-0 scale-0'}
-                  `}
-                />
-              </div>
+              <button
+                key={project.name}
+                ref={(el) => buttonRefs.current[index] = el}
+                onClick={() => goToIndex(index)}
+                className={`
+                  whitespace-nowrap
+                  border-white border-1
+                  px-4 py-2 rounded-sm text-sm font-medium flex-shrink-0
+                  ios-optimize
+                  ${activeIndex === index 
+                    ? 'bg-[#5b8592]/80 text-white shadow-lg' 
+                    : 'bg-white/20 text-white/90 hover:bg-white/30 hover:text-white'
+                  }
+                  ${hasAnimated ? 'smooth-reveal' : 'button-initial'}
+                  ${activeIndex !== index ? 'button-backdrop' : ''}
+                `}
+                style={{
+                  animationDelay: hasAnimated ? `${index * 0.1}s` : '0s',
+                  animationFillMode: 'both',
+                  // Separate transition for color/background changes only
+                  transition: 'background-color 0.6s, color 0.6s, box-shadow 0.6s',
+                  WebkitTransition: 'background-color 0.6s, color 0.6s, box-shadow 0.6s'
+                }}
+              >
+                {project.name}
+              </button>
             ))}
+            
+            {/* Single sliding dot indicator */}
+            {showDot && (
+              <div 
+                className="absolute bottom-[0.3em] w-1.5 h-1.5 bg-slate-300 rounded-full shadow-sm dot-fade-in ios-optimize"
+                style={{
+                  left: `${dotPosition}px`,
+                  transform: 'translateX(-50%)',
+                  transition: 'left 0.3s ease-out',
+                  WebkitTransition: 'left 0.3s ease-out',
+                }}
+              />
+            )}
           </div>
         </div>
       </div>
