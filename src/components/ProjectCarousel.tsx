@@ -284,103 +284,12 @@ const ProjectCarousel: FC<ProjectCarouselProps> = ({ projects, backgroundImages 
     </CarouselItem>
   ));
 
-  // CSS for the sleek fade-in animation with iOS fixes
-  const glideAnimationStyles = `
-    .button-initial {
-      opacity: 0;
-      transform: translateY(8px);
-      -webkit-transform: translateY(8px);
-    }
-    
-    @keyframes smoothReveal {
-      from {
-        opacity: 0;
-        transform: translateY(8px);
-        -webkit-transform: translateY(8px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-        -webkit-transform: translateY(0);
-      }
-    }
-    
-    @-webkit-keyframes smoothReveal {
-      from {
-        opacity: 0;
-        -webkit-transform: translateY(8px);
-      }
-      to {
-        opacity: 1;
-        -webkit-transform: translateY(0);
-      }
-    }
-    
-    .smooth-reveal {
-      animation: smoothReveal 1s ease-out both;
-      -webkit-animation: smoothReveal 1s ease-out both;
-    }
-    
-    @keyframes dotFadeIn {
-      from {
-        opacity: 0;
-        transform: translateX(-50%) scale(0);
-        -webkit-transform: translateX(-50%) scale(0);
-      }
-      to {
-        opacity: 1;
-        transform: translateX(-50%) scale(1);
-        -webkit-transform: translateX(-50%) scale(1);
-      }
-    }
-    
-    @-webkit-keyframes dotFadeIn {
-      from {
-        opacity: 0;
-        -webkit-transform: translateX(-50%) scale(0);
-      }
-      to {
-        opacity: 1;
-        -webkit-transform: translateX(-50%) scale(1);
-      }
-    }
-    
-    .dot-fade-in {
-      animation: dotFadeIn 0.3s ease-out both;
-      -webkit-animation: dotFadeIn 0.3s ease-out both;
-    }
-    
-    /* iOS optimization styles */
-    .ios-optimize {
-      -webkit-backface-visibility: hidden;
-      -webkit-transform: translateZ(0);
-      backface-visibility: hidden;
-      transform: translateZ(0);
-      will-change: transform, opacity;
-    }
-    
-    /* Prevent backdrop-filter flicker on iOS */
-    .button-backdrop {
-      -webkit-backdrop-filter: blur(4px);
-      backdrop-filter: blur(4px);
-    }
-  `;
 
   return (
     <div className="relative w-full select-none shadow-[5px_6px_11px_0px_rgba(0,_0,_0,_0.3)] rounded-sm hover:duration-200 hover:shadow-[rgba(0,_0,_0,_0.4)]">
-      <style>{glideAnimationStyles}</style>
-      
-      {/* Container with mask gradient */}
+           
       <div 
         className="relative overflow-hidden -mx-[50vw] left-[50%] right-[50%] w-screen"
-        style={{
-          marginLeft: '-50vw',
-          marginRight: '-50vw',
-          left: '50%',
-          right: '50%',
-          width: '100vw',
-          position: 'relative'
-        }}
       >
 
         <div 
@@ -433,8 +342,9 @@ const ProjectCarousel: FC<ProjectCarouselProps> = ({ projects, backgroundImages 
             
             {/* Single sliding dot indicator */}
             {showDot && (
+              <>
               <div 
-                className="absolute bottom-[0.3em] w-1.5 h-1.5 bg-slate-300 rounded-full shadow-sm dot-fade-in ios-optimize"
+                className="absolute bottom-[0.5em] w-[5.5em] h-0.5 bg-slate-300 rounded-fullx shadow-sm dot-fade-in ios-optimize"
                 style={{
                   left: `${dotPosition}px`,
                   transform: 'translateX(-50%)',
@@ -442,6 +352,16 @@ const ProjectCarousel: FC<ProjectCarouselProps> = ({ projects, backgroundImages 
                   WebkitTransition: 'left 0.3s ease-out',
                 }}
               />
+              <div 
+                className="absolute top-[0.5em] w-[5.5em] h-0.5 bg-slate-300 rounded-fullx shadow-sm dot-fade-in ios-optimize"
+                style={{
+                  left: `${dotPosition}px`,
+                  transform: 'translateX(-50%)',
+                  transition: 'left 0.3s ease-out',
+                  WebkitTransition: 'left 0.3s ease-out',
+                }}
+              />
+              </>
             )}
           </div>
         </div>
