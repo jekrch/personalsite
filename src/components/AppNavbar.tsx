@@ -1,18 +1,17 @@
 import { FC, useEffect, useCallback, useState } from "react";
 import {
   Collapse,
-  Navbar,
-  NavbarToggler,
+  Navbar, 
   NavbarBrand,
   Nav,
   NavItem,
   NavLink,
   Container
 } from "reactstrap";
-// Import FontAwesome components
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLinkedin, faGithub } from '@fortawesome/free-brands-svg-icons';
 import classNames from "classnames";
+import { Sling as Hamburger } from 'hamburger-react';
 
 interface NavbarState {
   isOpen: boolean;
@@ -43,7 +42,6 @@ const AppNavbar: FC = () => {
     triggerLogoAnimation('tada-animation', 1000);
   }, [triggerLogoAnimation]);
 
-  // 1. Removed social links from the main navigation items
   const navItems = [
     { href: "/#logiclectures", text: "logic lectures", animation: "side-to-side-animation" },
     { href: "/#eurovision-ranker", text: "eurovision ranker", animation: "shiver-animation" },
@@ -53,7 +51,6 @@ const AppNavbar: FC = () => {
     { href: "/#music", text: "music", animation: "bouncy-dance-animation" }
   ];
   
-  // 2. Created a dedicated array for social links for clean, scalable code
   const socialLinks = [
       { href: "https://www.linkedin.com/in/jacob-krch-60541a61", icon: faLinkedin, label: "LinkedIn" },
       { href: "https://github.com/jekrch", icon: faGithub, label: "GitHub" }
@@ -78,7 +75,17 @@ const AppNavbar: FC = () => {
               alt="Jacob Krch Logo" 
             />
           </NavbarBrand>
-          <NavbarToggler onClick={toggle} className="ml-auto my-auto" />
+
+
+          <div className="ml-auto my-auto d-sm-none border-slate-300 border-1 rounded-md mr-1">
+            <Hamburger 
+              toggled={state.isOpen} 
+              toggle={toggle}
+              size={20} 
+              color="#edeef0" 
+              aria-label="Toggle navigation"
+            />
+          </div>
         </Container>
 
         <Collapse isOpen={state.isOpen} navbar>
@@ -102,7 +109,6 @@ const AppNavbar: FC = () => {
              <Nav navbar className={classNames("flex-row flex-sm-column align-items-center align-items-sm-end mt-2 mt-sm-0 duration-1000 ", state.isOpen ? '-ml-2 border-slate-300 border-t-[.05em] pt-2' : 'ml-2 pt-2')}>
                 {socialLinks.map((link) => (
                   <NavItem key={link.href}>
-                    {/* Use target="_blank" for external links and add padding for spacing */}
                     <NavLink
                       href={link.href}
                       target="_blank"

@@ -37,7 +37,7 @@ const EurovisionRanker: FC = () => {
           The Eurovision Song Contest finale drew 168 million viewers in 2023, eclipsing the Super Bowl of that same year by over 50 million. Viewers play a critical role in determining the winner over 3 separate events involving around 50 contestants. Unsurprisingly, much of the social media surrounding the event is focused on ranking artists in various categories. Despite this, there are currently no modern, easily-accessible tools for facilitating viewer rankings. This, along with my own love of the contest, inspired me to create this app.
         </p>
 
-        <ImageCarousel items={imagePaths} />
+        <ImageCarousel items={imagePaths} className="min-h-[20em] lg:min-h-[35em] md:min-h-[35em] sm:min-h-[25em] max-sm:min-h-[25em]" />
         <div className="mt-10" />
       </Container>
     </div>
