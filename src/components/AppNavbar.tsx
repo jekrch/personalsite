@@ -77,14 +77,16 @@ const AppNavbar: FC = () => {
           </NavbarBrand>
 
 
-          <div className="ml-auto my-auto d-sm-none border-slate-300 border-1 rounded-md mr-1">
+          <div className="ml-auto w-10 h-10 my-auto d-sm-none border-slate-300 border-1 rounded-md mr-2">
+            <div className="-mt-1 -ml-[0.28em]">
             <Hamburger 
               toggled={state.isOpen} 
               toggle={toggle}
-              size={20} 
+              size={18}               
               color="#edeef0" 
               aria-label="Toggle navigation"
             />
+            </div>
           </div>
         </Container>
 
