@@ -318,7 +318,7 @@ const ProjectCarousel: FC<ProjectCarouselProps> = ({ projects, backgroundImages 
                 onClick={() => goToIndex(index)}
                 className={`
                   whitespace-nowrap
-                  border-white border-1
+                  border-white border-1 mt-[0.1em]
                   px-4 py-2 rounded-sm text-sm font-medium flex-shrink-0
                   ios-optimize
                   ${activeIndex === index 
@@ -344,7 +344,7 @@ const ProjectCarousel: FC<ProjectCarouselProps> = ({ projects, backgroundImages 
             {showDot && (
               <>
               <div 
-                className="absolute bottom-[0.5em] w-[5.5em] h-0.5 bg-slate-300 rounded-fullx shadow-sm dot-fade-in ios-optimize"
+                className="absolute bottom-[0.44em] w-[5.5em] h-[0.08em] bg-slate-300 rounded-fullx shadow-sm dot-fade-in ios-optimize"
                 style={{
                   left: `${dotPosition}px`,
                   transform: 'translateX(-50%)',
@@ -353,7 +353,7 @@ const ProjectCarousel: FC<ProjectCarouselProps> = ({ projects, backgroundImages 
                 }}
               />
               <div 
-                className="absolute top-[0.5em] w-[5.5em] h-0.5 bg-slate-300 rounded-fullx shadow-sm dot-fade-in ios-optimize"
+                className="absolute top-[0.54em] w-[5.5em] h-[0.08em] bg-slate-300 rounded-fullx shadow-sm dot-fade-in ios-optimize"
                 style={{
                   left: `${dotPosition}px`,
                   transform: 'translateX(-50%)',

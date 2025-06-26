@@ -77,8 +77,8 @@ const AppNavbar: FC = () => {
           </NavbarBrand>
 
 
-          <div className="ml-auto w-10 h-10 my-auto d-sm-none border-slate-300 border-1 rounded-md mr-2">
-            <div className="-mt-1 -ml-[0.28em]">
+          <div className="ml-auto w-10 h-10 my-auto d-sm-none border-slate-400 hover:border-slate-300 focus:border-slate-300 border-1 rounded-md mr-2">
+            <div className="-mt-1 -ml-[0.32em]">
             <Hamburger 
               toggled={state.isOpen} 
               toggle={toggle}
