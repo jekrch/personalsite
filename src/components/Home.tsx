@@ -13,7 +13,7 @@ const projects = [
     {
     name: "Modal ChordBuildr",
     imageUrl: "/images/modal1.png", 
-    pageLink: "/#chordbuildr",
+    pageLink: "/#modal-chordbuildr",
     url: "modal.chordbuildr.com"
   },
   {
