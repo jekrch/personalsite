@@ -5,10 +5,16 @@ import ProjectCarousel from "./ProjectCarousel"
 
 const projects = [
   {
-    name: "Chord Buildr",
+    name: "ChordBuildr",
     imageUrl: "/images/chordbuildr3.png", 
     pageLink: "/#chordbuildr",
     url: "chordbuildr.com"
+  },
+    {
+    name: "Modal ChordBuildr",
+    imageUrl: "/images/modal1.png", 
+    pageLink: "/#chordbuildr",
+    url: "modal.chordbuildr.com"
   },
   {
     name: "Eurovision Ranker",

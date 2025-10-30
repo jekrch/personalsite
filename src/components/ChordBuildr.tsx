@@ -27,7 +27,7 @@ const ChordBuildr: FC = () => {
       />
       <Container style={{ fontFamily: "Helvetica", fontSize: 14 }}>
         <div className="mb-10">
-          Chord Buildr is a project I started with{" "}
+          ChordBuildr is a project I started with{" "}
           <a href="https://www.linkedin.com/in/teran-keith-210941107/" target="_blank" rel="noopener noreferrer">
             Teran Keith
           </a>{" "}

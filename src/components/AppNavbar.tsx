@@ -46,6 +46,7 @@ const AppNavbar: FC = () => {
     { href: "/#logiclectures", text: "logic lectures", animation: "side-to-side-animation" },
     { href: "/#eurovision-ranker", text: "eurovision ranker", animation: "shiver-animation" },
     { href: "/#chordbuildr", text: "chord buildr", animation: "rotate-animation" },
+    { href: "/#modal-chordbuildr", text: "modal buildr", animation: "bouncy-dance-animation" },
     { href: "/#criterion-club", text: "criterion club", animation: "shiver-animation" },
     { href: "/#juxtaglobe", text: "juxta globe", animation: "side-to-side-animation" },
     { href: "/#music", text: "music", animation: "bouncy-dance-animation" }
@@ -60,7 +61,7 @@ const AppNavbar: FC = () => {
     <div className="bg-jk-teal">
       <Navbar
         dark
-        expand="sm"
+        expand="md"
         className="mb-5 content-max-width"
       >
         <Container className="d-flex justify-content-between">
@@ -77,7 +78,7 @@ const AppNavbar: FC = () => {
           </NavbarBrand>
 
 
-          <div className="ml-auto w-10 h-10 my-auto d-sm-none border-slate-400 hover:border-slate-300 focus:border-slate-300 border-1 rounded-md mr-2">
+          <div className="ml-auto w-10 h-10 my-auto d-md-none border-slate-400 hover:border-slate-300 focus:border-slate-300 border-1 rounded-md mr-2">
             <div className="-mt-1 -ml-[0.32em]">
             <Hamburger 
               toggled={state.isOpen} 
@@ -92,7 +93,7 @@ const AppNavbar: FC = () => {
 
         <Collapse isOpen={state.isOpen} navbar>
           <Container>
-            <div className="d-flex flex-column flex-sm-row justify-content-between w-100">
+            <div className="d-flex flex-column flex-md-row justify-content-between w-100">
               {/* Main navigation links */}
               <Nav className="me-auto" navbar>
                 {navItems.map((item) => (
@@ -108,7 +109,7 @@ const AppNavbar: FC = () => {
               </Nav>
 
               {/* section for social icons */}
-             <Nav navbar className={classNames("flex-row flex-sm-column align-items-center align-items-sm-end mt-2 mt-sm-0 duration-1000 ", state.isOpen ? '-ml-2 border-slate-300 border-t-[.05em] pt-2' : 'ml-2 pt-2')}>
+             <Nav navbar className={classNames("flex-row flex-md-column align-items-center align-items-md-end mt-2 mt-md-0 duration-1000 ", state.isOpen ? '-ml-2 border-slate-300 border-t-[.05em] pt-2' : 'ml-2 pt-2')}>
                 {socialLinks.map((link) => (
                   <NavItem key={link.href}>
                     <NavLink

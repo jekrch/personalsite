@@ -10,6 +10,7 @@ import { HashRouter as Router, Routes, Route } from 'react-router-dom'
 import "./App.css"
 import FilmClub from './components/FilmClub';
 import JuxtaGlobe from './components/JuxtaGlobe';
+import ModalChordBuildr from './components/ModalChordBuildr';
 
 const rootElement = document.getElementById('root') as Container;
 const root = createRoot(rootElement);
@@ -23,6 +24,7 @@ root.render(
           <Route path="/" element={<Home />} />
           <Route path="/logiclectures" element={<LogicLectures />} />
           <Route path="/chordbuildr" element={<ChordBuildr />} />
+          <Route path="/modal-chordbuildr" element={<ModalChordBuildr />} />
           <Route path="/eurovision-ranker" element={<EurovisionRanker />} />
           <Route path="/music" element={<Music />} />
           <Route path="/criterion-club" element={<FilmClub />} />
