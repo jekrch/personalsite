@@ -16,7 +16,7 @@ const rootElement = document.getElementById('root') as Container;
 const root = createRoot(rootElement);
 
 root.render(
-  <div className="pb-[2em] min-h-screen h-full relative ">
+  <div className="pb-[2em] min-h-screen h-full relative app-wrapper bg-white">
     <AppNavbar />
     <div className="app content-max-width">
       <Router>

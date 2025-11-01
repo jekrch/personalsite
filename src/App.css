@@ -2,15 +2,25 @@
 @tailwind components;
 @tailwind utilities;
 
+html {
+  padding: env(safe-area-inset); 
+  background-color: var(--jk-teal); 
+}
+
 body {
+  background-color: var(--jk-teal); 
+  padding: 0;
   @apply font-sans;
 }
 
-
+.app-wrapper {
+  background-color: #ffffff; 
+}
 
 :root {
   --jk-teal: #5b8592;
 }
+
 
 .app .btn-primary,
 .app .btn-primary:active,

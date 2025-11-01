@@ -47,7 +47,7 @@ const Home: FC = () => {
   return (
     <Container className="pb-[1em]">
       <div className="content-text my-[3em]">
-        I'm a software engineer in Minneapolis who's interested in music, technology, and philosophy. Check out the links to see some of my current and past projects.
+        I'm a software engineer and architect based in Minneapolis who's interested in technology, music, and philosophy. Check out the links to see some of my current and past projects.
       </div>
       
       {/* Project showcase carousel */}
