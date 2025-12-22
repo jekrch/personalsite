@@ -19,14 +19,18 @@ const root = createRoot(rootElement);
 root.render(
   <Router>
     <div className="pb-[2em] min-h-screen h-full relative app-wrapper bg-white">
-      <AppNavbar />
+      {/* conditionally render navbar, hiding it specifically for comics-25 */}
+      <Routes>
+        <Route path="/comics-25" element={null} />
+        <Route path="*" element={<AppNavbar />} />
+      </Routes>
       
-      {/* Full-width routes */}
+      {/* full-width routes */}
       <Routes>
         <Route path="/comics-25" element={<TopComics2025 />} />
       </Routes>
       
-      {/* Constrained-width routes */}
+      {/* constrained-width routes */}
       <div className="app content-max-width">
         <Routes>
           <Route path="/" element={<Home />} />
@@ -40,11 +44,8 @@ root.render(
         </Routes>
       </div>
       
-      {/* Hide social bar on full-width pages if desired */}
-      <Routes>
-        <Route path="/comics-25" element={null} />
-        <Route path="*" element={<SocialIconBar />} />
-      </Routes>
+      {/* render social bar globally, including on comics-25 */}
+      <SocialIconBar />
     </div>
   </Router>
 );

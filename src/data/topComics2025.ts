@@ -16,6 +16,7 @@ export const topComics2025: ComicSeries[] = [
       "/images/comics/assorted-crisis-events-3.jpg"
     ],
     description: "Time is having a crisis. An ongoing anthology following normal people navigating a world where time loops, space portals, and alternate realities collide with everyday life. Like Crisis on Infinite Earths if it happened to ordinary people.",
+    jj_comment:"This is some of the most powerful, insightful social-political commentary I've seen in comics. Each self-contained issue has made a difference in how I think about the contemporary issue it addressed. Its subjects include everything from climate change, disability rights, the experience of immigrants in America and more. Deniz Camp is a voice of conscience that I never expected to find in this medium, and am excited to see more from.",
     link: "https://imagecomics.com/comics/series/assorted-crisis-events"
   },
   {
@@ -114,6 +115,7 @@ export const topComics2025: ComicSeries[] = [
       "/images/comics/redcoat-1.jpg",
       "/images/comics/redcoat-2.jpg"
     ],
+    jj_comment: "We've liked several of the Ghost Machine stories, and it was a bit hard to choose between them. Redcoat made the list for its playful spirit and use/subversion of American history tropes.",
     description: "British redcoat and all-around rogue Simon Pure mysteriously became immortal in 1776 after a run-in with the Founding Fathers. Reminiscent of Pirates of the Caribbean and Indiana Jones, Redcoat pulls back the curtain of American history.",
     link: "https://imagecomics.com/comics/series/redcoat"
   },

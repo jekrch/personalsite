@@ -9,5 +9,10 @@ export interface ComicSeries {
   cover_image: string;
   sample_images: string[];
   description: string;
+  description_source?: {
+    name: string;
+    link: string;
+  };
+  jj_comment?: string;  
   link: string;
 }
