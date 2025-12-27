@@ -11,7 +11,6 @@ import "./App.css"
 import FilmClub from './components/FilmClub';
 import JuxtaGlobe from './components/JuxtaGlobe';
 import ModalChordBuildr from './components/ModalChordBuildr';
-import TopComics2025 from './components/TopComics2025';
 
 const rootElement = document.getElementById('root') as Container;
 const root = createRoot(rootElement);
@@ -23,11 +22,6 @@ root.render(
       <Routes>
         <Route path="/comics-25" element={null} />
         <Route path="*" element={<AppNavbar />} />
-      </Routes>
-      
-      {/* full-width routes */}
-      <Routes>
-        <Route path="/comics-25" element={<TopComics2025 />} />
       </Routes>
       
       {/* constrained-width routes */}
