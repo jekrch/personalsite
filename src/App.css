@@ -2,30 +2,50 @@
 @tailwind components;
 @tailwind utilities;
 
-html {
-  padding: env(safe-area-inset);
-  background-color: var(--jk-teal);
+@theme {
+  /* 1. Custom Colors */
+  --color-jk-teal: var(--jk-teal);
+
 }
 
+html, body {
+  background-color: #5b8592;
+}
+
+/* Prevent overscroll bounce from showing white */
 body {
-  background-color: var(--jk-teal);
-  padding: 0;
-  @apply font-sans;
+  overscroll-behavior-y: none;
 }
 
-.app-wrapper {
-  background-color: #ffffff;
-}
 
 :root {
   --jk-teal: #5b8592;
 }
 
+html {
+  background-color: #5b8592;
+}
+/* 
+.bg-jk-teal {
+  margin-top: -50px;
+  padding-top: 50px;
+} */
+
+body {
+  background-color: #5b8592;
+  padding: 0;
+  @apply font-sans;
+}
+
+.app-wrapper {
+  background-color: #5b8592;
+  padding-top: env(safe-area-inset-top);
+}
 
 .app .btn-primary,
 .app .btn-primary:active,
 .app .btn-primary:visited {
-  background-color: var(--jk-teal);
+  background-color: #5b8592;
   border-color: #6d8791;
 }
 

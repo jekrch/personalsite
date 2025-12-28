@@ -7,7 +7,7 @@ module.exports = {
         'jk-teal': 'var(--jk-teal)',
         'zinc': {
           850: '#1f1f23', 
-          950: '#0c0c0e', 
+          950: '#0c0c0e',
         }
       },
       fontFamily: {

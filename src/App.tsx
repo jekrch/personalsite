@@ -11,16 +11,17 @@ import "./App.css"
 import FilmClub from './components/FilmClub';
 import JuxtaGlobe from './components/JuxtaGlobe';
 import ModalChordBuildr from './components/ModalChordBuildr';
+import GeometricBackground from './components/GeometricBackground';
 
 const rootElement = document.getElementById('root') as Container;
 const root = createRoot(rootElement);
 
 root.render(
   <Router>
-    <div className="pb-[2em] min-h-screen h-full relative app-wrapper bg-white">
-      {/* conditionally render navbar, hiding it specifically for comics-25 */}
+    <div className="bg-dark pb-[2em] min-h-screen h-full relative app-wrapper bg-white">
+      <GeometricBackground />
+      
       <Routes>
-        <Route path="/comics-25" element={null} />
         <Route path="*" element={<AppNavbar />} />
       </Routes>
       

@@ -21,9 +21,32 @@ const PageHeader = ({ mainLink, mainLinkText, githubLink, githubText }: PageHead
   }, []);
 
   return (
-    <div className="border-t border-b border-jk-teal py-[1em] mb-6 relative w-screen left-1/2 -translate-x-1/2 -mt-[1.3em] overflow-hidden">
+    <div className="border-t border-b border-jk-teal bg-white py-[1em] mb-6 relative w-screen left-1/2 -translate-x-1/2 -mt-[1.3em] overflow-hidden">
       <Container style={{ fontFamily: "helvetica", fontSize: 14 }} className="items-center">
         <div className="flex items-center justify-center">
+          <div className="flex items-center gap-2 mr-3">
+            <div className="flex items-center justify-center">
+              <div className={`
+                w-[8px] h-[8px] bg-jk-teal opacity-20 rotate-45
+                transform transition-all duration-500 ease-out
+                ${isVisible ? 'translate-x-0 opacity-20' : '-translate-x-full opacity-0'}
+              `}/> 
+            </div>
+            <div className="flex items-center justify-center">
+              <div className={`
+                w-[10px] h-[10px] bg-jk-teal opacity-40 rotate-45
+                transform transition-all duration-500 ease-out
+                ${isVisible ? 'translate-x-0 opacity-40' : '-translate-x-full opacity-0'}
+              `}/> 
+            </div>
+            <div className="flex items-center justify-center">
+              <div className={`
+                w-[12px] h-[12px] bg-jk-teal opacity-20 rotate-45
+                transform transition-all duration-500 ease-out
+                ${isVisible ? 'translate-x-0 opacity-60' : '-translate-x-full opacity-0'}
+              `}/> 
+            </div>
+          </div>
           <a
             href={mainLink}
             target="_blank"
