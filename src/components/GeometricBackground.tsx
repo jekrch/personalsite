@@ -51,7 +51,7 @@ const GeometricBackground: React.FC = () => {
       // Combine scroll parallax with ambient motion
       const targets = {
         layer1: {
-          x: scroll * 0.015 + ambient.layer1.x,
+          x: scroll * 0.06 + ambient.layer1.x,
           y: scroll * 0.04 + ambient.layer1.y,
           rotate: ambient.layer1.rotate,
         },
@@ -122,11 +122,11 @@ const GeometricBackground: React.FC = () => {
           <polygon
             points="200,-50 1500,400 300,950 0,500"
             fill="#5b8592"
-            fillOpacity="0.05"
+            fillOpacity="0.08"
           />
           <line x1="180" y1="-50" x2="-20" y2="520" stroke="#5b8592" strokeWidth="2" strokeOpacity="0.12" />
           <line x1="220" y1="-50" x2="20" y2="520" stroke="#5b8592" strokeWidth="1.5" strokeOpacity="0.08" />
-          <line x1="1320" y1="920" x2="1520" y2="380" stroke="#5b8592" strokeWidth="2" strokeOpacity="0.12" />
+          <line x1="1320" y1="920" x2="1520" y2="380" stroke="#5b8592" strokeWidth="2" strokeOpacity="0.18" />
           <line x1="1280" y1="950" x2="1480" y2="410" stroke="#5b8592" strokeWidth="1.5" strokeOpacity="0.08" />
         </g>
 
@@ -141,7 +141,7 @@ const GeometricBackground: React.FC = () => {
           <polygon
             points="800,-80 1200,100 1100,300 700,120"
             fill="#5b8592"
-            fillOpacity="0.025"
+            fillOpacity="0.1"
           />
           <line x1="790" y1="-80" x2="690" y2="120" stroke="#5b8592" strokeWidth="1.5" strokeOpacity="0.10" />
           <line x1="810" y1="-80" x2="710" y2="120" stroke="#5b8592" strokeWidth="1" strokeOpacity="0.06" />
