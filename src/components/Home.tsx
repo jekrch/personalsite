@@ -1,6 +1,7 @@
 import { FC } from "react"
 import { Container } from "reactstrap"
 import ProjectCarousel from "./ProjectCarousel"
+import ComicsBanner from "./ComicsBanner"
 
 const projects = [
   {
@@ -57,28 +58,7 @@ const Home: FC = () => {
       </div>
 
       {/* Comics Top 10 Banner */}
-      <a 
-        href="https://comics.jacobkrch.com" 
-        className="block group no-underline"
-      >
-        <div className="relative overflow-hidden bg-[var(--jk-teal)] px-5 py-4 my-8 border-2 border-transparent hover:border-white/30 transition-colors">
-          {/* Overlapping frame accents */}
-          <div className="absolute top-2 left-2 w-12 h-12 border-2 border-white/15" />
-          <div className="absolute top-4 left-4 w-12 h-12 border-2 border-white/10" />
-          <div className="absolute bottom-2 right-2 w-10 h-10 border-2 border-white/15" />
-          <div className="absolute bottom-4 right-4 w-10 h-10 border-2 border-white/10" />
-          
-          {/* Content */}
-          <div className="relative z-10 text-center">
-            <p className="text-white/70 text-sm m-0 mb-1">
-              What are my favorite comics from 2025? 
-            </p>
-            <h3 className="text-white text-lg font-semibold m-0 group-hover:underline">
-              I made a list →
-            </h3>
-          </div>
-        </div>
-      </a>
+      <ComicsBanner />
     </Container>
   )
 }
