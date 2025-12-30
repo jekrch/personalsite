@@ -78,7 +78,7 @@ const ComicsBanner: FC = () => {
         style={{
           top: '-4px',
           left: '32px',
-          right: '-18px',
+          right: '8px',
           bottom: '-12px',
         }}
       />
@@ -129,7 +129,7 @@ const ComicsBanner: FC = () => {
           {/* Content */}
           <div className="relative z-10 text-center">
             <p className="text-white  text-sm m-0 mb-1">
-              What are my favorite comics from 2025? 
+              What were my fav comics from 2025? 
             </p>
             <h3 className="text-white text-lg font-semibold m-0 group-hover:underline">
               I made a list →
