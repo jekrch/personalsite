@@ -12,6 +12,7 @@ import FilmClub from './components/FilmClub';
 import JuxtaGlobe from './components/JuxtaGlobe';
 import ModalChordBuildr from './components/ModalChordBuildr';
 import GeometricBackground from './components/GeometricBackground';
+import GbMeter from './components/GbMeter';
 
 const rootElement = document.getElementById('root') as Container;
 const root = createRoot(rootElement);
@@ -36,6 +37,7 @@ root.render(
           <Route path="/music" element={<Music />} />
           <Route path="/criterion-club" element={<FilmClub />} />
           <Route path="/juxtaglobe" element={<JuxtaGlobe />} />
+          <Route path="/gb-meter" element={<GbMeter />} />
         </Routes>
       </div>
       

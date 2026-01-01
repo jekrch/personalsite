@@ -33,6 +33,12 @@ const projects = [
     imageUrl: "/images/juxtaglobe1.png", 
     pageLink: "/#juxtaglobe",
     url: "juxtaglobe.com"
+  },
+    {
+    name: "GB Meter",
+    imageUrl: "/images/gbmeter2.png", 
+    pageLink: "/#gb-meter",
+    url: "gbmeter.com"
   }
 ];
 
