@@ -63,7 +63,7 @@ const ImageCarousel: FC<ImageCarouselProps> = ({ items, className }) => {
       <Carousel
         activeIndex={activeIndex}
         next={next}
-        previous={previous}
+        previous={previous} 
         className="shadow-[5px_6px_11px_0px_rgba(0,_0,_0,_0.3)] overflow-hidden rounded-sm hover:duration-200 hover:shadow-[rgba(0,_0,_0,_0.4)]"
         interval={5000}
       >

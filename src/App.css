@@ -350,3 +350,15 @@ body {
   -webkit-backdrop-filter: blur(4px);
   backdrop-filter: blur(4px);
 }
+
+.carousel-item {
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
+.carousel-inner {
+  overflow: hidden;
+  /* Slight scale can hide subpixel gaps */
+  transform: scale(1.001);
+}
+
