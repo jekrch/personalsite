@@ -88,7 +88,9 @@ const ComicsBanner: FC = () => {
         href="https://comics.jacobkrch.com" 
         className="block group no-underline relative z-10"
       >
-        <div className="relative overflow-hidden bg-[var(--jk-teal)] px-5 py-4 border-2 border-transparent hover:border-white/30 transition-colors">
+
+        <div className="relative overflow-hidden bg-[var(--jk-teal)] px-5 py-4 border-2 border-white/80 hover:border-white/50 transition-colors hover:shadow-md">
+                 
           {/* Comic background images */}
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
             {/* Left image */}
