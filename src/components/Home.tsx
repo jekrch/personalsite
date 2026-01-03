@@ -1,7 +1,7 @@
 import { FC } from "react"
 import { Container } from "reactstrap"
 import ProjectCarousel from "./ProjectCarousel"
-import ComicsBanner from "./ComicsBanner"
+import Banner from "./Banner";
 
 const projects = [
   {
@@ -62,9 +62,48 @@ const Home: FC = () => {
           backgroundImages={backgroundImages}
         />
       </div>
-
       {/* Comics Top 10 Banner */}
-      <ComicsBanner />
+      <Banner
+        href="https://comics.jacobkrch.com"
+        title="I made a list →"
+        subtitle="What were my fav comics from 2025?"
+        images={[
+          "/images/comics/assorted-crisis-events-1.jpg",
+          "/images/comics/beneath-the-trees-1.jpg",
+          "/images/comics/invisible-man-3.jpg",
+          "/images/comics/were-taking-everyone-down-2.jpg",
+        ]}
+      />
+     
+      <Banner
+        href="/#logiclectures"
+        title="Logic Lectures"
+        subtitle="Learn or teach symbolic logic from my"
+        images={[
+          "/images/logic1.png",
+          "/images/logic2.png",
+          "/images/logic3.png",
+        ]}
+        imageScale={2}
+        disableRotation={true}
+        accentColor="#564A3E"
+        frames={[
+          { top: -5, left: 10, right: 10, bottom: -5, opacity: 0.35 },
+        ]}
+      />
+
+      <Banner
+        href="/#music"
+        title="Music"
+        subtitle="Check out my soundcloud!"
+        images={[
+          "/images/music1.png",
+          "/images/music1.png",
+        ]}
+        imageScale={1}
+        disableRotation={false}
+        accentColor="#466EDD"
+      />
     </Container>
   )
 }
