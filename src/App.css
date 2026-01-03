@@ -362,3 +362,77 @@ body {
   transform: scale(1.001);
 }
 
+.loader-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #5b8592; /* Brand Teal */
+  z-index: 10;
+}
+
+/* Container for the logo squares */
+.logo-loader {
+  position: relative;
+  width: 80px;
+  height: 80px;
+}
+
+/* Base Frame Style */
+.frame {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 2px solid #FFFFFF; 
+  box-sizing: border-box;
+  
+  animation-duration: 2s;
+  animation-iteration-count: infinite;
+  animation-timing-function: ease-in-out;
+  animation-fill-mode: forwards;
+}
+
+.frame-1 {
+  animation-name: rotateFrame1;
+  z-index: 3;
+}
+
+.frame-2 {
+  animation-name: rotateFrame2;
+  transform: translate(10px, 10px);
+  z-index: 2;
+}
+
+.frame-3 {
+  animation-name: rotateFrame3;
+  transform: translate(20px, 20px);
+  z-index: 1;
+}
+
+/* --- Keyframes (Takes turns rotating) --- */
+
+@keyframes rotateFrame1 {
+  0%   { transform: rotate(0deg); }
+  20%  { transform: rotate(90deg); }
+  100% { transform: rotate(90deg); }
+}
+
+@keyframes rotateFrame2 {
+  0%   { transform: translate(10px, 10px) rotate(0deg); }
+  20%  { transform: translate(10px, 10px) rotate(0deg); } /* Wait */
+  40%  { transform: translate(10px, 10px) rotate(90deg); } /* Turn */
+  100% { transform: translate(10px, 10px) rotate(90deg); } /* Stay */
+}
+
+@keyframes rotateFrame3 {
+  0%   { transform: translate(20px, 20px) rotate(0deg); }
+  40%  { transform: translate(20px, 20px) rotate(0deg); } /* Wait */
+  60%  { transform: translate(20px, 20px) rotate(90deg); } /* Turn */
+  100% { transform: translate(20px, 20px) rotate(90deg); } /* Stay */
+}

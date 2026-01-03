@@ -32,9 +32,9 @@ const FilmClub: FC = () => {
 
         <ImageCarousel items={imagePaths} className="!min-h-[27em] !max-h-[30em]" />
 
-        <h4 className="my-4">
+        <h5 className="my-4">
           An Approachable design
-        </h4>
+        </h5>
 
         <p className="mb-4 mt-4">
           One interesting challenge was figuring out how to simply and efficiently enable my fellow club members to update the site themselves: e.g. adding new films, scores, reviews etc. Given that most of them have no previous experience with this kind of web development, I needed something that wouldn't require them to write code, fiddle with JSON, or learn Git.  
@@ -48,9 +48,9 @@ const FilmClub: FC = () => {
         This system has been a huge win. Contributing to the site is as easy as filling in a spreadsheet cell. No need to touch code or understand how the site works under the hood. The automation handles the tedious parts like fetching poster images, formatting data, and pushing changes to production.
         </p>
 
-        <h4 className="mb-4">
+        <h5 className="mb-4">
           Experiments in AI-driven development
-        </h4>
+        </h5>
 
         <p className="mb-4">
         Now beyond the practical purpose behind this project, I also used it as an opportunity to see how far I could push AI tools in a real development workflow. From initial concept to production, I leaned heavily on Claude 3.7 Sonnet (with thinking enabled) and Gemini 2.5 to accelerate and enhance my work.
