@@ -5,7 +5,6 @@
 @theme {
   /* 1. Custom Colors */
   --color-jk-teal: var(--jk-teal);
-
 }
 
 html, body {
@@ -436,3 +435,4 @@ body {
   60%  { transform: translate(20px, 20px) rotate(90deg); } /* Turn */
   100% { transform: translate(20px, 20px) rotate(90deg); } /* Stay */
 }
+
