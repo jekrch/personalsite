@@ -282,9 +282,10 @@ const AppNavbar: FC = () => {
           <Container>
             <div className="flex flex-col w-full">
               {/* Categories grid - columns on wide screens, stacked on narrow */}
+              {/* Added overflow-visible and horizontal padding to prevent indicator clipping during animation */}
               <div
                 ref={navContainerRef}
-                className="relative grid grid-cols-1 xs:grid-cols-2 gap-x-8 gap-y-2"
+                className="relative grid grid-cols-1 xs:grid-cols-2 gap-x-8 gap-y-2 overflow-x-visible px-4 -mx-4"
               >
                 {/* Sliding indicator with rotation */}
                 <div
