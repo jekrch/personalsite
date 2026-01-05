@@ -78,7 +78,7 @@ const Home: FC = () => {
       <Banner
         href="/#logiclectures"
         title="Logic Lectures"
-        subtitle="Learn or teach symbolic logic from my"
+        subtitle="Learn or teach symbolic logic with my"
         images={[
           "/images/logic1.png",
           "/images/logic2.png",

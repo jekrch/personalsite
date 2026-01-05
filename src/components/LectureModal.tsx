@@ -85,7 +85,7 @@ const LectureModal: FC<LectureModalProps> = ({ isOpen, toggle, lectureName, url 
 
       {/* Modal Container */}
       <div
-        className="relative w-full max-w-2xl bg-white border-1 border-gray-600  rounded-lg shadow-2xl overflow-hidden pb-10"
+        className="relative w-full max-w-3xl bg-white border-1 border-gray-600 rounded-lg shadow-xl overflow-hidden pb-10"
         style={{
           opacity: isAnimating ? 1 : 0,
           transform: isAnimating ? 'scale(1) translateY(0)' : 'scale(0.95) translateY(-20px)',
@@ -95,13 +95,13 @@ const LectureModal: FC<LectureModalProps> = ({ isOpen, toggle, lectureName, url 
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-start justify-between px-6 py-4 border-b border-gray-200 bg-gray-50">
+        <div className="flex items-start justify-between px-6 pt-3 pb-2 border-b border-gray-200 bg-gray-50">
           <h5 className="text-base font-semibold text-gray-600 m-0 pr-4 break-words">
             {lectureName}
           </h5>
           <button
             onClick={toggle}
-            className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-sm text-gray-500 hover:text-gray-700 hover:bg-gray-200 transition-colors duration-150"
+            className="flex-shrink-0 w-8 h-8 -mt-1 flex items-center justify-center rounded-sm text-gray-500 hover:text-gray-700 hover:bg-gray-200 transition-colors duration-150"
             aria-label="Close modal"
           >
             <svg
