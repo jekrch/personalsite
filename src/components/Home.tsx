@@ -84,6 +84,7 @@ const Home: FC = () => {
           "/images/logic2.png",
           "/images/logic3.png",
         ]}
+        enableParallax
         imageScale={2}
         disableRotation={true}
         accentColor="#564A3E"
@@ -100,6 +101,7 @@ const Home: FC = () => {
           "/images/music1.png",
           "/images/music1.png",
         ]}
+        enableParallax
         imageScale={1}
         disableRotation={false}
         accentColor="#466EDD"

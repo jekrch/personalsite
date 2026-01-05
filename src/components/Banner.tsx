@@ -1,4 +1,4 @@
-import { FC, useState, useEffect, useMemo } from "react"
+import { FC, useState, useEffect, useMemo, useRef, useCallback } from "react"
 
 interface ImageSlot {
     src: string
@@ -49,6 +49,10 @@ interface BannerProps {
     frameColor?: string
     /** Frame border width */
     frameBorderWidth?: number
+    /** Enable parallax scrolling effect on background images */
+    enableParallax?: boolean
+    /** Parallax intensity - how much the images move relative to scroll (default: 0.3) */
+    parallaxIntensity?: number
 }
 
 const getRandomOrigin = () => ({
@@ -87,9 +91,14 @@ const Banner: FC<BannerProps> = ({
     frames,
     frameColor,
     frameBorderWidth = 2,
+    enableParallax = false,
+    parallaxIntensity = 0.3,
 }) => {
     const [slots, setSlots] = useState<ImageSlot[]>([])
     const [, setCurrentIndex] = useState(0)
+    const [parallaxOffset, setParallaxOffset] = useState(0)
+    const [isHovered, setIsHovered] = useState(false)
+    const bannerRef = useRef<HTMLDivElement>(null)
 
     // Compute frame offsets - memoized to prevent re-randomizing on every render
     const frameOffsets = useMemo(() => {
@@ -146,6 +155,41 @@ const Banner: FC<BannerProps> = ({
         return () => clearInterval(interval)
     }, [images, rotationInterval, disableRotation])
 
+    // Parallax scroll effect
+    const handleScroll = useCallback(() => {
+        if (!bannerRef.current || !enableParallax) return
+
+        const rect = bannerRef.current.getBoundingClientRect()
+        const windowHeight = window.innerHeight
+        
+        // Calculate how far the banner is from the center of the viewport
+        const bannerCenter = rect.top + rect.height / 2
+        const viewportCenter = windowHeight / 2
+        const distanceFromCenter = bannerCenter - viewportCenter
+        
+        // Convert to a parallax offset (clamped to reasonable range)
+        const maxOffset = 50 // Maximum pixels to shift
+        const offset = Math.max(-maxOffset, Math.min(maxOffset, distanceFromCenter * parallaxIntensity))
+        
+        setParallaxOffset(offset)
+    }, [enableParallax, parallaxIntensity])
+
+    useEffect(() => {
+        if (!enableParallax) return
+
+        // Initial calculation
+        handleScroll()
+
+        // Use passive listener for better scroll performance
+        window.addEventListener("scroll", handleScroll, { passive: true })
+        window.addEventListener("resize", handleScroll, { passive: true })
+
+        return () => {
+            window.removeEventListener("scroll", handleScroll)
+            window.removeEventListener("resize", handleScroll)
+        }
+    }, [enableParallax, handleScroll])
+
     const formatOffset = (value: number | string) =>
         typeof value === "number" ? `${value}px` : value
 
@@ -162,8 +206,16 @@ const Banner: FC<BannerProps> = ({
         }
     }
 
+    // Compute parallax transform style
+    const parallaxStyle = enableParallax
+        ? { transform: `translateY(${parallaxOffset}px)`, transition: "transform 0.1s ease-out" }
+        : {}
+
+    // Hover zoom multiplier (5% zoom on hover)
+    const hoverZoomMultiplier = isHovered ? 1.05 : 1
+
     return (
-        <div className={`relative my-8 ${className}`}>
+        <div ref={bannerRef} className={`relative my-8 ${className}`}>
             {/* Backing frame elements - offset behind the banner */}
             {frameOffsets.map((frame, index) => (
                 <div
@@ -186,6 +238,8 @@ const Banner: FC<BannerProps> = ({
             <a
                 href={href}
                 onClick={handleClick}
+                onMouseEnter={() => setIsHovered(true)}
+                onMouseLeave={() => setIsHovered(false)}
                 className="block group no-underline relative z-10"
             >
                 <div
@@ -198,14 +252,24 @@ const Banner: FC<BannerProps> = ({
                             {/* Left image */}
                             {slots[0] && (
                                 <div className="absolute left-0 top-0 w-1/2 h-full overflow-hidden">
-                                    <img
-                                        src={slots[0].src}
-                                        alt=""
-                                        className={`w-full h-full object-cover scale-[${imageScale}] transition-all duration-1000`}
+                                    <div
+                                        className="absolute inset-0"
                                         style={{
-                                            objectPosition: `${slots[0].originX}% ${slots[0].originY}%`,
+                                            top: enableParallax ? "-50px" : 0,
+                                            bottom: enableParallax ? "-50px" : 0,
+                                            ...parallaxStyle,
                                         }}
-                                    />
+                                    >
+                                        <img
+                                            src={slots[0].src}
+                                            alt=""
+                                            className="w-full h-full object-cover transition-all duration-500"
+                                            style={{
+                                                objectPosition: `${slots[0].originX}% ${slots[0].originY}%`,
+                                                transform: `scale(${imageScale * hoverZoomMultiplier})`,
+                                            }}
+                                        />
+                                    </div>
                                     <div
                                         className="absolute inset-0 bg-gradient-to-r from-transparent"
                                         style={{ ["--tw-gradient-to" as string]: accentColor }}
@@ -220,14 +284,24 @@ const Banner: FC<BannerProps> = ({
                             {/* Right image */}
                             {slots[1] && (
                                 <div className="absolute right-0 top-0 w-1/2 h-full overflow-hidden">
-                                    <img
-                                        src={slots[1].src}
-                                        alt=""
-                                        className={`w-full h-full object-cover scale-[${imageScale}] transition-all duration-1000`}
+                                    <div
+                                        className="absolute inset-0"
                                         style={{
-                                            objectPosition: `${slots[1].originX}% ${slots[1].originY}%`,
+                                            top: enableParallax ? "-50px" : 0,
+                                            bottom: enableParallax ? "-50px" : 0,
+                                            ...parallaxStyle,
                                         }}
-                                    />
+                                    >
+                                        <img
+                                            src={slots[1].src}
+                                            alt=""
+                                            className="w-full h-full object-cover transition-all duration-500"
+                                            style={{
+                                                objectPosition: `${slots[1].originX}% ${slots[1].originY}%`,
+                                                transform: `scale(${imageScale * hoverZoomMultiplier})`,
+                                            }}
+                                        />
+                                    </div>
                                     <div
                                         className="absolute inset-0 bg-gradient-to-l from-transparent"
                                         style={{ ["--tw-gradient-to" as string]: accentColor }}
