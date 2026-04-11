@@ -231,6 +231,7 @@ const AppNavbar: FC = () => {
         { href: "/#criterion-club", text: "criterion club", animation: "shiver-animation" },
         { href: "/#juxtaglobe", text: "juxta globe", animation: "side-to-side-animation" },
         { href: "/#gb-meter", text: "gb meter", animation: "shiver-animation" },
+        { href: "/#comic-snaps", text: "comic snaps", animation: "bouncy-dance-animation" },
       ]
     }
   ];

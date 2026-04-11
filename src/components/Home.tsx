@@ -39,6 +39,12 @@ const projects = [
     imageUrl: "/images/gbmeter2.png", 
     pageLink: "/#gb-meter",
     url: "gbmeter.com"
+  },
+    {
+    name: "Comic Snaps",
+    imageUrl: "/images/comicSnaps1.png", 
+    pageLink: "/#comic-snaps",
+    url: "snaps.jacobkrch.com"
   }
 ];
 

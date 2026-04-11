@@ -1,4 +1,4 @@
-import { useState, useCallback, FC } from "react";
+import { useState, useCallback, useEffect, FC } from "react";
 import {
   Carousel,
   CarouselItem,
@@ -20,6 +20,29 @@ interface CarouselIndicatorItem {
 const ImageCarousel: FC<ImageCarouselProps> = ({ items, className }) => {
   const [activeIndex, setActiveIndex] = useState<number>(0);
   const [animating, setAnimating] = useState<boolean>(false);
+  const [minAspectRatio, setMinAspectRatio] = useState<number | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    Promise.all(
+      items.map(
+        (src) =>
+          new Promise<number>((resolve) => {
+            const img = new Image();
+            img.onload = () => resolve(img.naturalWidth / img.naturalHeight);
+            img.onerror = () => resolve(Number.POSITIVE_INFINITY);
+            img.src = src;
+          })
+      )
+    ).then((ratios) => {
+      if (cancelled) return;
+      const finite = ratios.filter((r) => Number.isFinite(r) && r > 0);
+      if (finite.length) setMinAspectRatio(Math.min(...finite));
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [items]);
 
   const next = useCallback(() => {
     if (animating) return;
@@ -46,13 +69,20 @@ const ImageCarousel: FC<ImageCarouselProps> = ({ items, className }) => {
       onExiting={onExiting}
       onExited={onExited}
       key={src}
-      className="flex items-center justify-center"
     >
-      <img 
-        src={src} 
-        alt="" 
-        className={classNames("w-full h-auto object-contain max-h-[41.5em] bg-jk-teal", className)}
-      />
+      <div
+        className={classNames(
+          "flex items-center justify-center w-full bg-jk-teal",
+          className
+        )}
+        style={minAspectRatio ? { aspectRatio: String(minAspectRatio) } : undefined}
+      >
+        <img
+          src={src}
+          alt=""
+          className="max-w-full max-h-full object-contain"
+        />
+      </div>
     </CarouselItem>
   ));
 
@@ -63,7 +93,7 @@ const ImageCarousel: FC<ImageCarouselProps> = ({ items, className }) => {
       <Carousel
         activeIndex={activeIndex}
         next={next}
-        previous={previous} 
+        previous={previous}
         className="shadow-[5px_6px_11px_0px_rgba(0,_0,_0,_0.3)] overflow-hidden rounded-sm hover:duration-200 hover:shadow-[rgba(0,_0,_0,_0.4)]"
         interval={5000}
       >
