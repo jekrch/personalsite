@@ -13,11 +13,11 @@ const architectureChart = `flowchart TD
   tg[Telegram Bot]
   cf[Cloudflare Worker]
   repo[(GitHub Repo)]
-  action[GitHub Action<br/>Python pipeline]
-  meta[Metadata<br/>pHash · CIELAB · dims]
+  action[GitHub Action]
+  meta[Metadata: pHash · CIELAB · dims]
   wiki[MediaWiki API]
-  emb[Embeddings<br/>SigLIP · DINOv2 · VGG-16]
-  pages[GitHub Pages<br/>React frontend]
+  emb[Embeddings: SigLIP · DINOv2 · VGG-16]
+  pages[GitHub Pages]
 
   user -->|submit panel| tg
   tg --> cf
