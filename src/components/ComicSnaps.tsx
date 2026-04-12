@@ -62,13 +62,17 @@ const ComicSnaps: FC = () => {
         <ImageCarousel items={imagePaths} className="!min-h-[27em] !max-h-[30em]" />
 
         <p className="mt-4">
-        The app uses a streamlined ingestion pipeline: images and captions are submitted in a Telegram channel which are picked up by a Telegram bot, and then routed through a Cloudflare Worker and committed directly to the GitHub repo. A GH action then automatically triggers a rebuild of the static frontend, which is built with React, TypeScript, Vite, and Tailwind, and hosted on GitHub Pages.
+        One of the key goals for the app was to leverage automation to simplify the user experience, while at the same time keeping costs at zero. Sort of like code golf for cheapskates! I also wanted to use the project as an opportunity to explore different types of image embedding models. While you might expect image processing via neural networks to be computationally intensive, the truth is that the more purpose-built, moderately sized models can be surprisingly efficient when deployed correctly. 
+        </p>
+
+        <p>
+        The final streamlined ingestion pipeline that I landed on looked like this: images and captions are submitted in a Telegram channel which are picked up by a Telegram bot webhook, and then routed through a Cloudflare Worker which commits the images and metadata directly to the GitHub repo. A GithHub action then triggers a rebuild of the static frontend, which is implemented with React, TypeScript, Vite, and Tailwind, and hosted on GitHub Pages.
         </p>
 
         <MermaidDiagram chart={architectureChart} className="my-6 flex justify-center [&_svg]:max-w-full [&_svg]:h-auto" />
 
         <p>
-        On the backend, a GH Action runs a Python script upon each relevant repo update to compute metadata and neural network embeddings for new panels. Basic metadata extraction includes calculating pixel dimensions, dominant CIELAB colors, perceptual hashes (pHash), and a colorfulness metric to distinguish between black-and-white and color art. Additionally, the script integrates with the MediaWiki API to auto-populate artist and series descriptions.
+        On the backend, another GitHub Action runs a python script following each relevant repo update to compute metadata and neural network embeddings for new panels. Basic metadata extraction includes calculating pixel dimensions, dominant CIELAB colors, perceptual hashes (pHash), and a colorfulness metric to distinguish between black-and-white and color art. Additionally, the script integrates with the MediaWiki API to auto-populate artist and series descriptions.
         </p>
 
         <p>
@@ -77,6 +81,10 @@ const ComicSnaps: FC = () => {
 
         <p>
         These embeddings power the frontend's sorting and discovery features. The gallery can be organized into greedy nearest-neighbor chains based on any of the computed distance metrics. Furthermore, users can open a force-directed similarity graph to explore the collection, where node positioning and edge thickness visually represent the mathematical distance between different compositions, semantic meanings, or rendering styles.
+        </p>
+
+        <p>
+          It's been an interesting project to build out, and the simple pipeline has made it easy to incorporate the posting process with my weekly comic book habit. I spent sometime compiling what I've learned about each image model in an explainer modal that you can access from each similarity graph. 
         </p>
       </Container>
     </div>
