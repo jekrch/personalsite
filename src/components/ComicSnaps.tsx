@@ -84,7 +84,7 @@ const ComicSnaps: FC = () => {
         </p>
 
         <p>
-          It's been an interesting project to build out, and the simple pipeline has made it easy to incorporate the posting process with my weekly comic book habit. I spent sometime compiling what I've learned about each image model in an explainer modal that you can access from each similarity graph. 
+          It's been an interesting project to build out, and the simple pipeline has made it easy to incorporate the posting process with my weekly comic book habit. I spent some time compiling what I've learned about each image model in an explainer modal that you can access from each similarity graph. If you have any questions or ideas for new features, feel free to reach out.
         </p>
       </Container>
     </div>
