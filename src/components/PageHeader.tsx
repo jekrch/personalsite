@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Container } from 'reactstrap';
+import WaterFlush from './WaterFlush';
 
 interface PageHeaderProps {
   mainLink: string,
@@ -22,6 +23,7 @@ const PageHeader = ({ mainLink, mainLinkText, githubLink, githubText }: PageHead
 
   return (
     <div className="border-t border-b border-jk-teal bg-white py-[1em] mb-6 relative w-screen left-1/2 -translate-x-1/2 -mt-[1.3em] overflow-hidden">
+      <WaterFlush delayMs={1000} particleCount={10} />
       <Container style={{ fontFamily: "helvetica", fontSize: 14 }} className="items-center">
         <div className="flex items-center justify-center">
           <div className="flex items-center gap-2 mr-3">
