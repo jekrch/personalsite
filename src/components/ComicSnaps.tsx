@@ -13,9 +13,11 @@ const architectureChart = `flowchart TD
   tg[Telegram Bot]
   cf[Cloudflare Worker]
   repo[(GitHub Repo)]
-  action[GitHub Action]
+  metaAction[GitHub Action: metadata]
+  embAction[GitHub Action: embeddings]
   meta[Metadata: pHash · CIELAB · dims]
   wiki[MediaWiki API]
+  vine[Comic Vine API]
   emb[Embeddings: SigLIP · DINOv2 · VGG-16]
   pages[GitHub Pages]
 
@@ -23,17 +25,19 @@ const architectureChart = `flowchart TD
   tg --> cf
   cf -->|commit| repo
   repo --> pages
-  repo --> action
-  action --> meta
-  action --> emb
-  action --> wiki
+  repo --> metaAction
+  repo --> embAction
+  metaAction --> meta
+  metaAction --> wiki
+  metaAction --> vine
+  embAction --> emb
 
   classDef teal fill:#5b8592,stroke:#3f5e69,color:#ffffff
   classDef gray fill:#e5e7eb,stroke:#9ca3af,color:#374151
   classDef ext fill:#f3f4f6,stroke:#9ca3af,color:#4b5563
-  class repo,action teal
+  class repo,metaAction,embAction teal
   class tg,cf,pages,meta,emb gray
-  class wiki,user ext
+  class wiki,vine,user ext
 `
 
 const imagePaths = [
@@ -72,7 +76,7 @@ const ComicSnaps: FC = () => {
         <MermaidDiagram chart={architectureChart} className="my-6 flex justify-center [&_svg]:max-w-full [&_svg]:h-auto" />
 
         <p>
-        On the backend, another GitHub Action runs a python script following each relevant repo update to compute metadata and neural network embeddings for new panels. Basic metadata extraction includes calculating pixel dimensions, dominant CIELAB colors, perceptual hashes (pHash), and a colorfulness metric to distinguish between black-and-white and color art. Additionally, the script integrates with the MediaWiki API to auto-populate artist and series descriptions.
+        On the backend, another GitHub Action runs a python script following each relevant repo update to compute metadata and neural network embeddings for new panels. Basic metadata extraction includes calculating pixel dimensions, dominant CIELAB colors, perceptual hashes (pHash), and a colorfulness metric to distinguish between black-and-white and color art. Additionally, the script integrates with the MediaWiki API to auto-populate artist and series descriptions, falling back to the Comic Vine API to fill in any remaining gaps along with supplemental fields like publisher, start year, issue count, and artist birth/death years.
         </p>
 
         <p>
