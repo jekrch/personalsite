@@ -31,6 +31,9 @@ const ProjectCarousel: FC<ProjectCarouselProps> = ({ projects, backgroundImages 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const buttonsContainerRef = useRef<HTMLDivElement>(null);
   const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const touchStartXRef = useRef<number | null>(null);
+  const touchStartYRef = useRef<number | null>(null);
+  const touchHandledRef = useRef<boolean>(false);
 
   const onExiting = useCallback(() => setAnimating(true), []);
   const onExited = useCallback(() => setAnimating(false), []);
@@ -235,6 +238,40 @@ const ProjectCarousel: FC<ProjectCarouselProps> = ({ projects, backgroundImages 
     return () => container.removeEventListener('scroll', handleScroll);
   }, [updateDotPosition]);
 
+  const handleTouchStart = useCallback((e: React.TouchEvent<HTMLDivElement>) => {
+    const touch = e.touches[0];
+    touchStartXRef.current = touch.clientX;
+    touchStartYRef.current = touch.clientY;
+    touchHandledRef.current = false;
+  }, []);
+
+  const handleTouchMove = useCallback((e: React.TouchEvent<HTMLDivElement>) => {
+    if (touchStartXRef.current === null || touchStartYRef.current === null) return;
+    if (touchHandledRef.current) return;
+
+    const touch = e.touches[0];
+    const deltaX = touch.clientX - touchStartXRef.current;
+    const deltaY = touch.clientY - touchStartYRef.current;
+
+    // Only trigger if horizontal movement clearly dominates and exceeds threshold
+    if (Math.abs(deltaX) > 50 && Math.abs(deltaX) > Math.abs(deltaY) * 1.5) {
+      if (deltaX < 0) {
+        next();
+      } else {
+        previous();
+      }
+      touchHandledRef.current = true;
+      touchStartXRef.current = null;
+      touchStartYRef.current = null;
+    }
+  }, [next, previous]);
+
+  const handleTouchEnd = useCallback(() => {
+    touchStartXRef.current = null;
+    touchStartYRef.current = null;
+    touchHandledRef.current = false;
+  }, []);
+
   // Rotate through background images if provided
   const getBackgroundImage = (index: number) => {
     if (backgroundImages.length === 0) return '';
@@ -410,31 +447,38 @@ const ProjectCarousel: FC<ProjectCarouselProps> = ({ projects, backgroundImages 
         </div>
       </div>
 
-      <Carousel
-        activeIndex={activeIndex}
-        next={next}
-        previous={previous}
-        className="shadow-2xl overflow-hidden bg-gray-900"
-        interval={6000}
+      <div
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        onTouchCancel={handleTouchEnd}
       >
-        {slides}
+        <Carousel
+          activeIndex={activeIndex}
+          next={next}
+          previous={previous}
+          className="shadow-2xl overflow-hidden bg-gray-900"
+          interval={6000}
+        >
+          {slides}
 
-        {/* Modern carousel controls with higher z-index */}
-        <CarouselControl
-          direction="prev"
-          directionText="Previous"
-          onClickHandler={previous}
-          className="opacity-50 hover:opacity-100 transition-opacity"
-          style={{ zIndex: 20 }}
-        />
-        <CarouselControl
-          direction="next"
-          directionText="Next"
-          onClickHandler={next}
-          className="opacity-50 hover:opacity-100 transition-opacity"
-          style={{ zIndex: 20 }}
-        />
-      </Carousel>
+          {/* Modern carousel controls with higher z-index */}
+          <CarouselControl
+            direction="prev"
+            directionText="Previous"
+            onClickHandler={previous}
+            className="opacity-50 hover:opacity-100 transition-opacity"
+            style={{ zIndex: 20 }}
+          />
+          <CarouselControl
+            direction="next"
+            directionText="Next"
+            onClickHandler={next}
+            className="opacity-50 hover:opacity-100 transition-opacity"
+            style={{ zIndex: 20 }}
+          />
+        </Carousel>
+      </div>
 
     </div>
   );
