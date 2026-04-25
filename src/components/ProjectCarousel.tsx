@@ -25,6 +25,9 @@ const ProjectCarousel: FC<ProjectCarouselProps> = ({ projects, backgroundImages 
   const [hasAnimated, setHasAnimated] = useState<boolean>(false);
   const [showDot, setShowDot] = useState<boolean>(false);
   const [dotPosition, setDotPosition] = useState<number>(0);
+  const [activeButtonWidth, setActiveButtonWidth] = useState<number>(0);
+  const [activeButtonTop, setActiveButtonTop] = useState<number>(0);
+  const [activeButtonHeight, setActiveButtonHeight] = useState<number>(0);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const buttonsContainerRef = useRef<HTMLDivElement>(null);
   const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
@@ -61,6 +64,9 @@ const ProjectCarousel: FC<ProjectCarouselProps> = ({ projects, backgroundImages 
       // Calculate position relative to the container
       const buttonCenter = activeButton.offsetLeft + (activeButton.offsetWidth / 2);
       setDotPosition(buttonCenter);
+      setActiveButtonWidth(activeButton.offsetWidth);
+      setActiveButtonTop(activeButton.offsetTop);
+      setActiveButtonHeight(activeButton.offsetHeight);
     }
   }, [activeIndex]);
 
@@ -70,7 +76,7 @@ const ProjectCarousel: FC<ProjectCarouselProps> = ({ projects, backgroundImages 
 
     const container = scrollContainerRef.current;
     const innerDiv = buttonsContainerRef.current;
-    const activeButton = innerDiv.children[activeIndex] as HTMLElement;
+    const activeButton = buttonRefs.current[activeIndex];
 
     if (!activeButton) return;
 
@@ -95,14 +101,18 @@ const ProjectCarousel: FC<ProjectCarouselProps> = ({ projects, backgroundImages 
 
       let targetScroll = currentScroll;
 
+      // First button: always scroll all the way to the start
+      if (activeIndex === 0) {
+        targetScroll = 0;
+      }
+      // Last button: scroll all the way to the end
+      else if (activeIndex === projects.length - 1) {
+        targetScroll = innerDiv.scrollWidth - containerWidth;
+      }
       // If button is too far left
-      if (buttonRect.left < safeAreaLeft) {
+      else if (buttonRect.left < safeAreaLeft) {
         // Scroll so button appears just after the left mask
-        let padding = 30;
-        if (activeIndex === 0) {
-          padding = -50;
-        }
-        targetScroll = buttonLeft - maskSize - padding; // 30px padding
+        targetScroll = buttonLeft - maskSize - 30; // 30px padding
       }
       // If button is too far right
       else if (buttonRect.right > safeAreaRight) {
@@ -119,7 +129,7 @@ const ProjectCarousel: FC<ProjectCarouselProps> = ({ projects, backgroundImages 
         behavior: 'smooth'
       });
     }
-  }, [activeIndex, buttonsOverflow]);
+  }, [activeIndex, buttonsOverflow, projects.length]);
 
   // Check if buttons overflow the container
   useEffect(() => {
@@ -145,6 +155,27 @@ const ProjectCarousel: FC<ProjectCarouselProps> = ({ projects, backgroundImages 
       window.removeEventListener('resize', checkOverflow);
     };
   }, [projects]);
+
+  // Keep the sliding indicator aligned with the active button on resize
+  useEffect(() => {
+    const handleResize = () => updateDotPosition();
+
+    window.addEventListener('resize', handleResize);
+
+    // Observe the buttons container itself, since layout can shift even
+    // without a window resize (e.g. fonts loading, parent reflow).
+    let resizeObserver: ResizeObserver | undefined;
+    if (typeof ResizeObserver !== 'undefined' && buttonsContainerRef.current) {
+      resizeObserver = new ResizeObserver(() => updateDotPosition());
+      resizeObserver.observe(buttonsContainerRef.current);
+      buttonRefs.current.forEach((btn) => btn && resizeObserver!.observe(btn));
+    }
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      resizeObserver?.disconnect();
+    };
+  }, [updateDotPosition, projects]);
 
   // Scroll when active index changes
   useEffect(() => {
@@ -314,65 +345,67 @@ const ProjectCarousel: FC<ProjectCarouselProps> = ({ projects, backgroundImages 
           <div
             ref={buttonsContainerRef}
             className={`
-              flex gap-2 py-3 pb-3 relative
-              ${buttonsOverflow ? 'px-[10%]' : 'justify-center px-12'}
+              flex gap-3 py-3 pb-3 relative
+              ${buttonsOverflow ? 'pl-[6%] pr-[20%]' : 'justify-center px-12'}
             `}
             style={{
               minWidth: buttonsOverflow ? 'max-content' : 'auto'
             }}
           >
+            {/* Sliding indicator — stacked outlined frames echoing the logo's layered squares */}
+            {showDot && activeButtonWidth > 0 && (
+              <div
+                className="absolute pointer-events-none ios-optimize dot-fade-in"
+                style={{
+                  left: `${dotPosition}px`,
+                  top: `${activeButtonTop}px`,
+                  width: `${activeButtonWidth}px`,
+                  height: `${activeButtonHeight}px`,
+                  transform: 'translateX(-50%)',
+                  transition:
+                    'left 0.45s cubic-bezier(0.34, 1.3, 0.64, 1), width 0.35s cubic-bezier(0.34, 1.3, 0.64, 1)',
+                  WebkitTransition:
+                    'left 0.45s cubic-bezier(0.34, 1.3, 0.64, 1), width 0.35s cubic-bezier(0.34, 1.3, 0.64, 1)',
+                  zIndex: 0,
+                  willChange: 'left, width',
+                }}
+              >
+                <div
+                  className="absolute inset-0 border border-white rounded-sm"
+                  style={{ transform: 'translate(0.4em, -0.4em)' }}
+                />
+                <div
+                  className="absolute inset-0 border border-white rounded-sm"
+                  style={{ transform: 'translate(-0.4em, 0.4em)' }}
+                />
+              </div>
+            )}
+
             {projects.map((project, index) => (
               <button
                 key={project.name}
                 ref={(el) => buttonRefs.current[index] = el}
                 onClick={() => goToIndex(index)}
                 className={`
-                  whitespace-nowrap
+                  relative whitespace-nowrap
                   border-white border-1 mt-[0.1em]
                   px-4 py-2 rounded-sm text-sm font-medium flex-shrink-0
-                  ios-optimize
+                  ios-optimize carousel-btn
                   ${activeIndex === index
-                    ? 'bg-[#5b8592]/80 text-white shadow-lg'
+                    ? 'bg-transparent text-white'
                     : 'bg-white/20 text-white/90 hover:bg-white/30 hover:text-white'
                   }
                   ${hasAnimated ? 'smooth-reveal' : 'button-initial'}
                   ${activeIndex !== index ? 'button-backdrop' : ''}
                 `}
                 style={{
-                  animationDelay: hasAnimated ? `${index * 0.1}s` : '0s',
-                  animationFillMode: 'both',
-                  // Separate transition for color/background changes only
-                  transition: 'background-color 0.6s, color 0.6s, box-shadow 0.6s',
-                  WebkitTransition: 'background-color 0.6s, color 0.6s, box-shadow 0.6s'
+                  animationDelay: hasAnimated ? `${index * 0.08}s` : '0s',
+                  zIndex: 1,
                 }}
               >
                 {project.name}
               </button>
             ))}
-
-            {/* Single sliding dot indicator */}
-            {showDot && (
-              <>
-                <div
-                  className="absolute bottom-[0.44em] w-[5.5em] h-[0.08em] bg-slate-300 rounded-fullx shadow-sm dot-fade-in ios-optimize"
-                  style={{
-                    left: `${dotPosition}px`,
-                    transform: 'translateX(-50%)',
-                    transition: 'left 0.3s ease-out',
-                    WebkitTransition: 'left 0.3s ease-out',
-                  }}
-                />
-                <div
-                  className="absolute top-[0.54em] w-[5.5em] h-[0.08em] bg-slate-300 rounded-fullx shadow-sm dot-fade-in ios-optimize"
-                  style={{
-                    left: `${dotPosition}px`,
-                    transform: 'translateX(-50%)',
-                    transition: 'left 0.3s ease-out',
-                    WebkitTransition: 'left 0.3s ease-out',
-                  }}
-                />
-              </>
-            )}
           </div>
         </div>
       </div>

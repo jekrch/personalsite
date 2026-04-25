@@ -300,8 +300,21 @@ body {
 }
 
 .smooth-reveal {
-  animation: smoothReveal 1s ease-out both;
-  -webkit-animation: smoothReveal 1s ease-out both;
+  animation: smoothReveal 0.7s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  -webkit-animation: smoothReveal 0.7s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+
+.carousel-btn {
+  transition:
+    background-color 0.35s ease,
+    color 0.35s ease,
+    box-shadow 0.35s ease,
+    border-color 0.35s ease;
+  -webkit-transition:
+    background-color 0.35s ease,
+    color 0.35s ease,
+    box-shadow 0.35s ease,
+    border-color 0.35s ease;
 }
 
 @keyframes dotFadeIn {
