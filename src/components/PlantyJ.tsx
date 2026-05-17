@@ -64,7 +64,10 @@ const PlantyJ: FC = () => {
 
       <Container style={{ fontFamily: "helvetica", fontSize: 14 }}>
         <p>
-        PlantyJ is the project I built right after Comic Snaps for my partner Jenny. Jenny has a long standing interest in native ecology, permaculture, and urban environmental conservation, and over the last five years she's made remarkable progress on our property, building out mutually sustaining food webs and teaching me a lot about how Minnesota's biodiversity is all woven together. The app is an agentic garden journal: a way to record what's growing where, watch it change across the seasons, and ask questions about the whole collection in plain English.
+        PlantyJ is the project I built right after Comic Snaps for my partner Jenny. Jenny has a long standing interest in native ecology, permaculture, and urban environmental conservation, and over the last five years she's made remarkable progress on our property, building out mutually sustaining food webs and teaching me a lot about how Minnesota's interconnected biodiversity.
+        </p>
+        <p>
+         The app is an agentic garden journal: a way to record what's growing where, watch it change across the seasons, and ask questions about the whole collection in plain English.
         </p>
 
         <ImageCarousel items={imagePaths} className="!min-h-[27em] !max-h-[30em]" />
@@ -78,7 +81,11 @@ const PlantyJ: FC = () => {
         </p>
 
         <p>
-        The ingestion pipeline is similar in spirit to Comic Snaps. Photos and commands sent to the Telegram bot are picked up by a webhook and routed through a Cloudflare Worker, which commits images and metadata directly to the GitHub repo. A GitHub Action then rebuilds the static frontend, which is React, TypeScript, Vite, and Tailwind, hosted on GitHub Pages. The wrinkle here is the agent. Anything that needs an LLM (the question answering, the change proposals, the ecological analysis) is never run inside the webhook. The worker writes a job to a KV backed queue and returns immediately, and a one minute cron drains that queue, calls Gemini, and posts the result back to Telegram. Gemini calls routinely take ten to sixty seconds, well past a webhook timeout, so decoupling them through the queue is what makes the agent usable at all.
+        The ingestion pipeline is similar in spirit to Comic Snaps. Photos and commands sent to the Telegram bot are picked up by a webhook and routed through a Cloudflare Worker, which commits images and metadata directly to the GitHub repo. A GitHub Action then rebuilds the static frontend, which is React, TypeScript, Vite, and Tailwind, hosted on GitHub Pages. 
+        </p>
+
+        <p>
+        The wrinkle here is the agent. Anything that needs an LLM (the question answering, the change proposals, the ecological analysis) is never run inside the webhook. The worker writes a job to a KV backed queue and returns immediately, and a one minute cron drains that queue, calls Gemini, and posts the result back to Telegram. Gemini calls routinely take ten to sixty seconds, well past a webhook timeout, so decoupling them through the queue is what makes the agent usable at all.
         </p>
 
         <MermaidDiagram chart={architectureChart} className="my-6 flex justify-center [&_svg]:max-w-full [&_svg]:h-auto" />
