@@ -88,7 +88,7 @@ const BottomCardStrip: FC<{ tiles: string[] }> = ({ tiles }) => {
         {rendered.map((src, i) => (
           <div
             key={`${src}-${i}`}
-            className="w-[7rem] sm:w-[9rem] flex-none aspect-[4/3] overflow-hidden rounded-[3px] ring-1 ring-white/10 shadow-md shadow-black/40"
+            className="h-[8rem] sm:h-[11rem] w-auto flex-none aspect-[4/3] overflow-hidden rounded-[3px] ring-1 ring-white/10 shadow-md shadow-black/40"
           >
             <img
               src={src}

@@ -79,6 +79,7 @@ const projects = [
     gallery: [
       "/images/juxtaglobe2.png",
       "/images/juxtaglobe3.png",
+      "/images/juxtaglobe4.png",
     ]
   },
     {

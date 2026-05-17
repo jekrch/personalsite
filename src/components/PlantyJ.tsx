@@ -49,7 +49,7 @@ const imagePaths = [
     "/images/plantyj5.png",
     "/images/plantyj6.png",
     "/images/plantyj7.png",
-    ]
+]
 
 const PlantyJ: FC = () => {
   return (
