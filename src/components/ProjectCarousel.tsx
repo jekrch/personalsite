@@ -11,7 +11,101 @@ interface ProjectItem {
   imageUrl: string;
   pageLink?: string;
   url?: string; // Optional external URL
+  gallery?: string[]; // Additional project views, sampled as a background mosaic
 }
+
+// Cycled per tile so each crop frames a different region of the screenshot,
+// giving the strip a varied, "close-up sampling" feel rather than flat thumbnails.
+const TILE_POSITIONS = [
+  'center',
+  'top left',
+  'top right',
+  'center top',
+  'bottom right',
+  'left center',
+];
+// Each project view shown at most once so the strip reads as a varied
+// sampling rather than a repeating pattern.
+const buildMosaicTiles = (gallery: string[]): string[] => {
+  const seen = new Set<string>();
+  const tiles: string[] = [];
+  for (const src of gallery) {
+    if (src && !seen.has(src)) {
+      seen.add(src);
+      tiles.push(src);
+    }
+  }
+  return tiles;
+};
+
+// A row of sampled project views pinned to the bottom of the slide. If the
+// row is wider than the slide it slowly marquees through all of them;
+// otherwise it sits static and centered.
+const BottomCardStrip: FC<{ tiles: string[] }> = ({ tiles }) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const [overflow, setOverflow] = useState<boolean>(false);
+
+  useEffect(() => {
+    const measure = () => {
+      const container = containerRef.current;
+      const track = trackRef.current;
+      if (!container || !track) return;
+      // When marquee-ing the track holds two copies, so compare against half.
+      const setWidth = overflow ? track.scrollWidth / 2 : track.scrollWidth;
+      setOverflow(setWidth > container.clientWidth + 4);
+    };
+
+    measure();
+    const ro =
+      typeof ResizeObserver !== 'undefined' ? new ResizeObserver(measure) : undefined;
+    if (ro && containerRef.current) ro.observe(containerRef.current);
+    window.addEventListener('resize', measure);
+    return () => {
+      window.removeEventListener('resize', measure);
+      ro?.disconnect();
+    };
+  }, [tiles, overflow]);
+
+  // Two copies so the -50% loop is seamless; slow, count-scaled duration.
+  const rendered = overflow ? [...tiles, ...tiles] : tiles;
+  const duration = Math.max(30, tiles.length * 6);
+
+  return (
+    <div
+      ref={containerRef}
+      className="absolute inset-x-0 bottom-0 overflow-hidden pb-[3%] opacity-80 [mask-image:linear-gradient(to_right,transparent_0%,black_9%,black_91%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_right,transparent_0%,black_9%,black_91%,transparent_100%)]"
+    >
+      <div
+        ref={trackRef}
+        className={`flex gap-2 w-max px-4 ${overflow ? 'carousel-marquee' : 'mx-auto'}`}
+        style={
+          overflow
+            ? ({ ['--marquee-duration' as string]: `${duration}s` } as React.CSSProperties)
+            : undefined
+        }
+      >
+        {rendered.map((src, i) => (
+          <div
+            key={`${src}-${i}`}
+            className="w-[7rem] sm:w-[9rem] flex-none aspect-[4/3] overflow-hidden rounded-[3px] ring-1 ring-white/10 shadow-md shadow-black/40"
+          >
+            <img
+              src={src}
+              alt=""
+              loading="lazy"
+              className="w-full h-full object-cover"
+              style={{
+                objectPosition: TILE_POSITIONS[i % TILE_POSITIONS.length],
+                transform: `scale(${1.05 + (i % 3) * 0.08})`,
+              }}
+            />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
 
 interface ProjectCarouselProps {
   projects: ProjectItem[];
@@ -279,35 +373,55 @@ const ProjectCarousel: FC<ProjectCarouselProps> = ({ projects, backgroundImages 
   };
 
 
-  const slides = projects.map((project, index) => (
+  const slides = projects.map((project, index) => {
+   const mosaicTiles = project.gallery ? buildMosaicTiles(project.gallery) : [];
+   return (
     <CarouselItem
       onExiting={onExiting}
       onExited={onExited}
       key={project.name}
       className="relative"
     >
-      {/* Background layer with subtle overlay */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {backgroundImages.length > 0 && (
+      {/* Background layer — the rotating background image fills the slide as
+          before, with a sampled mosaic of this project's other views layered
+          on top and fading out toward the center. */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none bg-gray-900">
+        {backgroundImages.length > 0 ? (
           <>
             <img
               src={getBackgroundImage(index)}
               alt=""
-              className="w-full h-full object-cover scale-100"
+              className="absolute inset-0 w-full h-full object-cover scale-100"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/50 to-black/30"></div>
           </>
-        )}
-        {backgroundImages.length === 0 && (
+        ) : (
           <div className="absolute inset-0 bg-gradient-to-br from-gray-900 to-gray-800"></div>
+        )}
+
+        {project.gallery && project.gallery.length > 0 && (
+          <>
+            {/* Sampled project views in a strip along the bottom; slowly
+                marquees through them when there are more than fit. */}
+            <BottomCardStrip tiles={mosaicTiles} />
+            {/* Light vignette only — keep the cards visible while easing
+                contrast behind the featured screenshot and controls. */}
+            <div
+              className="absolute inset-0"
+              style={{
+                background:
+                  'radial-gradient(ellipse at center, rgba(10,12,14,0.62) 0%, rgba(10,12,14,0.3) 45%, rgba(10,12,14,0.12) 75%, rgba(10,12,14,0) 100%)',
+              }}
+            ></div>
+          </>
         )}
       </div>
 
       {/* Project content - contained within bounds to not overlap controls */}
-      <div className="relative z-[5] flex flex-col items-center justify-center h-[450px] min-h-[300px] p-8 pointer-events-none">
+      <div className="relative z-[5] flex flex-col items-center justify-start h-[520px] min-h-[340px] px-8 pb-8 pointer-events-none">
         <a
           href={project.pageLink || '#'}
-          className="group cursor-pointer flex flex-col items-center pointer-events-auto"
+          className="group cursor-pointer no-underline hover:no-underline flex flex-col items-center pointer-events-auto h-full sm:h-auto"
           onClick={(e) => {
             // If it's an external URL without pageLink, open in new tab
             if (!project.pageLink && project.url) {
@@ -338,10 +452,24 @@ const ProjectCarousel: FC<ProjectCarouselProps> = ({ projects, backgroundImages 
             </div>
           </div>
 
-          {/* Show URL if provided */}
+          {/* Show URL if provided — anchored above the image on every screen
+              size with an equal top/bottom margin (3em on mobile/very narrow
+              screens, 1em from the sm breakpoint up). Because the content
+              column is top-aligned (not centered), the URL stays a fixed
+              distance from the top and the image a fixed distance below it,
+              regardless of hero image height. A mild backdrop keeps it legible
+              over lighter imagery. */}
           {project.url && (
-            <div className="text-slate-200 text-lg mb-2 opacity-80 group-hover:opacity-100 transition-opacity">
-              {project.url}
+            <div className="order-first w-full my-[3em] flex items-center justify-center sm:my-[1em] sm:w-auto">
+              <span
+                className="text-white text-lg opacity-90 group-hover:opacity-100 transition-opacity px-6 py-1 rounded-sm"
+                style={{
+                  background:
+                    'linear-gradient(to right, rgba(91,133,146,0) 0%, rgba(91,133,146,0.5) 28%, rgba(91,133,146,0.5) 72%, rgba(91,133,146,0) 100%)',
+                }}
+              >
+                {project.url}
+              </span>
             </div>
           )}
 
@@ -357,10 +485,12 @@ const ProjectCarousel: FC<ProjectCarouselProps> = ({ projects, backgroundImages 
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
           </div>
+
         </a>
       </div>
     </CarouselItem>
-  ));
+   );
+  });
 
 
   return (

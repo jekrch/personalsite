@@ -14,6 +14,7 @@ import ModalChordBuildr from './components/ModalChordBuildr';
 import GeometricBackground from './components/GeometricBackground';
 import GbMeter from './components/GbMeter';
 import ComicSnaps from './components/ComicSnaps';
+import PlantyJ from './components/PlantyJ';
 
 const rootElement = document.getElementById('root') as Container;
 const root = createRoot(rootElement);
@@ -40,6 +41,7 @@ root.render(
           <Route path="/juxtaglobe" element={<JuxtaGlobe />} />
           <Route path="/gb-meter" element={<GbMeter />} />
           <Route path="/comic-snaps" element={<ComicSnaps />} />
+          <Route path="/plantyj" element={<PlantyJ />} />
         </Routes>
       </div>
       

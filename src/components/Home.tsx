@@ -5,46 +5,103 @@ import Banner from "./Banner";
 
 const projects = [
   {
+    name: "PlantyJ",
+    imageUrl: "/images/plantyj1.png",
+    pageLink: "/#plantyj",
+    url: "plantyj.com",
+    gallery: [
+      "/images/plantyj2.png",
+      "/images/plantyj3.png",
+      "/images/plantyj4.png",
+      "/images/plantyj5.png",
+      "/images/plantyj6.png",
+      "/images/plantyj7.png",
+      "/images/plantyj8.png",
+    ]
+  },
+  {
     name: "ChordBuildr",
-    imageUrl: "/images/chordbuildr3.png", 
+    imageUrl: "/images/chordbuildr3.png",
     pageLink: "/#chordbuildr",
-    url: "chordbuildr.com"
+    url: "chordbuildr.com",
+    gallery: [
+      "/images/chordbuildr1.png",
+      "/images/chordbuildr2.png",
+      "/images/chordbuildr4.png",
+      "/images/chordbuildr5.png",
+      "/images/chordbuildrios.jpg",
+    ]
   },
   {
     name: "Modal ChordBuildr",
-    imageUrl: "/images/modal1.png", 
+    imageUrl: "/images/modal1.png",
     pageLink: "/#modal-chordbuildr",
-    url: "modal.chordbuildr.com"
+    url: "modal.chordbuildr.com",
+    gallery: [
+      "/images/modal2.png",
+      "/images/modal3.png",
+      "/images/modal4.png",
+      "/images/modal5.png",
+      "/images/modal6.png",
+    ]
   },
   {
     name: "Eurovision Ranker",
-    imageUrl: "/images/eurovision-ranker3.png", 
+    imageUrl: "/images/eurovision-ranker3.png",
     pageLink: "/#eurovision-ranker",
-    url: "eurovision-ranker.com"
+    url: "eurovision-ranker.com",
+    gallery: [
+      "/images/eurovision-ranker1.png",
+      "/images/eurovision-ranker2.png",
+      "/images/eurovision-ranker4.png",
+      "/images/eurovision-ranker5.png",
+      "/images/eurovision-ranker6.png",
+      "/images/eurovision-ranker7.png",
+      "/images/eurovision-ranker8.png",
+    ]
   },
   {
     name: "Criterion Club",
-    imageUrl: "/images/filmclub1.png", 
+    imageUrl: "/images/filmclub1.png",
     pageLink: "/#criterion-club",
-    url: "criterionclub.org"
+    url: "criterionclub.org",
+    gallery: [
+      "/images/filmclub2.png",
+      "/images/filmclub3.png",
+      "/images/filmclub4.png",
+    ]
   },
   {
     name: "JuxtaGlobe",
-    imageUrl: "/images/juxtaglobe1.png", 
+    imageUrl: "/images/juxtaglobe1.png",
     pageLink: "/#juxtaglobe",
-    url: "juxtaglobe.com"
+    url: "juxtaglobe.com",
+    gallery: [
+      "/images/juxtaglobe2.png",
+      "/images/juxtaglobe3.png",
+    ]
   },
     {
     name: "GB Meter",
-    imageUrl: "/images/gbmeter2.png", 
+    imageUrl: "/images/gbmeter2.png",
     pageLink: "/#gb-meter",
-    url: "gbmeter.com"
+    url: "gbmeter.com",
+    gallery: [
+      "/images/gbmeter1.png",
+      "/images/gbmeter3.png",
+      "/images/gbmeter4.png",
+    ]
   },
-    {
+  {
     name: "Comic Snaps",
-    imageUrl: "/images/comicSnaps1.png", 
+    imageUrl: "/images/comicSnaps1.png",
     pageLink: "/#comic-snaps",
-    url: "snaps.jacobkrch.com"
+    url: "snaps.jacobkrch.com",
+    gallery: [
+      "/images/comicSnaps2.png",
+      "/images/comicSnaps3.png",
+      "/images/comicSnaps4.png",
+    ]
   }
 ];
 
