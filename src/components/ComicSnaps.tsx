@@ -45,6 +45,7 @@ const imagePaths = [
   "/images/comicSnaps2.png",
   "/images/comicSnaps3.png",
   "/images/comicSnaps4.png",
+  "/images/comicSnaps5.png",
 ]
 
 const ComicSnaps: FC = () => {

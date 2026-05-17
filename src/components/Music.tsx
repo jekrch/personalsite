@@ -14,10 +14,10 @@ const Music: FC = () => {
       <Container style={{ fontFamily: "helvetica", fontSize: 14 }}>
 
         <p>
-          I've made music most of my life with family and friends. Since I was a teenager, I've probably been in a dozen bands, each with their own personality: rock, pop, experimental, hip-hop, dixieland jazz, bluegrass. Sadly, I've been on a bandless run for the last several years.
+          I've made music most of my life with family and friends. Since I was a teenager, I've probably been in a dozen bands, across various genres and sensibilities: rock, pop, experimental, hip-hop, dixieland jazz, bluegrass. But alas, sadly, I've been on a bandless streak for the last several years.
         </p>
         <p className="mb-10">
-          So to keep myself distracted while I'm between bands, I've gotten into recording little bite-sized songs. Here are a few from my soundcloud:
+          To keep myself distracted while I'm between groups, I've gotten into recording little bite-sized songs. Here are a few from my soundcloud:
         </p>
 
         <SoundCloudPlayer />
