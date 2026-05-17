@@ -460,7 +460,7 @@ const ProjectCarousel: FC<ProjectCarouselProps> = ({ projects, backgroundImages 
               regardless of hero image height. A mild backdrop keeps it legible
               over lighter imagery. */}
           {project.url && (
-            <div className="order-first w-full my-[3em] flex items-center justify-center sm:my-[1em] sm:w-auto">
+            <div className="order-first w-full my-[2em] flex items-center justify-center sm:my-[1em] sm:w-auto">
               <span
                 className="text-white text-lg opacity-90 group-hover:opacity-100 transition-opacity px-6 py-1 rounded-sm"
                 style={{
