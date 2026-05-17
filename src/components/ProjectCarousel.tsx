@@ -418,7 +418,7 @@ const ProjectCarousel: FC<ProjectCarouselProps> = ({ projects, backgroundImages 
       </div>
 
       {/* Project content - contained within bounds to not overlap controls */}
-      <div className="relative z-[5] flex flex-col items-center justify-start h-[520px] min-h-[340px] px-8 pb-8 pointer-events-none">
+      <div className="relative z-[5] flex flex-col items-center justify-start h-[460px] sm:h-[520px] min-h-[340px] px-8 pb-8 pointer-events-none">
         <a
           href={project.pageLink || '#'}
           className="group cursor-pointer no-underline hover:no-underline flex flex-col items-center pointer-events-auto h-full sm:h-auto"
