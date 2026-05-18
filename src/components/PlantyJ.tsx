@@ -64,7 +64,7 @@ const PlantyJ: FC = () => {
 
       <Container style={{ fontFamily: "helvetica", fontSize: 14 }}>
         <p>
-        PlantyJ is the project I built right after Comic Snaps for my partner Jenny. Jenny has a long standing interest in native ecology, permaculture, and urban environmental conservation, and over the last five years she's made remarkable progress on our property, building out mutually sustaining food webs and teaching me a lot about how Minnesota's interconnected biodiversity.
+        PlantyJ is the project I built right after Comic Snaps for my partner Jenny. Jenny has a long standing interest in native ecology, permaculture, and urban environmental conservation, and over the last five years she's made remarkable progress on our property, building out mutually sustaining food webs and teaching me a lot about Minnesota's interconnected biodiversity.
         </p>
         <p>
          The app is an agentic garden journal: a way to record what's growing where, watch it change across the seasons, and ask questions about the whole collection in plain English.
