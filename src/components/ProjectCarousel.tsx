@@ -447,7 +447,7 @@ const ProjectCarousel: FC<ProjectCarouselProps> = ({ projects, backgroundImages 
               <img
                 src={project.imageUrl}
                 alt={project.name}
-                className="w-full max-w-md h-auto object-contain rounded-md shadow-lg"
+                className="w-full max-w-[min(28rem,80vw)] h-auto object-contain rounded-md shadow-lg"
                 style={{ maxHeight: '500px' }}
               />
             </div>

@@ -21,25 +21,11 @@ const projects = [
     ]
   },
   {
-    name: "ChordBuildr",
-    imageUrl: "/images/chordbuildr3.png",
-    pageLink: "/#chordbuildr",
-    url: "chordbuildr.com",
-    description: "Create and share chord progressions in the browser.",
-    gallery: [
-      "/images/chordbuildr1.png",
-      "/images/chordbuildr2.png",
-      "/images/chordbuildr4.png",
-      "/images/chordbuildr5.png",
-      "/images/chordbuildrios.jpg",
-    ]
-  },
-  {
     name: "Modal ChordBuildr",
     imageUrl: "/images/modal1.png",
     pageLink: "/#modal-chordbuildr",
     url: "modal.chordbuildr.com",
-    description: "Surface unexpected modal chord progressions for songwriting.",
+    description: "Explore modal chord progressions for songwriting.",
     gallery: [
       "/images/modal2.png",
       "/images/modal3.png",
@@ -62,6 +48,19 @@ const projects = [
       "/images/eurovision-ranker6.png",
       "/images/eurovision-ranker7.png",
       "/images/eurovision-ranker8.png",
+    ]
+  },
+  {
+    name: "Comic Snaps",
+    imageUrl: "/images/comicSnaps1.png",
+    pageLink: "/#comic-snaps",
+    url: "snaps.jacobkrch.com",
+    description: "Collect comic panels with neural-network image analysis.",
+    gallery: [
+      "/images/comicSnaps2.png",
+      "/images/comicSnaps3.png",
+      "/images/comicSnaps4.png",
+      "/images/comicSnaps5.png",
     ]
   },
   {
@@ -101,18 +100,19 @@ const projects = [
     ]
   },
   {
-    name: "Comic Snaps",
-    imageUrl: "/images/comicSnaps1.png",
-    pageLink: "/#comic-snaps",
-    url: "snaps.jacobkrch.com",
-    description: "Collect comic panels with neural-network image analysis.",
+    name: "ChordBuildr",
+    imageUrl: "/images/chordbuildr3.png",
+    pageLink: "/#chordbuildr",
+    url: "chordbuildr.com",
+    description: "Create and share chord progressions in the browser.",
     gallery: [
-      "/images/comicSnaps2.png",
-      "/images/comicSnaps3.png",
-      "/images/comicSnaps4.png",
-      "/images/comicSnaps5.png",
+      "/images/chordbuildr1.png",
+      "/images/chordbuildr2.png",
+      "/images/chordbuildr4.png",
+      "/images/chordbuildr5.png",
+      "/images/chordbuildrios.jpg",
     ]
-  }
+  },
 ];
 
 const backgroundImages = [
