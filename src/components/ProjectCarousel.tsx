@@ -470,7 +470,7 @@ const ProjectCarousel: FC<ProjectCarouselProps> = ({ projects, backgroundImages 
                 }}
               >
                 {project.url && (
-                  <span className="text-white text-lg leading-tight opacity-90 group-hover:opacity-100 transition-opacity">
+                  <span className="text-white text-md leading-tight opacity-90 group-hover:opacity-100 transition-opacity">
                     {project.url}
                   </span>
                 )}
