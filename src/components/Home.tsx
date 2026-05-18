@@ -9,6 +9,7 @@ const projects = [
     imageUrl: "/images/plantyj1.png",
     pageLink: "/#plantyj",
     url: "plantyj.com",
+    description: "An agentic garden journal you can maintain in plain English.",
     gallery: [
       "/images/plantyj2.png",
       "/images/plantyj3.png",
@@ -24,6 +25,7 @@ const projects = [
     imageUrl: "/images/chordbuildr3.png",
     pageLink: "/#chordbuildr",
     url: "chordbuildr.com",
+    description: "Create and share chord progressions in the browser.",
     gallery: [
       "/images/chordbuildr1.png",
       "/images/chordbuildr2.png",
@@ -37,6 +39,7 @@ const projects = [
     imageUrl: "/images/modal1.png",
     pageLink: "/#modal-chordbuildr",
     url: "modal.chordbuildr.com",
+    description: "Surface unexpected modal chord progressions for songwriting.",
     gallery: [
       "/images/modal2.png",
       "/images/modal3.png",
@@ -50,6 +53,7 @@ const projects = [
     imageUrl: "/images/eurovision-ranker3.png",
     pageLink: "/#eurovision-ranker",
     url: "eurovision-ranker.com",
+    description: "Rank and share Eurovision contestants from every year.",
     gallery: [
       "/images/eurovision-ranker1.png",
       "/images/eurovision-ranker2.png",
@@ -65,6 +69,7 @@ const projects = [
     imageUrl: "/images/filmclub1.png",
     pageLink: "/#criterion-club",
     url: "criterionclub.org",
+    description: "A data-driven home for a long-running film club.",
     gallery: [
       "/images/filmclub2.png",
       "/images/filmclub3.png",
@@ -76,6 +81,7 @@ const projects = [
     imageUrl: "/images/juxtaglobe1.png",
     pageLink: "/#juxtaglobe",
     url: "juxtaglobe.com",
+    description: "A dual-globe map for exploring Earth's antipodes.",
     gallery: [
       "/images/juxtaglobe2.png",
       "/images/juxtaglobe3.png",
@@ -87,6 +93,7 @@ const projects = [
     imageUrl: "/images/gbmeter2.png",
     pageLink: "/#gb-meter",
     url: "gbmeter.com",
+    description: "Turn Green Button utility data into energy insights.",
     gallery: [
       "/images/gbmeter1.png",
       "/images/gbmeter3.png",
@@ -98,6 +105,7 @@ const projects = [
     imageUrl: "/images/comicSnaps1.png",
     pageLink: "/#comic-snaps",
     url: "snaps.jacobkrch.com",
+    description: "Collect comic panels with neural-network image analysis.",
     gallery: [
       "/images/comicSnaps2.png",
       "/images/comicSnaps3.png",

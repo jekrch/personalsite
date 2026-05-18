@@ -11,6 +11,7 @@ interface ProjectItem {
   imageUrl: string;
   pageLink?: string;
   url?: string; // Optional external URL
+  description?: string; // Optional one-line summary shown beneath the URL
   gallery?: string[]; // Additional project views, sampled as a background mosaic
 }
 
@@ -459,17 +460,26 @@ const ProjectCarousel: FC<ProjectCarouselProps> = ({ projects, backgroundImages 
               distance from the top and the image a fixed distance below it,
               regardless of hero image height. A mild backdrop keeps it legible
               over lighter imagery. */}
-          {project.url && (
-            <div className="order-first w-full my-[2em] flex items-center justify-center sm:my-[1em] sm:w-auto">
-              <span
-                className="text-white text-lg opacity-90 group-hover:opacity-100 transition-opacity px-6 py-1 rounded-sm"
+          {(project.url || project.description) && (
+            <div className="order-first w-full my-[1em] flex flex-col items-center sm:my-[1em] sm:w-auto">
+              <div
+                className="flex flex-col items-center gap-0.5 px-6 py-1.5 rounded-sm"
                 style={{
                   background:
                     'linear-gradient(to right, rgba(91,133,146,0) 0%, rgba(91,133,146,0.5) 28%, rgba(91,133,146,0.5) 72%, rgba(91,133,146,0) 100%)',
                 }}
               >
-                {project.url}
-              </span>
+                {project.url && (
+                  <span className="text-white text-lg leading-tight opacity-90 group-hover:opacity-100 transition-opacity">
+                    {project.url}
+                  </span>
+                )}
+                {project.description && (
+                  <span className="whitespace-nowrap text-center text-xs sm:text-sm leading-tight text-white opacity-90 group-hover:opacity-100 transition-opacity">
+                    {project.description}
+                  </span>
+                )}
+              </div>
             </div>
           )}
 
