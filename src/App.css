@@ -364,14 +364,14 @@ body {
 }
 
 .carousel-item {
+  /* No translateZ/scale here: promoting each slide to its own scaled GPU
+     layer makes screenshots resample at CSS (1x) resolution and look soft
+     on high-DPI screens. Slides sit on a solid bg, so no seam to hide. */
   backface-visibility: hidden;
-  transform: translateZ(0);
 }
 
 .carousel-inner {
   overflow: hidden;
-  /* Slight scale can hide subpixel gaps */
-  transform: scale(1.001);
 }
 
 .loader-wrapper {

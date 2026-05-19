@@ -441,9 +441,14 @@ const ProjectCarousel: FC<ProjectCarouselProps> = ({ projects, backgroundImages 
           }}
         >
           {/* Project image container with hover effects */}
-          <div className="relative mb-6 transform transition-all duration-300 ">
+          {/* No `transform`/`backdrop-blur` here: either one promotes this
+              subtree to a compositing layer that Chromium rasterizes at CSS
+              (1x) resolution, softening the screenshot on HiDPI displays.
+              Nothing here actually transforms, and the backdrop blur sat
+              behind an opaque image so it was invisible anyway. */}
+          <div className="relative mb-6">
             <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500 to-teal-500 rounded-lg blur opacity-25 group-hover:opacity-75 transition duration-300"></div>
-            <div className="relative bg-white/10 backdrop-blur-sm rounded-lg p-2 shadow-xl">
+            <div className="relative bg-white/10 rounded-lg p-2 shadow-xl">
               <img
                 src={project.imageUrl}
                 alt={project.name}
