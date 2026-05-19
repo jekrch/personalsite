@@ -24,7 +24,7 @@ const architectureChart = `flowchart TD
   user -->|photo / command| tg
   tg --> cf
   cf -->|queue LLM jobs| kv
-  cf -->|"/ask · /analyze"| gem
+  cf -->|"/ask · /identify · /analyze"| gem
   cf -->|commit| repo
   repo --> pages
   repo --> metaAction
@@ -91,11 +91,15 @@ const PlantyJ: FC = () => {
         <MermaidDiagram chart={architectureChart} className="my-6 flex justify-center [&_svg]:max-w-full [&_svg]:h-auto" />
 
         <p>
-        On the backend, another GitHub Action runs a Python script whenever the plant data changes. It backfills per image metadata (pixel dimensions, perceptual hashes for a duplicates view, and dominant CIELAB colors for a hue based color sort), and it runs every new photo through BioCLIP, a vision model fine tuned on the Tree of Life dataset. BioCLIP gives two things: a 512 dimensional embedding used for similarity sorting that clusters by species and visual form, and a Tree of Life species prediction written back into the record with a confidence score. The same job enriches each species from GBIF for canonical taxonomy and vernacular names, POWO for native range, and Wikipedia for a description, with each source gated so re-runs only hit each API once and a third party hiccup never fails the build.
+        On the backend, another GitHub Action runs a Python script whenever the plant data changes. It backfills per image metadata (pixel dimensions for layout placeholders), and it runs every new photo through BioCLIP, a vision model fine tuned on the Tree of Life dataset. BioCLIP gives two things: a 512 dimensional embedding used for similarity sorting that clusters by species and visual form, and a Tree of Life species prediction written back into the record with a confidence score. The same job enriches each species from GBIF for canonical taxonomy and vernacular names, POWO for native range, and Wikipedia for a description, with each source gated so re-runs only hit each API once and a third party hiccup never fails the build.
         </p>
 
         <p>
         Expanding on the agentic component, I added an ecological fit analysis. For every plant or animal paired with the zone it was photographed in, the bot can produce a short write up of how well that specimen fits that niche, grounded against Google Search so the cited sources can't be hallucinated, and tagged with a GOOD, BAD, or MIXED verdict. Those run through Gemini's Batch API to keep the cost down, so it's a submit then poll workflow, and the verdicts surface on the site in the organism info drawer, on the phylogenetic tree, and as a filter on the gallery.
+        </p>
+
+        <p>
+        Another agentic piece I'm fond of is photo identification. When we find something we can't name, we send the photo with /identify as the caption and an optional hint about what it might be or where it is. That runs on the same queued cron path as the question answering, so the webhook never blocks on it, and the image goes to Gemini's vision model grounded against the live rollup of every known plant and zone, the property's location and USDA zone, and the current date so seasonality informs what's plausible. The bot replies with up to three ranked candidates, each with a common and scientific name, a confidence, a one line note on what to look for to confirm it, and a ready to ingest caption: if it's clearly a plant already in the journal the caption reuses that plant's short code so the photo just attaches to it, otherwise it drafts a fresh entry. A /pick commits the chosen option exactly like a normal photo upload.
         </p>
 
         <p>
