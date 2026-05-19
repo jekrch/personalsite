@@ -9,7 +9,7 @@ const projects = [
     imageUrl: "/images/plantyj1.png",
     pageLink: "/#plantyj",
     url: "plantyj.com",
-    description: "An agentic garden journal you can maintain in plain English.",
+    description: "An agentic garden journal maintained with prompts and photos",
     gallery: [
       "/images/plantyj2.png",
       "/images/plantyj3.png",
