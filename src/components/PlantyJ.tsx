@@ -7,6 +7,7 @@ import "bootstrap/dist/css/bootstrap.min.css"
 import ImageCarousel from "./ImageCarousel"
 import PageHeader from "./PageHeader"
 import MermaidDiagram from "./MermaidDiagram"
+import TelegramChat from "./TelegramChat"
 
 const architectureChart = `flowchart TD
   user([User])
@@ -62,7 +63,7 @@ const PlantyJ: FC = () => {
         githubText="(github)"
       />
 
-      <Container style={{ fontFamily: "helvetica", fontSize: 14 }}>
+      <Container style={{ fontFamily: "helvetica", fontSize: 14 }} >
         <p>
         PlantyJ is the project I built right after Comic Snaps for my partner Jenny. Jenny has a long standing interest in native ecology, permaculture, and urban environmental conservation, and over the last five years she's made remarkable progress on our property, building out mutually sustaining food webs and teaching me a lot about Minnesota's interconnected biodiversity.
         </p>
@@ -98,8 +99,14 @@ const PlantyJ: FC = () => {
         Expanding on the agentic component, I added an ecological fit analysis. For every plant or animal paired with the zone it was photographed in, the bot can produce a short write up of how well that specimen fits that niche, grounded against Google Search so the cited sources can't be hallucinated, and tagged with a GOOD, BAD, or MIXED verdict. Those run through Gemini's Batch API to keep the cost down, so it's a submit then poll workflow, and the verdicts surface on the site in the organism info drawer, on the phylogenetic tree, and as a filter on the gallery.
         </p>
 
+        <TelegramChat className="mb-6 w-full max-w-sm mx-auto md:float-right md:mx-0 md:ml-10 lg:ml-16 xl:ml-20 md:mb-3 md:w-[20rem] lg:w-[21rem]" />
+
         <p>
         Another agentic piece I'm fond of is photo identification. When we find something we can't name, we send the photo with /identify as the caption and an optional hint about what it might be or where it is. That runs on the same queued cron path as the question answering, so the webhook never blocks on it, and the image goes to Gemini's vision model grounded against the live rollup of every known plant and zone, the property's location and USDA zone, and the current date so seasonality informs what's plausible. The bot replies with up to three ranked candidates, each with a common and scientific name, a confidence, a one line note on what to look for to confirm it, and a ready to ingest caption: if it's clearly a plant already in the journal the caption reuses that plant's short code so the photo just attaches to it, otherwise it drafts a fresh entry. A /pick commits the chosen option exactly like a normal photo upload.
+        </p>
+
+        <p>
+        I've included a real example from the Telegram group, scrollable here: an /identify run that lands a new native Heuchera with /pick, followed by an /ask that drafts a batch of ecological relationships and waits for /confirm before writing any of them.
         </p>
 
         <p>
@@ -111,8 +118,10 @@ const PlantyJ: FC = () => {
         </p>
 
         <p>
-        It's been a genuinely useful thing to build. The Telegram first flow means Jenny can log a plant from the garden on her phone without thinking about any of the machinery behind it, and watching the food web she's built turn into a queryable, photographed record has been its own reward. If you have questions or ideas for new features, feel free to reach out.
+        It's been a genuinely useful app for us. The Telegram first flow means Jenny can log a plant from the garden on her phone without thinking about any of the machinery behind it, and watching the food web she's built turn into a queryable, photographed record has been its own reward. If you have questions or ideas for new features, feel free to reach out.
         </p>
+
+        <div className="clear-both" />
       </Container>
     </div>
   )
