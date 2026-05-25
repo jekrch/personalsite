@@ -480,7 +480,7 @@ const ProjectCarousel: FC<ProjectCarouselProps> = ({ projects, backgroundImages 
                   </span>
                 )}
                 {project.description && (
-                  <span className="whitespace-nowrap text-center text-[11px] sm:text-sm leading-tight text-white opacity-90 group-hover:opacity-100 transition-opacity">
+                  <span className="whitespace-nowrap text-center text-[11px] sm:text-sm leading-tight italic text-white/80 opacity-90 group-hover:opacity-100 transition-opacity">
                     {project.description}
                   </span>
                 )}
