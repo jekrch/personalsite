@@ -2,6 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Tailwind's `.collapse` utility is `visibility: collapse`, which collides with
+   the `collapse` class reactstrap/Bootstrap puts on an open menu. Once a menu
+   finishes its open transition (class becomes `collapse show`), the Tailwind
+   rule would otherwise hide all of its contents via inherited visibility.
+   Keeping shown collapses visible neutralizes the collision. */
+.collapse.show {
+  visibility: visible;
+}
+
 @theme {
   /* 1. Custom Colors */
   --color-jk-teal: var(--jk-teal);
