@@ -57,6 +57,12 @@ const ChordBuildr: FC = () => {
           <p>
             Adding a sequencer, midi recording, and extended synthesizer effects add further texture here. At least in my case, all of this helps me to break out of stale habits, and into that interesting new stuff that makes composing music so inspiring and fun.
           </p>
+          <p>
+            Most recently, I've added features that allow users to create song sheets with lyrics and playable chords. These can be saved and loaded either locally or via Google Drive, so you can store your work between sessions and share with others. 
+          </p>
+          <p> 
+            This was motivated by my own experiences, transcribing chord charts for songs I wanted to learn and perform with others. This kind of work is finicky and intuitive, and having the right tools can make a huge difference. I hope to continue enhancing this with features that I find useful in my own composition process, and that others find useful in theirs.
+          </p>
         </div>     
       </Container>
     </div>
