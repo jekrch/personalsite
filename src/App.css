@@ -276,6 +276,176 @@ body {
   display: none;
 }
 
+/* Project carousel tab strip: a teal parallelogram with a white underline
+   that overhangs the carousel, its slanted ends each echoed by a pair of thin
+   parallel lines (strong then faint), like the bands in GeometricBackground.
+   The lines are children of the skewed shape so they share its slant. The
+   overhang comes out of the gutter (100% is the strip's width here), leaving
+   room for the slant and lines so nothing reaches the screen edge. The button
+   scroller widens by the same overhang so the buttons run out under the
+   slanted ends. */
+.tab-band {
+  /* Half of the free gutter; the other half is left for the ghost outlines. */
+  --overhang: min(6rem, max(0px, ((100vw - 100%) / 2 - 2.5rem) / 2));
+  position: relative;
+}
+
+.tab-band__scroller {
+  margin-inline: calc(-1 * var(--overhang));
+}
+
+.tab-band__scroller.is-dragging,
+.tab-band__scroller.is-dragging * {
+  cursor: grabbing;
+}
+
+.tab-band__shape {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc(-1 * var(--overhang));
+  right: calc(-1 * var(--overhang));
+  background:
+    linear-gradient(#fff, #fff) bottom / 100% 0.1em no-repeat,
+    var(--jk-teal);
+  transform: skewX(-40deg);
+  pointer-events: none;
+  /* The strip's share of the card shadow, following its slanted outline.
+     Clipped at the strip's bottom edge so it doesn't fall on the carousel,
+     which casts its own. */
+  filter: drop-shadow(5px 6px 11px rgba(0, 0, 0, 0.3));
+  clip-path: inset(-3rem -4rem 0 -4rem);
+  transition: filter 0.2s;
+}
+
+.group\/card:hover .tab-band__shape {
+  filter: drop-shadow(5px 6px 11px rgba(0, 0, 0, 0.4));
+}
+
+.tab-band__shape::before,
+.tab-band__shape::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 5px;
+}
+
+.tab-band__shape::before {
+  right: calc(100% + 6px);
+  border-left: 1px solid rgba(91, 133, 146, 0.35);
+  border-right: 1px solid rgba(91, 133, 146, 0.75);
+}
+
+.tab-band__shape::after {
+  left: calc(100% + 6px);
+  border-left: 1px solid rgba(91, 133, 146, 0.75);
+  border-right: 1px solid rgba(91, 133, 146, 0.35);
+}
+
+/* Ghost outlines of the tab buttons, pinned to the real ones by JS. The layer
+   reaches past the scroller into the gutter (stopping short of the screen
+   edge) and is masked so the ghosts show only around each scroller edge:
+   rising through the button fade (--ghost-fade) to peak at the edge, holding
+   most of that across the slanted end and its lines (--ghost-hold), then
+   trailing off outward over --reach-l / --reach-r (measured in JS). --ghost-l
+   / --ghost-r switch a side on while buttons are hidden past it. */
+@property --ghost-l {
+  syntax: '<number>';
+  inherits: false;
+  initial-value: 0;
+}
+
+@property --ghost-r {
+  syntax: '<number>';
+  inherits: false;
+  initial-value: 0;
+}
+
+.tab-band__ghosts {
+  --ghost-extent: min(var(--overhang) + 10rem, max(var(--overhang), (100vw - 100%) / 2 - 1rem));
+  --ghost-peak: 0.6;
+  --ghost-hold: 1.75rem;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc(-1 * var(--ghost-extent));
+  right: calc(-1 * var(--ghost-extent));
+  overflow: hidden;
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    rgba(0, 0, 0, calc(var(--ghost-peak) * var(--ghost-l) * 0.8)) calc(var(--reach-l, 0px) - var(--ghost-hold)),
+    rgba(0, 0, 0, calc(var(--ghost-peak) * var(--ghost-l))) var(--reach-l, 0px),
+    transparent calc(var(--reach-l, 0px) + var(--ghost-fade)),
+    transparent calc(100% - var(--reach-r, 0px) - var(--ghost-fade)),
+    rgba(0, 0, 0, calc(var(--ghost-peak) * var(--ghost-r))) calc(100% - var(--reach-r, 0px)),
+    rgba(0, 0, 0, calc(var(--ghost-peak) * var(--ghost-r) * 0.8)) calc(100% - var(--reach-r, 0px) + var(--ghost-hold)),
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    rgba(0, 0, 0, calc(var(--ghost-peak) * var(--ghost-l) * 0.8)) calc(var(--reach-l, 0px) - var(--ghost-hold)),
+    rgba(0, 0, 0, calc(var(--ghost-peak) * var(--ghost-l))) var(--reach-l, 0px),
+    transparent calc(var(--reach-l, 0px) + var(--ghost-fade)),
+    transparent calc(100% - var(--reach-r, 0px) - var(--ghost-fade)),
+    rgba(0, 0, 0, calc(var(--ghost-peak) * var(--ghost-r))) calc(100% - var(--reach-r, 0px)),
+    rgba(0, 0, 0, calc(var(--ghost-peak) * var(--ghost-r) * 0.8)) calc(100% - var(--reach-r, 0px) + var(--ghost-hold)),
+    transparent 100%
+  );
+  transition: --ghost-l 0.3s ease, --ghost-r 0.3s ease;
+}
+
+.tab-band__ghost {
+  position: absolute;
+  border: 1px solid #fff;
+  border-radius: 0.125rem;
+  /* A teal line just outside the white one: over the band the white shows,
+     out on the white page the teal does, so each ghost's line seems to change
+     colour as it crosses the band's edge. */
+  box-shadow: 0 0 0 1px var(--jk-teal);
+}
+
+/* Phones: no gutter to overhang into, so run flat to the screen edges. */
+@media (max-width: 575.98px) {
+  .tab-band {
+    --overhang: calc((100vw - 100%) / 2);
+  }
+
+  .tab-band__shape {
+    transform: none;
+  }
+
+  .tab-band__shape::before,
+  .tab-band__shape::after,
+  .tab-band__ghosts {
+    display: none;
+  }
+}
+
+/* Horizontal scroller whose edges fade out while content is hidden past
+   them. Set --fade-l / --fade-r to the fade width (0px = hard edge).
+   Registering them lets the fade ease in/out instead of snapping. */
+@property --fade-l {
+  syntax: '<length>';
+  inherits: false;
+  initial-value: 0px;
+}
+
+@property --fade-r {
+  syntax: '<length>';
+  inherits: false;
+  initial-value: 0px;
+}
+
+.edge-fade {
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 var(--fade-l), #000 calc(100% - var(--fade-r)), transparent);
+  mask-image: linear-gradient(to right, transparent, #000 var(--fade-l), #000 calc(100% - var(--fade-r)), transparent);
+  transition: --fade-l 0.3s ease, --fade-r 0.3s ease;
+}
+
 .button-initial {
   opacity: 0;
   transform: translateY(8px);

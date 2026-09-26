@@ -1,4 +1,4 @@
-import { useState, useCallback, FC, useRef, useEffect } from "react";
+import { useState, useCallback, FC, useRef, useEffect, RefObject } from "react";
 import {
   Carousel,
   CarouselItem,
@@ -29,6 +29,10 @@ const buildMosaicTiles = (gallery: string[]): string[] => {
   }
   return tiles;
 };
+
+// Width of the fade on a side of the tab strip that has more buttons scrolled
+// out of view. Also the margin auto-scroll keeps the active button clear of.
+const EDGE_FADE_PX = 56;
 
 // Marquee speed in px/sec. Duration is derived from the measured loop width so
 // every strip drifts at the same pace regardless of tile count or tile size.
@@ -106,6 +110,250 @@ const BottomCardStrip: FC<{ tiles: string[] }> = ({ tiles }) => {
   );
 };
 
+// Desktop scroll physics for the tab strip, modeled on touch scrolling.
+// Trackpads and touch screens already scroll it natively; this covers a
+// mouse. A drag follows the pointer and, on release, glides on with the
+// throw's speed under friction. Past either end it stretches with growing
+// resistance (drawn by translating the track) and springs back. Wheel
+// notches glide to their target rather than jumping. Clicking mid-glide
+// catches the strip without selecting a tab. Returns a ref holding a
+// function that halts any motion, for programmatic scrolls to call first.
+// `onRender` runs after each frame it draws, including overscroll frames
+// that move the track without firing a scroll event.
+const WHEEL_EASE_MS = 90; // time constant of the wheel glide
+const FRICTION_PER_MS = 0.997; // throw decay; iOS uses 0.998
+const SPRING_K = 0.0003; // pull back from overscroll, per ms²
+const SPRING_C = 2 * Math.sqrt(SPRING_K); // critically damped: no wobble
+const DRAG_THRESHOLD_PX = 5;
+const VELOCITY_WINDOW_MS = 100; // pointer history used to measure a throw
+
+const useMomentumScroll = (
+  scrollRef: RefObject<HTMLDivElement>,
+  trackRef: RefObject<HTMLDivElement>,
+  onRender?: () => void,
+) => {
+  const stopRef = useRef<() => void>(() => {});
+  const onRenderRef = useRef(onRender);
+  onRenderRef.current = onRender;
+
+  useEffect(() => {
+    const container = scrollRef.current;
+    const track = trackRef.current;
+    if (!container || !track) return;
+
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    // Virtual scroll position. Runs past [0, max] while overscrolled; the
+    // excess is drawn as a rubber-banded translate of the track.
+    let pos = container.scrollLeft;
+    let velocity = 0; // px/ms
+    let wheelTarget: number | null = null;
+    let frame: number | null = null;
+    let lastTime = 0;
+    let shownOverscroll = 0;
+
+    // Mouse drag state
+    let pointerActive = false;
+    let pointerId = -1;
+    let dragging = false;
+    let eatClick = false;
+    let startX = 0;
+    let startPos = 0;
+    let samples: { t: number; x: number }[] = [];
+
+    const maxScroll = () => Math.max(0, container.scrollWidth - container.clientWidth);
+    const clamp = (x: number) => Math.min(Math.max(x, 0), maxScroll());
+
+    // iOS-style resistance: the further past the end, the less it follows.
+    const rubber = (over: number) => {
+      const dim = container.clientWidth;
+      return Math.sign(over) * (1 - 1 / ((Math.abs(over) * 0.55) / dim + 1)) * dim;
+    };
+
+    const render = () => {
+      const inBounds = clamp(pos);
+      container.scrollTo({ left: inBounds, behavior: 'instant' });
+      const shown = pos === inBounds ? 0 : rubber(pos - inBounds);
+      if (shown !== shownOverscroll) {
+        track.style.transform = shown ? `translateX(${-shown}px)` : '';
+        shownOverscroll = shown;
+      }
+      onRenderRef.current?.();
+    };
+
+    const step = (time: number) => {
+      const dt = Math.min(Math.max(time - lastTime, 0), 50);
+      lastTime = time;
+
+      if (wheelTarget !== null) {
+        const target = clamp(wheelTarget);
+        pos += (target - pos) * (1 - Math.exp(-dt / WHEEL_EASE_MS));
+        if (Math.abs(target - pos) < 0.5) {
+          pos = target;
+          wheelTarget = null;
+        }
+      } else {
+        // Small fixed substeps keep the spring stable on slow frames.
+        for (let left = dt; left > 0; left -= 4) {
+          const h = Math.min(left, 4);
+          const over = pos - clamp(pos);
+          velocity = over
+            ? velocity + (-SPRING_K * over - SPRING_C * velocity) * h
+            : velocity * Math.pow(FRICTION_PER_MS, h);
+          pos += velocity * h;
+        }
+        if (Math.abs(velocity) < 0.02 && Math.abs(pos - clamp(pos)) < 0.5) {
+          pos = clamp(pos);
+          velocity = 0;
+        }
+      }
+
+      render();
+      const settled = wheelTarget === null && velocity === 0 && pos === clamp(pos);
+      frame = settled ? null : requestAnimationFrame(step);
+    };
+
+    const animate = () => {
+      if (frame !== null) return;
+      lastTime = performance.now();
+      frame = requestAnimationFrame(step);
+    };
+
+    const stop = () => {
+      if (frame !== null) cancelAnimationFrame(frame);
+      frame = null;
+      velocity = 0;
+      wheelTarget = null;
+      if (shownOverscroll) {
+        pos = clamp(pos);
+        track.style.transform = '';
+        shownOverscroll = 0;
+        onRenderRef.current?.();
+      }
+    };
+    stopRef.current = stop;
+
+    // Where the strip is headed, resyncing to the real scroll position when
+    // idle (native trackpad and programmatic scrolls move it behind our back).
+    const currentBase = () => {
+      if (frame === null && !pointerActive) pos = container.scrollLeft;
+      return wheelTarget ?? pos;
+    };
+
+    const handleWheel = (e: WheelEvent) => {
+      if (Math.abs(e.deltaX) >= Math.abs(e.deltaY)) {
+        stop(); // horizontal trackpad swipe: let it scroll natively
+        return;
+      }
+      const max = maxScroll();
+      if (max <= 0) return;
+      const base = clamp(currentBase());
+      const delta = e.deltaMode === WheelEvent.DOM_DELTA_LINE ? e.deltaY * 16 : e.deltaY;
+      // At an end, hand the wheel back to the page.
+      if ((delta < 0 && base <= 0) || (delta > 0 && base >= max - 1)) return;
+      e.preventDefault();
+      velocity = 0;
+      if (reduceMotion.matches) {
+        stop();
+        pos = clamp(base + delta);
+        render();
+        return;
+      }
+      wheelTarget = clamp(base + delta);
+      animate();
+    };
+
+    const handlePointerDown = (e: PointerEvent) => {
+      if (e.pointerType !== 'mouse' || e.button !== 0) return;
+      if (maxScroll() <= 0) return;
+      const wasMoving = frame !== null;
+      currentBase();
+      if (frame !== null) cancelAnimationFrame(frame);
+      frame = null;
+      velocity = 0;
+      wheelTarget = null;
+      pointerActive = true;
+      pointerId = e.pointerId;
+      dragging = false;
+      // Like touch: a press that catches a glide doesn't count as a tap.
+      eatClick = wasMoving;
+      startX = e.clientX;
+      startPos = pos;
+      samples = [{ t: e.timeStamp, x: e.clientX }];
+    };
+
+    const handlePointerMove = (e: PointerEvent) => {
+      if (!pointerActive || e.pointerId !== pointerId) return;
+      const dx = e.clientX - startX;
+      if (!dragging) {
+        if (Math.abs(dx) < DRAG_THRESHOLD_PX) return;
+        dragging = true;
+        // Capture only once dragging, so plain clicks keep their target.
+        container.setPointerCapture(e.pointerId);
+        container.classList.add('is-dragging');
+      }
+      pos = startPos - dx;
+      render();
+      samples.push({ t: e.timeStamp, x: e.clientX });
+      while (samples.length > 2 && e.timeStamp - samples[0].t > VELOCITY_WINDOW_MS) {
+        samples.shift();
+      }
+    };
+
+    const endPointer = (e: PointerEvent) => {
+      if (!pointerActive || e.pointerId !== pointerId) return;
+      pointerActive = false;
+      container.classList.remove('is-dragging');
+      if (dragging) {
+        eatClick = true;
+        const first = samples[0];
+        const last = samples[samples.length - 1];
+        // Held still before letting go: no throw.
+        const stale = e.timeStamp - last.t > 50;
+        velocity =
+          !stale && !reduceMotion.matches && last.t > first.t
+            ? -(last.x - first.x) / (last.t - first.t)
+            : 0;
+      }
+      if (velocity !== 0 || pos !== clamp(pos)) animate();
+    };
+
+    const handleClickCapture = (e: MouseEvent) => {
+      if (!eatClick) return;
+      eatClick = false;
+      e.preventDefault();
+      e.stopPropagation();
+    };
+
+    container.addEventListener('wheel', handleWheel, { passive: false });
+    container.addEventListener('pointerdown', handlePointerDown);
+    container.addEventListener('pointermove', handlePointerMove);
+    container.addEventListener('pointerup', endPointer);
+    container.addEventListener('pointercancel', endPointer);
+    container.addEventListener('click', handleClickCapture, true);
+    return () => {
+      stop();
+      stopRef.current = () => {};
+      container.removeEventListener('wheel', handleWheel);
+      container.removeEventListener('pointerdown', handlePointerDown);
+      container.removeEventListener('pointermove', handlePointerMove);
+      container.removeEventListener('pointerup', endPointer);
+      container.removeEventListener('pointercancel', endPointer);
+      container.removeEventListener('click', handleClickCapture, true);
+    };
+  }, [scrollRef, trackRef]);
+
+  return stopRef;
+};
+
+// A button's box within the tab track, traced by its ghost outline.
+interface GhostRect {
+  left: number;
+  top: number;
+  width: number;
+  height: number;
+}
+
 interface ProjectCarouselProps {
   projects: ProjectItem[];
   backgroundImages?: string[]; // Optional background images for rotation
@@ -115,6 +363,8 @@ const ProjectCarousel: FC<ProjectCarouselProps> = ({ projects, backgroundImages 
   const [activeIndex, setActiveIndex] = useState<number>(0);
   const [animating, setAnimating] = useState<boolean>(false);
   const [buttonsOverflow, setButtonsOverflow] = useState<boolean>(false);
+  const [fadeLeft, setFadeLeft] = useState<boolean>(false);
+  const [fadeRight, setFadeRight] = useState<boolean>(false);
   const [hasAnimated, setHasAnimated] = useState<boolean>(false);
   const [showDot, setShowDot] = useState<boolean>(false);
   const [dotPosition, setDotPosition] = useState<number>(0);
@@ -124,6 +374,24 @@ const ProjectCarousel: FC<ProjectCarouselProps> = ({ projects, backgroundImages 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const buttonsContainerRef = useRef<HTMLDivElement>(null);
   const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const ghostLayerRef = useRef<HTMLDivElement>(null);
+  const ghostTrackRef = useRef<HTMLDivElement>(null);
+  const [ghostRects, setGhostRects] = useState<GhostRect[]>([]);
+
+  // Pin the ghost outlines to the real buttons. The track's on-screen box
+  // already reflects scroll position and any rubber-band translate.
+  const syncGhosts = useCallback(() => {
+    const layer = ghostLayerRef.current;
+    const ghostTrack = ghostTrackRef.current;
+    const track = buttonsContainerRef.current;
+    if (!layer || !ghostTrack || !track) return;
+    const layerRect = layer.getBoundingClientRect();
+    const trackRect = track.getBoundingClientRect();
+    ghostTrack.style.transform =
+      `translate(${trackRect.left - layerRect.left}px, ${trackRect.top - layerRect.top}px)`;
+  }, []);
+
+  const stopStripMomentum = useMomentumScroll(scrollContainerRef, buttonsContainerRef, syncGhosts);
   const touchStartXRef = useRef<number | null>(null);
   const touchStartYRef = useRef<number | null>(null);
   const touchHandledRef = useRef<boolean>(false);
@@ -166,6 +434,15 @@ const ProjectCarousel: FC<ProjectCarouselProps> = ({ projects, backgroundImages 
     }
   }, [activeIndex]);
 
+  // Fade an edge of the tab strip only while there are buttons hidden past it.
+  const updateEdgeFades = useCallback(() => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+    const maxScroll = container.scrollWidth - container.clientWidth;
+    setFadeLeft(container.scrollLeft > 1);
+    setFadeRight(container.scrollLeft < maxScroll - 1);
+  }, []);
+
   // Function to scroll to active button
   const scrollToActiveButton = useCallback(() => {
     if (!scrollContainerRef.current || !buttonsContainerRef.current || !buttonsOverflow) return;
@@ -176,12 +453,15 @@ const ProjectCarousel: FC<ProjectCarouselProps> = ({ projects, backgroundImages 
 
     if (!activeButton) return;
 
+    // Take over from any glide the user set going
+    stopStripMomentum.current();
+
     // Get button and container dimensions
     const buttonRect = activeButton.getBoundingClientRect();
     const containerRect = container.getBoundingClientRect();
 
-    // Calculate mask area (15% on each side)
-    const maskSize = containerRect.width * 0.15;
+    // Keep the active button clear of the edge fades
+    const maskSize = EDGE_FADE_PX;
     const safeAreaLeft = containerRect.left + maskSize;
     const safeAreaRight = containerRect.right - maskSize;
 
@@ -207,13 +487,13 @@ const ProjectCarousel: FC<ProjectCarouselProps> = ({ projects, backgroundImages 
       }
       // If button is too far left
       else if (buttonRect.left < safeAreaLeft) {
-        // Scroll so button appears just after the left mask
-        targetScroll = buttonLeft - maskSize - 30; // 30px padding
+        // Scroll so button appears just after the left fade
+        targetScroll = buttonLeft - maskSize - 16; // 16px padding
       }
       // If button is too far right
       else if (buttonRect.right > safeAreaRight) {
-        // Scroll so button appears just before the right mask
-        targetScroll = buttonLeft + buttonWidth - containerWidth + maskSize + 30; // 30px padding
+        // Scroll so button appears just before the right fade
+        targetScroll = buttonLeft + buttonWidth - containerWidth + maskSize + 16; // 16px padding
       }
 
       // Ensure we don't scroll past boundaries
@@ -225,7 +505,7 @@ const ProjectCarousel: FC<ProjectCarouselProps> = ({ projects, backgroundImages 
         behavior: 'smooth'
       });
     }
-  }, [activeIndex, buttonsOverflow, projects.length]);
+  }, [activeIndex, buttonsOverflow, projects.length, stopStripMomentum]);
 
   // Check if buttons overflow the container
   useEffect(() => {
@@ -325,11 +605,63 @@ const ProjectCarousel: FC<ProjectCarouselProps> = ({ projects, backgroundImages 
 
     const handleScroll = () => {
       updateDotPosition();
+      updateEdgeFades();
+      syncGhosts();
     };
 
     container.addEventListener('scroll', handleScroll);
     return () => container.removeEventListener('scroll', handleScroll);
-  }, [updateDotPosition]);
+  }, [updateDotPosition, updateEdgeFades, syncGhosts]);
+
+  // Measure the buttons for their ghost outlines, and how far the ghost layer
+  // reaches past the scroller on each side (the mask fades ghosts over that).
+  useEffect(() => {
+    if (!buttonsOverflow) return;
+
+    const measure = () => {
+      const layer = ghostLayerRef.current;
+      const scroller = scrollContainerRef.current;
+      if (!layer || !scroller) return;
+      const layerRect = layer.getBoundingClientRect();
+      const scrollerRect = scroller.getBoundingClientRect();
+      layer.style.setProperty('--reach-l', `${scrollerRect.left - layerRect.left}px`);
+      layer.style.setProperty('--reach-r', `${layerRect.right - scrollerRect.right}px`);
+
+      const rects = buttonRefs.current
+        .slice(0, projects.length)
+        .filter((b): b is HTMLButtonElement => !!b)
+        .map((b) => ({ left: b.offsetLeft, top: b.offsetTop, width: b.offsetWidth, height: b.offsetHeight }));
+      setGhostRects((prev) => (JSON.stringify(prev) === JSON.stringify(rects) ? prev : rects));
+      syncGhosts();
+    };
+
+    measure();
+    let resizeObserver: ResizeObserver | undefined;
+    if (typeof ResizeObserver !== 'undefined') {
+      resizeObserver = new ResizeObserver(measure);
+      [ghostLayerRef, scrollContainerRef, buttonsContainerRef].forEach(
+        (ref) => ref.current && resizeObserver!.observe(ref.current),
+      );
+    }
+    return () => resizeObserver?.disconnect();
+  }, [buttonsOverflow, projects, syncGhosts]);
+
+  useEffect(() => {
+    syncGhosts();
+  }, [ghostRects, syncGhosts]);
+
+  // Re-evaluate the edge fades whenever the strip's size or contents change
+  useEffect(() => {
+    updateEdgeFades();
+
+    let resizeObserver: ResizeObserver | undefined;
+    if (typeof ResizeObserver !== 'undefined' && scrollContainerRef.current) {
+      resizeObserver = new ResizeObserver(() => updateEdgeFades());
+      resizeObserver.observe(scrollContainerRef.current);
+      if (buttonsContainerRef.current) resizeObserver.observe(buttonsContainerRef.current);
+    }
+    return () => resizeObserver?.disconnect();
+  }, [updateEdgeFades, buttonsOverflow, projects]);
 
   const handleTouchStart = useCallback((e: React.TouchEvent<HTMLDivElement>) => {
     const touch = e.touches[0];
@@ -470,26 +802,60 @@ const ProjectCarousel: FC<ProjectCarouselProps> = ({ projects, backgroundImages 
 
 
   return (
-    <div className="relative w-full select-none shadow-[5px_6px_11px_0px_rgba(0,_0,_0,_0.3)] rounded-sm hover:duration-200 hover:shadow-[rgba(0,_0,_0,_0.4)]">
+    <div className="group/card relative w-full select-none">
+      {/* No shadow here: it sits on the carousel and, separately, on the
+          strip's slanted shape (.tab-band__shape). One box-shadow around both
+          would trace a rectangle past the strip's slanted ends. */}
 
-      <div
-        className="relative overflow-hidden -mx-[50vw] left-[50%] right-[50%] w-screen"
-      >
+      {/* Tab strip — a teal parallelogram that overhangs the carousel, its
+          slanted ends echoed by pairs of thin lines like the background's
+          bands (see .tab-band). The buttons scroll across the band's full
+          width, fading out as they reach the slanted ends. */}
+      <div className="tab-band z-10">
+        <div aria-hidden className="tab-band__shape" />
+
+        {/* Ghost outlines: the buttons traced past the scroller's edges,
+            taking over as the real ones fade and trailing off into the page
+            (see .tab-band__ghosts). Only on the side with buttons out of view. */}
+        {buttonsOverflow && (
+          <div
+            ref={ghostLayerRef}
+            aria-hidden
+            className="tab-band__ghosts"
+            style={{
+              ['--ghost-l' as string]: fadeLeft ? 1 : 0,
+              ['--ghost-r' as string]: fadeRight ? 1 : 0,
+              ['--ghost-fade' as string]: `${EDGE_FADE_PX}px`,
+            } as React.CSSProperties}
+          >
+            <div ref={ghostTrackRef} className="absolute left-0 top-0">
+              {ghostRects.map((r, i) => (
+                <div
+                  key={i}
+                  className="tab-band__ghost"
+                  style={{ left: r.left, top: r.top, width: r.width, height: r.height }}
+                />
+              ))}
+            </div>
+          </div>
+        )}
 
         <div
           ref={scrollContainerRef}
-          className="relative z-10 overflow-x-auto scrollbar-hide scroll-smooth bg-[#5b8592] border-white border-b-[0.1em]"
+          className="tab-band__scroller relative overflow-x-auto scrollbar-hide scroll-smooth edge-fade"
           style={{
             scrollbarWidth: 'none',
             msOverflowStyle: 'none',
             WebkitOverflowScrolling: 'touch',
-          }}
+            ['--fade-l' as string]: fadeLeft ? `${EDGE_FADE_PX}px` : '0px',
+            ['--fade-r' as string]: fadeRight ? `${EDGE_FADE_PX}px` : '0px',
+          } as React.CSSProperties}
         >
           <div
             ref={buttonsContainerRef}
             className={`
               flex gap-3 py-3 pb-3 relative
-              ${buttonsOverflow ? 'pl-[6%] pr-[20%]' : 'justify-center px-12'}
+              ${buttonsOverflow ? 'px-7' : 'justify-center px-12'}
             `}
             style={{
               minWidth: buttonsOverflow ? 'max-content' : 'auto'
@@ -554,6 +920,7 @@ const ProjectCarousel: FC<ProjectCarouselProps> = ({ projects, backgroundImages 
       </div>
 
       <div
+        className="rounded-sm shadow-[5px_6px_11px_0px_rgba(0,_0,_0,_0.3)] transition-shadow duration-200 group-hover/card:shadow-[rgba(0,_0,_0,_0.4)]"
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
