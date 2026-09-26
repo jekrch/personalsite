@@ -18,6 +18,9 @@ const GeometricBackground: React.FC = () => {
 
   useEffect(() => {
     const handleScroll = () => {
+      // A modal pinning the page drops window.scrollY to 0 without the page
+      // actually moving; ignore that so the shapes don't drift.
+      if ('scrollLocked' in document.documentElement.dataset) return;
       scrollY.current = window.scrollY;
     };
 

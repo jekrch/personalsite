@@ -65,28 +65,82 @@ body {
   background-color: #3f4e53 !important;
 }
 
-.app .view-btn {
-  margin-right: 1.2rem;
-  margin-bottom: 0.5rem;
-  margin-top: 0.5rem;
+/* Lecture slide viewer. The OneDrive PowerPoint embed shows 4:3 slides above
+   a fixed 24px toolbar, so the stage is sized from the slide width: as wide
+   as the viewport allows, but never so wide that slide + toolbar + header
+   would run past the viewport's height. On short landscape screens (phones
+   turned sideways) the header becomes a rail on the right so the slide gets
+   the full height. On phones it runs edge to edge. */
+.lecture-viewer {
+  --lv-pad: 0px;
+  --lv-bar: 3.5rem;
+  --lv-rail: 0px;
+  --lv-toolbar: 24px;
+  --lv-border: 0px;
+  --lv-vh: 100vh;
+  --lv-w: min(
+    calc(100vw - 2 * var(--lv-pad) - var(--lv-rail) - var(--lv-border)),
+    60rem,
+    calc((var(--lv-vh) - 2 * var(--lv-pad) - var(--lv-bar) - var(--lv-toolbar) - var(--lv-border)) * 4 / 3)
+  );
 }
 
-.app .fade-enter {
-  opacity: 0.01;
+@supports (height: 100dvh) {
+  .lecture-viewer {
+    --lv-vh: 100dvh;
+  }
 }
 
-.app .fade-enter-active {
-  opacity: 1;
-  transition: opacity 500ms ease-in;
+@media (min-width: 640px) {
+  .lecture-viewer {
+    --lv-pad: 1.5rem;
+    --lv-border: 2px;
+  }
 }
 
-.app .fade-exit {
-  opacity: 1;
+@media (max-width: 639.98px) {
+  .lecture-viewer__frame {
+    border-width: 0;
+    border-radius: 0;
+  }
 }
 
-.app .fade-exit-active {
-  opacity: 0.01;
-  transition: opacity 500ms ease-in;
+.lecture-viewer__bar {
+  height: var(--lv-bar);
+}
+
+.lecture-viewer__stage {
+  width: var(--lv-w);
+  height: calc(var(--lv-w) * 3 / 4 + var(--lv-toolbar));
+}
+
+@media (orientation: landscape) and (max-height: 540px) {
+  .lecture-viewer {
+    --lv-pad: 0.5rem;
+    --lv-bar: 0px;
+    --lv-rail: 3rem;
+  }
+
+  .lecture-viewer__frame {
+    flex-direction: row-reverse;
+  }
+
+  /* Close button on top, lecture number at the bottom */
+  .lecture-viewer__bar {
+    width: var(--lv-rail);
+    height: auto;
+    flex-direction: column-reverse;
+    justify-content: space-between;
+    padding: 0.25rem 0;
+  }
+
+  .lecture-viewer__actions {
+    flex-direction: column-reverse;
+  }
+
+  .lecture-viewer__title {
+    display: none;
+  }
 }
 
 .content-max-width {

@@ -1,42 +1,44 @@
-import { FC, useState, useEffect, useCallback } from 'react';
+import { FC, useState, useEffect, useCallback, useRef } from 'react';
+import { createPortal } from 'react-dom';
 
 interface LectureModalProps {
   isOpen: boolean;
   toggle: () => void;
   lectureName: string;
+  lectureNumber?: number;
   url: string;
 }
 
-const LectureModal: FC<LectureModalProps> = ({ isOpen, toggle, lectureName, url }) => {
+// The PowerPoint viewer is still drawing its first slide when the iframe's
+// load event fires, so hold the loader a moment longer.
+const PAINT_DELAY_MS = 1200;
+// Give up on the loader if the load event never arrives.
+const LOAD_TIMEOUT_MS = 12000;
+
+const ICON_BTN =
+  'flex size-[2.5rem] flex-none items-center justify-center rounded-[2px] bg-transparent !text-white/80 no-underline transition-colors duration-150 hover:bg-white/15 hover:!text-white hover:no-underline focus-visible:bg-white/15 focus-visible:outline-none';
+
+const LectureModal: FC<LectureModalProps> = ({ isOpen, toggle, lectureName, lectureNumber, url }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isVisible, setIsVisible] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
+  const closeRef = useRef<HTMLButtonElement>(null);
+  const paintTimer = useRef<number>();
 
   // Handle open/close animations
   useEffect(() => {
     if (isOpen) {
       setIsVisible(true);
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
+      let frame = requestAnimationFrame(() => {
+        frame = requestAnimationFrame(() => {
           setIsAnimating(true);
+          closeRef.current?.focus({ preventScroll: true });
         });
       });
-
-      // Prevent scrolling via event listeners
-      const preventScroll = (e: Event) => {
-        e.preventDefault();
-      };
-
-      document.addEventListener('wheel', preventScroll, { passive: false });
-      document.addEventListener('touchmove', preventScroll, { passive: false });
-
-      return () => {
-        document.removeEventListener('wheel', preventScroll);
-        document.removeEventListener('touchmove', preventScroll);
-      };
+      return () => cancelAnimationFrame(frame);
     } else {
       setIsAnimating(false);
-      
+
       const timer = setTimeout(() => {
         setIsVisible(false);
       }, 300);
@@ -44,12 +46,65 @@ const LectureModal: FC<LectureModalProps> = ({ isOpen, toggle, lectureName, url 
     }
   }, [isOpen]);
 
+  // Hand focus back to whatever opened the modal once it closes
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const previousFocus = document.activeElement as HTMLElement | null;
+    return () => previousFocus?.focus({ preventScroll: true });
+  }, [isOpen]);
+
+  // Lock page scroll while the modal is on screen (through its fade-out too).
+  // Pin the page where it is (body fixed at its scroll offset) so there is
+  // nothing left to scroll: wheel, touch, keys, scrollbar drags and scroll
+  // chaining out of the iframe all do nothing. A classic scrollbar is kept
+  // (as an empty track) because hiding it would change the viewport width
+  // and shift the page and everything fixed to it.
+  useEffect(() => {
+    if (!isVisible) return;
+
+    const html = document.documentElement;
+    const { body } = document;
+    const scrollY = window.scrollY;
+    const hasScrollbar = window.innerWidth > html.clientWidth;
+    const previous = {
+      overflowY: html.style.overflowY,
+      position: body.style.position,
+      top: body.style.top,
+      left: body.style.left,
+      right: body.style.right,
+    };
+
+    html.dataset.scrollLocked = '';
+    if (hasScrollbar) html.style.overflowY = 'scroll';
+    body.style.position = 'fixed';
+    body.style.top = `-${scrollY}px`;
+    body.style.left = '0';
+    body.style.right = '0';
+
+    return () => {
+      html.style.overflowY = previous.overflowY;
+      body.style.position = previous.position;
+      body.style.top = previous.top;
+      body.style.left = previous.left;
+      body.style.right = previous.right;
+      // 'instant' so Bootstrap's smooth scroll-behavior doesn't animate it
+      window.scrollTo({ top: scrollY, behavior: 'instant' });
+      delete html.dataset.scrollLocked;
+    };
+  }, [isVisible]);
+
   // Reset loading state when modal opens or URL changes
   useEffect(() => {
-    if (isOpen) {
-      setIsLoading(true);
-    }
+    if (!isOpen) return;
+
+    setIsLoading(true);
+    window.clearTimeout(paintTimer.current);
+    const fallback = window.setTimeout(() => setIsLoading(false), LOAD_TIMEOUT_MS);
+    return () => window.clearTimeout(fallback);
   }, [isOpen, url]);
+
+  useEffect(() => () => window.clearTimeout(paintTimer.current), []);
 
   // Handle escape key
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
@@ -64,9 +119,8 @@ const LectureModal: FC<LectureModalProps> = ({ isOpen, toggle, lectureName, url 
   }, [handleKeyDown]);
 
   const handleIframeLoad = () => {
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 2000);
+    window.clearTimeout(paintTimer.current);
+    paintTimer.current = window.setTimeout(() => setIsLoading(false), PAINT_DELAY_MS);
   };
 
   const handleBackdropClick = (e: React.MouseEvent) => {
@@ -77,92 +131,107 @@ const LectureModal: FC<LectureModalProps> = ({ isOpen, toggle, lectureName, url 
 
   if (!isVisible) return null;
 
-  return (
+  // Portaled to <body> so no ancestor transform can break `position: fixed`.
+  return createPortal(
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      className="lecture-viewer fixed inset-0 z-[1050] flex items-center justify-center touch-none overscroll-contain backdrop-blur-[3px]"
+      style={{
+        backgroundColor: 'rgba(38, 50, 54, 0.72)',
+        opacity: isAnimating ? 1 : 0,
+        transition: 'opacity 300ms ease-out',
+      }}
       onClick={handleBackdropClick}
     >
-
-      {/* Modal Container */}
+      {/* Panel */}
       <div
-        className="relative w-full max-w-3xl bg-white border-1 border-gray-600 rounded-lg shadow-xl overflow-hidden pb-10"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="lecture-viewer-title"
+        className="relative"
         style={{
-          opacity: isAnimating ? 1 : 0,
-          transform: isAnimating ? 'scale(1) translateY(0)' : 'scale(0.95) translateY(-20px)',
-          transition: 'opacity 300ms ease-out, transform 300ms ease-out',
-          maxHeight: 'calc(100dvh - 2rem)',
+          transform: isAnimating ? 'none' : 'scale(0.96) translateY(12px)',
+          transition: 'transform 300ms cubic-bezier(0.22, 1, 0.36, 1)',
         }}
-        onClick={(e) => e.stopPropagation()}
       >
-        {/* Header */}
-        <div className="flex items-start justify-between px-6 pt-3 pb-2 border-b border-gray-200 bg-gray-50">
-          <h5 className="text-base font-semibold text-gray-600 m-0 pr-4 break-words">
-            {lectureName}
-          </h5>
-          <button
-            onClick={toggle}
-            className="flex-shrink-0 w-8 h-8 -mt-1 flex items-center justify-center rounded-sm text-gray-500 hover:text-gray-700 hover:bg-gray-200 transition-colors duration-150"
-            aria-label="Close modal"
-          >
-            <svg
-              className="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+        <div className="lecture-viewer__frame relative flex flex-col overflow-hidden rounded-[2px] border-[1px] border-solid border-white bg-jk-teal shadow-[5px_6px_18px_0px_rgba(0,0,0,0.35)]">
+          {/* Header */}
+          <div className="lecture-viewer__bar flex flex-none items-center gap-[0.75rem] pl-[0.875rem] pr-[0.375rem] text-white">
+            {lectureNumber !== undefined && (
+              <span className="grid size-[1.75rem] flex-none place-items-center rounded-[2px] border-[1px] border-solid border-white/70 text-[0.75rem] font-semibold tabular-nums">
+                {lectureNumber}
+              </span>
+            )}
+            <h2
+              id="lecture-viewer-title"
+              className="lecture-viewer__title m-0 min-w-0 flex-1 text-[0.95rem] font-semibold leading-tight line-clamp-2"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-          </button>
-        </div>
-
-        {/* Body */}
-        <div className="relative" style={{ minHeight: '481px' }}>
-          {/* Loader */}
-          <div
-            className="absolute inset-0 flex flex-col items-center justify-center z-10"
-            style={{
-              backgroundColor: '#5b8592',
-              opacity: isLoading ? 1 : 0,
-              pointerEvents: isLoading ? 'all' : 'none',
-              transition: 'opacity 500ms ease-in-out',
-            }}
-          >
-            <div className="logo-loader">
-              <div className="frame frame-1"></div>
-              <div className="frame frame-2"></div>
-              <div className="frame frame-3"></div>
-            </div>
-            <div
-              className="text-white mt-10 text-sm uppercase tracking-wider font-light"
-              style={{ fontFamily: 'sans-serif' }}
-            >
-              Loading slides...
+              {lectureName}
+            </h2>
+            <div className="lecture-viewer__actions flex flex-none items-center">
+              <a
+                href={url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={ICON_BTN}
+                aria-label="Open slides in a new tab"
+                title="Open in a new tab"
+              >
+                <svg className="size-[1.1rem]" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24" aria-hidden>
+                  <path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5" />
+                </svg>
+              </a>
+              <button
+                ref={closeRef}
+                type="button"
+                onClick={toggle}
+                className={ICON_BTN}
+                aria-label="Close slides"
+              >
+                <svg className="size-[1.25rem]" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" viewBox="0 0 24 24" aria-hidden>
+                  <path d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
             </div>
           </div>
 
-          {/* Iframe */}
-          <iframe
-            key={url}
-            className="block mx-auto"
-            style={{
-              opacity: isLoading ? 0 : 1,
-              transition: 'opacity 500ms ease-in-out',
-            }}
-            src={url}
-            width="100%"
-            height="481px"
-            frameBorder="0"
-            title={`${lectureName} presentation`}
-            onLoad={handleIframeLoad}
-          />
+          {/* Slides */}
+          <div className="lecture-viewer__stage relative flex-none bg-[#263236]">
+            <div
+              className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-jk-teal"
+              style={{
+                opacity: isLoading ? 1 : 0,
+                pointerEvents: isLoading ? 'auto' : 'none',
+                transition: 'opacity 500ms ease-in-out',
+              }}
+            >
+              <div className="logo-loader scale-75 sm:scale-100">
+                <div className="frame frame-1"></div>
+                <div className="frame frame-2"></div>
+                <div className="frame frame-3"></div>
+              </div>
+              <div className="mt-[1.75rem] text-sm font-light uppercase tracking-wider text-white sm:mt-10">
+                Loading slides...
+              </div>
+            </div>
+
+            <iframe
+              key={url}
+              className="absolute inset-0 block h-full w-full border-0"
+              style={{
+                opacity: isLoading ? 0 : 1,
+                transition: 'opacity 500ms ease-in-out',
+              }}
+              src={url}
+              title={`${lectureName} presentation`}
+              allow="fullscreen"
+              allowFullScreen
+              onLoad={handleIframeLoad}
+            />
+          </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
 
