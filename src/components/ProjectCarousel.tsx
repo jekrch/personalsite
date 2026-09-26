@@ -39,6 +39,10 @@ const buildMosaicTiles = (gallery: string[]): string[] => {
   return tiles;
 };
 
+// Marquee speed in px/sec. Duration is derived from the measured loop width so
+// every strip drifts at the same pace regardless of tile count or tile size.
+const MARQUEE_PX_PER_SEC = 20;
+
 // A row of sampled project views pinned to the bottom of the slide. If the
 // row is wider than the slide it slowly marquees through all of them;
 // otherwise it sits static and centered.
@@ -46,6 +50,7 @@ const BottomCardStrip: FC<{ tiles: string[] }> = ({ tiles }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const [overflow, setOverflow] = useState<boolean>(false);
+  const [loopWidth, setLoopWidth] = useState<number>(0);
 
   useEffect(() => {
     const measure = () => {
@@ -54,6 +59,7 @@ const BottomCardStrip: FC<{ tiles: string[] }> = ({ tiles }) => {
       if (!container || !track) return;
       // When marquee-ing the track holds two copies, so compare against half.
       const setWidth = overflow ? track.scrollWidth / 2 : track.scrollWidth;
+      if (overflow && setWidth > 0) setLoopWidth(setWidth);
       setOverflow(setWidth > container.clientWidth + 4);
     };
 
@@ -61,6 +67,7 @@ const BottomCardStrip: FC<{ tiles: string[] }> = ({ tiles }) => {
     const ro =
       typeof ResizeObserver !== 'undefined' ? new ResizeObserver(measure) : undefined;
     if (ro && containerRef.current) ro.observe(containerRef.current);
+    if (ro && trackRef.current) ro.observe(trackRef.current);
     window.addEventListener('resize', measure);
     return () => {
       window.removeEventListener('resize', measure);
@@ -68,9 +75,11 @@ const BottomCardStrip: FC<{ tiles: string[] }> = ({ tiles }) => {
     };
   }, [tiles, overflow]);
 
-  // Two copies so the -50% loop is seamless; slow, count-scaled duration.
+  // Two copies so the -50% loop is seamless. In marquee mode each tile carries
+  // its own trailing margin (no flex gap, no track padding) so the track is
+  // exactly two identical halves and -50% lands on the start of the second copy.
   const rendered = overflow ? [...tiles, ...tiles] : tiles;
-  const duration = Math.max(30, tiles.length * 6);
+  const duration = loopWidth > 0 ? loopWidth / MARQUEE_PX_PER_SEC : tiles.length * 12;
 
   return (
     <div
@@ -79,7 +88,7 @@ const BottomCardStrip: FC<{ tiles: string[] }> = ({ tiles }) => {
     >
       <div
         ref={trackRef}
-        className={`flex gap-2 w-max px-4 ${overflow ? 'carousel-marquee' : 'mx-auto'}`}
+        className={`flex w-max ${overflow ? 'carousel-marquee' : 'gap-2 px-4 mx-auto'}`}
         style={
           overflow
             ? ({ ['--marquee-duration' as string]: `${duration}s` } as React.CSSProperties)
@@ -89,7 +98,7 @@ const BottomCardStrip: FC<{ tiles: string[] }> = ({ tiles }) => {
         {rendered.map((src, i) => (
           <div
             key={`${src}-${i}`}
-            className="h-[8rem] sm:h-[11rem] w-auto flex-none aspect-[4/3] overflow-hidden rounded-[3px] ring-1 ring-white/10 shadow-md shadow-black/40"
+            className={`h-[8rem] sm:h-[11rem] w-auto flex-none aspect-[4/3] overflow-hidden rounded-[3px] ring-1 ring-white/10 shadow-md shadow-black/40 ${overflow ? 'mr-2' : ''}`}
           >
             <img
               src={src}
