@@ -5,6 +5,7 @@ import {
   CarouselControl,
 } from "reactstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
+import OffsetFrames from "./OffsetFrames";
 
 interface ProjectItem {
   name: string;
@@ -435,18 +436,8 @@ const ProjectCarousel: FC<ProjectCarouselProps> = ({ projects, backgroundImages 
               style={{ maxHeight: '500px' }}
             />
             {/* On hover, the same offset double frame as the active tab
-                indicator (the logo's layered squares). Offset with insets
-                rather than transforms for the HiDPI reason above. */}
-            <div
-              aria-hidden
-              className="pointer-events-none absolute border border-white rounded-sm opacity-0 transition-opacity duration-200 group-hover:opacity-100"
-              style={{ top: '-0.4em', right: '-0.4em', bottom: '0.4em', left: '0.4em' }}
-            />
-            <div
-              aria-hidden
-              className="pointer-events-none absolute border border-white rounded-sm opacity-0 transition-opacity duration-200 group-hover:opacity-100"
-              style={{ top: '0.4em', right: '0.4em', bottom: '-0.4em', left: '-0.4em' }}
-            />
+                indicator (the logo's layered squares). */}
+            <OffsetFrames className="opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-focus-visible:opacity-100" />
           </div>
 
           {/* Show URL if provided — anchored above the image on every screen

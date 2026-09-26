@@ -1,153 +1,120 @@
-import { FC, useState, useEffect, useMemo } from "react"
-
-interface ImageSlot {
-    src: string
-    originX: number
-    originY: number
-}
-
-interface FrameOffset {
-    top: number | string
-    left: number | string
-    right: number | string
-    bottom: number | string
-    opacity?: number
-}
+import { CSSProperties, FC, ReactNode, useEffect, useRef, useState } from "react"
+import OffsetFrames from "./OffsetFrames"
 
 interface BannerProps {
     /** URL the banner links to */
     href: string
     /** Main heading text */
     title: string
-    /** Smaller text above the title */
-    subtitle?: string
-    /** Array of image URLs to rotate through */
-    images: string[]
-    /** Rotation interval in milliseconds (default: 3000) */
-    rotationInterval?: number
-    /** Disable image rotation/animation (default: false) */
-    disableRotation?: boolean
-    /** Accent color for the banner background and gradients */
-    accentColor?: string
-    /** Additional className for the outer container */
+    /** One line beneath the title */
+    description?: string
+    /** The banner's visual — an object below the text that may bleed off
+     *  the card's right and bottom edges */
+    children?: ReactNode
+    /** Additional className for the outer link (e.g. grid placement) */
     className?: string
-    /** Additional className for the main banner content area */
-    bannerClassName?: string
-    /** Additional className for the title */
-    titleClassName?: string
-    /** Additional className for the subtitle */
-    subtitleClassName?: string
-    /** Image scale */
-    imageScale?: number
-    /** Disable backing frame borders entirely */
-    disableFrames?: boolean
-    /** Randomize frame positions on mount */
-    randomizeFrames?: boolean
-    /** Custom frame configurations (overrides defaults) */
-    frames?: FrameOffset[]
-    /** Frame border color (defaults to accentColor) */
-    frameColor?: string
-    /** Frame border width */
-    frameBorderWidth?: number
+    /** Stagger (ms) for the scroll-in reveal when several cards enter together */
+    revealDelay?: number
+    /** Which background arrangement to use (see MOTIFS) */
+    motif?: number
 }
 
-const getRandomOrigin = () => ({
-    originX: Math.floor(Math.random() * 100),
-    originY: Math.floor(Math.random() * 100),
-})
+// Flips to true the first time the element scrolls into view, then stops
+// observing so the reveal only plays once.
+const useRevealOnScroll = <T extends Element>() => {
+    const ref = useRef<T>(null)
+    const [visible, setVisible] = useState(false)
 
-const getRandomFrameOffset = (): FrameOffset => ({
-    top: `${Math.floor(Math.random() * 16) - 12}px`,
-    left: `${Math.floor(Math.random() * 40) + 5}px`,
-    right: `${Math.floor(Math.random() * 30) + 5}px`,
-    bottom: `${Math.floor(Math.random() * 16) - 12}px`,
-    opacity: 0.15 + Math.random() * 0.25,
-})
+    useEffect(() => {
+        const el = ref.current
+        if (!el) return
+        if (typeof IntersectionObserver === "undefined") {
+            setVisible(true)
+            return
+        }
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting) {
+                    setVisible(true)
+                    observer.disconnect()
+                }
+            },
+            { threshold: 0.15, rootMargin: "0px 0px -8% 0px" }
+        )
+        observer.observe(el)
+        return () => observer.disconnect()
+    }, [])
 
-const DEFAULT_FRAMES: FrameOffset[] = [
-    { top: -8, left: 10, right: 24, bottom: -6, opacity: 0.2 },
-    { top: -4, left: 32, right: 8, bottom: -12, opacity: 0.3 },
+    return [ref, visible] as const
+}
+
+// Echoes the site's GeometricBackground: faint diagonal bands with pairs of
+// thin parallel lines along their edges. Each card gets its own arrangement
+// and light direction so they read as a set rather than copies. The SVG
+// stretches to the card, so wide and narrow cards also get different slants.
+const LINE = { stroke: "#fff", vectorEffect: "non-scaling-stroke" } as const
+
+const MOTIFS: { light: string; shapes: ReactNode }[] = [
+    {
+        // Band leaning right, lines along its right edge; light from top left.
+        light: "radial-gradient(ellipse at top left, rgba(255,255,255,0.12), transparent 60%)",
+        shapes: (
+            <>
+                <polygon points="58,0 90,0 50,100 18,100" fill="#fff" fillOpacity="0.06" />
+                <line x1="94" y1="0" x2="54" y2="100" strokeOpacity="0.16" {...LINE} />
+                <line x1="97" y1="0" x2="57" y2="100" strokeOpacity="0.08" {...LINE} />
+            </>
+        ),
+    },
+    {
+        // Mirrored: band leaning left, lines along its left edge, a deeper
+        // shade in the lower right; light from top right.
+        light: "radial-gradient(ellipse at top right, rgba(255,255,255,0.11), transparent 55%), linear-gradient(to top left, rgba(63,78,83,0.28), transparent 50%)",
+        shapes: (
+            <>
+                <polygon points="12,0 40,0 84,100 56,100" fill="#fff" fillOpacity="0.05" />
+                <line x1="8" y1="0" x2="52" y2="100" strokeOpacity="0.14" {...LINE} />
+                <line x1="5" y1="0" x2="49" y2="100" strokeOpacity="0.07" {...LINE} />
+            </>
+        ),
+    },
+    {
+        // Wide: a sliver of band on the left and a broad one on the right with
+        // lines along its edge; light from bottom left, deeper shade at right.
+        light: "radial-gradient(ellipse at bottom left, rgba(255,255,255,0.12), transparent 55%), linear-gradient(to left, rgba(63,78,83,0.3), transparent 45%)",
+        shapes: (
+            <>
+                <polygon points="9,0 15,0 11,100 5,100" fill="#fff" fillOpacity="0.06" />
+                <polygon points="72,0 100,0 100,100 56,100" fill="#fff" fillOpacity="0.05" />
+                <line x1="68" y1="0" x2="52" y2="100" strokeOpacity="0.16" {...LINE} />
+                <line x1="70" y1="0" x2="54" y2="100" strokeOpacity="0.08" {...LINE} />
+            </>
+        ),
+    },
 ]
+
+const CardMotif: FC<{ shapes: ReactNode }> = ({ shapes }) => (
+    <svg
+        aria-hidden
+        className="pointer-events-none absolute inset-0 h-full w-full"
+        viewBox="0 0 100 100"
+        preserveAspectRatio="none"
+    >
+        {shapes}
+    </svg>
+)
 
 const Banner: FC<BannerProps> = ({
     href,
     title,
-    subtitle,
-    images,
-    rotationInterval = 3000,
-    disableRotation = false,
-    accentColor = "var(--jk-teal)",
+    description,
+    children,
     className = "",
-    bannerClassName = "",
-    titleClassName = "",
-    subtitleClassName = "",
-    imageScale = 3,
-    disableFrames = false,
-    randomizeFrames = false,
-    frames,
-    frameColor,
-    frameBorderWidth = 2,
+    revealDelay = 0,
+    motif = 0,
 }) => {
-    const [slots, setSlots] = useState<ImageSlot[]>([])
-    const [, setCurrentIndex] = useState(0)
-
-    // Compute frame offsets - memoized to prevent re-randomizing on every render
-    const frameOffsets = useMemo(() => {
-        if (disableFrames) return []
-        if (frames) return frames
-        if (randomizeFrames) {
-            return [getRandomFrameOffset(), getRandomFrameOffset()]
-        }
-        return DEFAULT_FRAMES
-    }, [disableFrames, frames, randomizeFrames])
-
-    const resolvedFrameColor = frameColor ?? accentColor
-
-    // Initialize two slots with random images and positions
-    useEffect(() => {
-        if (images.length === 0) return
-
-        const initialSlots: ImageSlot[] = [
-            {
-                src: images[0],
-                ...getRandomOrigin(),
-            },
-            {
-                src: images[1 % images.length],
-                ...getRandomOrigin(),
-            },
-        ]
-        setSlots(initialSlots)
-        setCurrentIndex(2 % images.length)
-    }, [images])
-
-    // Rotate images at the specified interval
-    useEffect(() => {
-        if (images.length <= 2 || disableRotation) return
-
-        const interval = setInterval(() => {
-            setSlots((prevSlots) => {
-                const slotToUpdate = Math.floor(Math.random() * 2)
-                const newSlots = [...prevSlots]
-
-                setCurrentIndex((prevIndex) => {
-                    const nextIndex = (prevIndex + 1) % images.length
-                    newSlots[slotToUpdate] = {
-                        src: images[nextIndex],
-                        ...getRandomOrigin(),
-                    }
-                    return nextIndex
-                })
-
-                return newSlots
-            })
-        }, rotationInterval)
-
-        return () => clearInterval(interval)
-    }, [images, rotationInterval, disableRotation])
-
-    const formatOffset = (value: number | string) =>
-        typeof value === "number" ? `${value}px` : value
+    const { light, shapes } = MOTIFS[motif % MOTIFS.length]
+    const [ref, visible] = useRevealOnScroll<HTMLAnchorElement>()
 
     const handleClick = () => {
         if (href.startsWith("#") || href.startsWith("/#")) {
@@ -163,98 +130,45 @@ const Banner: FC<BannerProps> = ({
     }
 
     return (
-        <div className={`relative my-8 ${className}`}>
-            {/* Backing frame elements - offset behind the banner */}
-            {frameOffsets.map((frame, index) => (
-                <div
-                    key={index}
-                    className="absolute pointer-events-none"
-                    style={{
-                        borderWidth: frameBorderWidth,
-                        borderStyle: "solid",
-                        borderColor: resolvedFrameColor,
-                        opacity: frame.opacity ?? 0.2 + index * 0.1,
-                        top: formatOffset(frame.top),
-                        left: formatOffset(frame.left),
-                        right: formatOffset(frame.right),
-                        bottom: formatOffset(frame.bottom),
-                    }}
-                />
-            ))}
-
-            {/* Main banner */}
-            <a
-                href={href}
-                onClick={handleClick}
-                className="block group no-underline relative z-10"
+        <a
+            ref={ref}
+            href={href}
+            onClick={handleClick}
+            className={`group reveal relative block no-underline hover:no-underline ${visible ? "is-visible" : ""} ${className}`}
+            style={{ ["--reveal-delay" as string]: `${revealDelay}ms` } as CSSProperties}
+        >
+            {/* --pad drives the card padding, the visual area's pull back out to
+                the edges, and objects' alignment with the text. Arbitrary values
+                on purpose: Bootstrap's spacing utilities (p-5 etc.) are
+                !important and would override Tailwind's. */}
+            <div
+                className="relative flex h-full flex-col overflow-hidden rounded-sm border border-white bg-jk-teal [--pad:1.5rem] sm:[--pad:2.5rem] p-[var(--pad)] shadow-[5px_6px_11px_0px_rgba(0,_0,_0,_0.3)]"
+                style={{
+                    backgroundImage: `${light}, linear-gradient(to bottom, transparent 55%, rgba(0,0,0,0.08))`,
+                }}
             >
-                <div
-                    className={`relative overflow-hidden px-5 py-4 border-2 border-white/80 hover:border-white/50 transition-colors hover:shadow-md ${bannerClassName}`}
-                    style={{ backgroundColor: accentColor }}
-                >
-                    {/* Comic background images */}
-                    {images.length > 0 && (
-                        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                            {/* Left image */}
-                            {slots[0] && (
-                                <div className="absolute left-0 top-0 w-1/2 h-full overflow-hidden">
-                                    <img
-                                        src={slots[0].src}
-                                        alt=""
-                                        className={`w-full h-full object-cover scale-[${imageScale}] transition-all duration-1000`}
-                                        style={{
-                                            objectPosition: `${slots[0].originX}% ${slots[0].originY}%`,
-                                        }}
-                                    />
-                                    <div
-                                        className="absolute inset-0 bg-gradient-to-r from-transparent"
-                                        style={{ ["--tw-gradient-to" as string]: accentColor }}
-                                    />
-                                    <div
-                                        className="absolute inset-0 bg-gradient-to-b from-transparent"
-                                        style={{ ["--tw-gradient-to" as string]: accentColor }}
-                                    />
-                                </div>
-                            )}
+                <CardMotif shapes={shapes} />
 
-                            {/* Right image */}
-                            {slots[1] && (
-                                <div className="absolute right-0 top-0 w-1/2 h-full overflow-hidden">
-                                    <img
-                                        src={slots[1].src}
-                                        alt=""
-                                        className={`w-full h-full object-cover scale-[${imageScale}] transition-all duration-1000`}
-                                        style={{
-                                            objectPosition: `${slots[1].originX}% ${slots[1].originY}%`,
-                                        }}
-                                    />
-                                    <div
-                                        className="absolute inset-0 bg-gradient-to-l from-transparent"
-                                        style={{ ["--tw-gradient-to" as string]: accentColor }}
-                                    />
-                                    <div
-                                        className="absolute inset-0 bg-gradient-to-b from-transparent"
-                                        style={{ ["--tw-gradient-to" as string]: accentColor }}
-                                    />
-                                </div>
-                            )}
-                        </div>
+                <div className="relative z-10">
+                    <h3 className="m-0 text-lg font-semibold text-white">{title}</h3>
+                    {description && (
+                        <p className="m-0 mt-1 text-sm text-white/80">{description}</p>
                     )}
-
-                    {/* Content */}
-                    <div className="relative z-10 text-center">
-                        {subtitle && (
-                            <p className={`text-white text-sm m-0 mb-1 ${subtitleClassName}`}>
-                                {subtitle}
-                            </p>
-                        )}
-                        <h3 className={`text-white text-lg font-semibold m-0 group-hover:underline ${titleClassName}`}>
-                            {title}
-                        </h3>
-                    </div>
                 </div>
-            </a>
-        </div>
+
+                {/* Visual area below the text, flush with the card's right and
+                    bottom edges so objects can bleed off them without ever
+                    reaching up into the text. */}
+                {children && (
+                    <div className="reveal-object pointer-events-none relative mx-[calc(var(--pad)*-1)] mb-[calc(var(--pad)*-1)] mt-[0.75rem] min-h-[8.5rem] flex-1">
+                        {children}
+                    </div>
+                )}
+            </div>
+
+            {/* Same hover as the project carousel's featured screenshot */}
+            <OffsetFrames className="opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-focus-visible:opacity-100" />
+        </a>
     )
 }
 
