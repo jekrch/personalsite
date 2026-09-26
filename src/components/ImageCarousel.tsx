@@ -153,20 +153,17 @@ const ImageCarousel: FC<ImageCarouselProps> = ({ items, className }) => {
           items={indicatorItems}
           activeIndex={activeIndex}
           onClickHandler={goToIndex}
-          className="z-10"
         />
         {slides}
         <CarouselControl
           direction="prev"
           directionText="Previous"
           onClickHandler={previous}
-          className="z-10"
         />
         <CarouselControl
           direction="next"
           directionText="Next"
           onClickHandler={next}
-          className="z-10"
         />
       </Carousel>
 

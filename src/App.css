@@ -643,6 +643,21 @@ body {
 
 .carousel-inner {
   overflow: hidden;
+  /* Contain the slides' stacking so a mid-transition slide can't paint
+     over the arrows/indicators (Safari lets backface-visibility layers
+     jump above z-indexed siblings during transform transitions). */
+  isolation: isolate;
+}
+
+/* Bootstrap gives these z-index 1/2, and its stylesheet is imported from
+   lazy route chunks, so Tailwind's z-10 on them loses or wins depending on
+   load order. Pin them here with higher specificity instead, and give them
+   their own layer so they stay above the composited slides. */
+.carousel > .carousel-control-prev,
+.carousel > .carousel-control-next,
+.carousel > .carousel-indicators {
+  z-index: 3;
+  transform: translateZ(0);
 }
 
 .loader-wrapper {
