@@ -15,16 +15,6 @@ interface ProjectItem {
   gallery?: string[]; // Additional project views, sampled as a background mosaic
 }
 
-// Cycled per tile so each crop frames a different region of the screenshot,
-// giving the strip a varied, "close-up sampling" feel rather than flat thumbnails.
-const TILE_POSITIONS = [
-  'center',
-  'top left',
-  'top right',
-  'center top',
-  'bottom right',
-  'left center',
-];
 // Each project view shown at most once so the strip reads as a varied
 // sampling rather than a repeating pattern.
 const buildMosaicTiles = (gallery: string[]): string[] => {
@@ -84,7 +74,7 @@ const BottomCardStrip: FC<{ tiles: string[] }> = ({ tiles }) => {
   return (
     <div
       ref={containerRef}
-      className="absolute inset-x-0 bottom-0 overflow-hidden pb-[3%] opacity-80 [mask-image:linear-gradient(to_right,transparent_0%,black_9%,black_91%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_right,transparent_0%,black_9%,black_91%,transparent_100%)]"
+      className="absolute inset-x-0 bottom-0 overflow-hidden pb-[3%] [mask-image:linear-gradient(to_right,transparent_0%,black_9%,black_91%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_right,transparent_0%,black_9%,black_91%,transparent_100%)]"
     >
       <div
         ref={trackRef}
@@ -98,17 +88,15 @@ const BottomCardStrip: FC<{ tiles: string[] }> = ({ tiles }) => {
         {rendered.map((src, i) => (
           <div
             key={`${src}-${i}`}
-            className={`h-[8rem] sm:h-[11rem] w-auto flex-none aspect-[4/3] overflow-hidden rounded-[3px] ring-1 ring-white/10 shadow-md shadow-black/40 ${overflow ? 'mr-2' : ''}`}
+            className={`h-[8rem] sm:h-[11rem] flex-none overflow-hidden rounded-sm ring-1 ring-white/10 ${overflow ? 'mr-2' : ''}`}
           >
+            {/* Whole screenshot at its natural aspect ratio — the tile height
+                is fixed and the width follows the image. */}
             <img
               src={src}
               alt=""
               loading="lazy"
-              className="w-full h-full object-cover"
-              style={{
-                objectPosition: TILE_POSITIONS[i % TILE_POSITIONS.length],
-                transform: `scale(${1.05 + (i % 3) * 0.08})`,
-              }}
+              className="h-full w-auto max-w-none"
             />
           </div>
         ))}
@@ -382,7 +370,6 @@ const ProjectCarousel: FC<ProjectCarouselProps> = ({ projects, backgroundImages 
     return backgroundImages[index % backgroundImages.length];
   };
 
-
   const slides = projects.map((project, index) => {
    const mosaicTiles = project.gallery ? buildMosaicTiles(project.gallery) : [];
    return (
@@ -392,38 +379,23 @@ const ProjectCarousel: FC<ProjectCarouselProps> = ({ projects, backgroundImages 
       key={project.name}
       className="relative"
     >
-      {/* Background layer — the rotating background image fills the slide as
-          before, with a sampled mosaic of this project's other views layered
-          on top and fading out toward the center. */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none bg-gray-900">
-        {backgroundImages.length > 0 ? (
+      {/* Background layer — the rotating photo, tinted by multiplying brand
+          teal over it (one layer, so it reads as part of the palette rather
+          than dimmed), with this project's other views in a strip along the
+          bottom that slowly marquees through them when there are more than fit. */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none bg-[#3f4e53]">
+        {backgroundImages.length > 0 && (
           <>
             <img
               src={getBackgroundImage(index)}
               alt=""
-              className="absolute inset-0 w-full h-full object-cover scale-100"
+              className="absolute inset-0 w-full h-full object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/50 to-black/30"></div>
+            <div className="absolute inset-0 bg-jk-teal mix-blend-multiply"></div>
           </>
-        ) : (
-          <div className="absolute inset-0 bg-gradient-to-br from-gray-900 to-gray-800"></div>
         )}
-
         {project.gallery && project.gallery.length > 0 && (
-          <>
-            {/* Sampled project views in a strip along the bottom; slowly
-                marquees through them when there are more than fit. */}
-            <BottomCardStrip tiles={mosaicTiles} />
-            {/* Light vignette only — keep the cards visible while easing
-                contrast behind the featured screenshot and controls. */}
-            <div
-              className="absolute inset-0"
-              style={{
-                background:
-                  'radial-gradient(ellipse at center, rgba(10,12,14,0.62) 0%, rgba(10,12,14,0.3) 45%, rgba(10,12,14,0.12) 75%, rgba(10,12,14,0) 100%)',
-              }}
-            ></div>
-          </>
+          <BottomCardStrip tiles={mosaicTiles} />
         )}
       </div>
 
@@ -456,15 +428,25 @@ const ProjectCarousel: FC<ProjectCarouselProps> = ({ projects, backgroundImages 
               Nothing here actually transforms, and the backdrop blur sat
               behind an opaque image so it was invisible anyway. */}
           <div className="relative mb-6">
-            <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500 to-teal-500 rounded-lg blur opacity-25 group-hover:opacity-75 transition duration-300"></div>
-            <div className="relative bg-white/10 rounded-lg p-2 shadow-xl">
-              <img
-                src={project.imageUrl}
-                alt={project.name}
-                className="w-full max-w-[min(28rem,80vw)] h-auto object-contain rounded-md shadow-lg"
-                style={{ maxHeight: '500px' }}
-              />
-            </div>
+            <img
+              src={project.imageUrl}
+              alt={project.name}
+              className="block w-full max-w-[min(28rem,80vw)] h-auto object-contain rounded-sm shadow-lg shadow-black/40"
+              style={{ maxHeight: '500px' }}
+            />
+            {/* On hover, the same offset double frame as the active tab
+                indicator (the logo's layered squares). Offset with insets
+                rather than transforms for the HiDPI reason above. */}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute border border-white rounded-sm opacity-0 transition-opacity duration-200 group-hover:opacity-100"
+              style={{ top: '-0.4em', right: '-0.4em', bottom: '0.4em', left: '0.4em' }}
+            />
+            <div
+              aria-hidden
+              className="pointer-events-none absolute border border-white rounded-sm opacity-0 transition-opacity duration-200 group-hover:opacity-100"
+              style={{ top: '0.4em', right: '0.4em', bottom: '-0.4em', left: '-0.4em' }}
+            />
           </div>
 
           {/* Show URL if provided — anchored above the image on every screen
@@ -472,17 +454,10 @@ const ProjectCarousel: FC<ProjectCarouselProps> = ({ projects, backgroundImages 
               screens, 1em from the sm breakpoint up). Because the content
               column is top-aligned (not centered), the URL stays a fixed
               distance from the top and the image a fixed distance below it,
-              regardless of hero image height. A mild backdrop keeps it legible
-              over lighter imagery. */}
+              regardless of hero image height. */}
           {(project.url || project.description) && (
             <div className="order-first w-full my-[1em] flex flex-col items-center sm:my-[1em] sm:w-auto">
-              <div
-                className="flex flex-col items-center gap-0.5 px-6 py-1.5 rounded-sm"
-                style={{
-                  background:
-                    'linear-gradient(to right, rgba(91,133,146,0) 0%, rgba(91,133,146,0.5) 28%, rgba(91,133,146,0.5) 72%, rgba(91,133,146,0) 100%)',
-                }}
-              >
+              <div className="flex flex-col items-center gap-0.5 px-6 py-1.5">
                 {project.url && (
                   <span className="text-white text-md leading-tight opacity-90 group-hover:opacity-100 transition-opacity">
                     {project.url}
@@ -496,20 +471,6 @@ const ProjectCarousel: FC<ProjectCarouselProps> = ({ projects, backgroundImages 
               </div>
             </div>
           )}
-
-          {/* Call to action */}
-          <div className="flex items-center gap-2 text-cyan-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            <span className="text-sm font-medium">View Project</span>
-            <svg
-              className="w-4 h-4 transform group-hover:translate-x-1 transition-transform"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </div>
-
         </a>
       </div>
     </CarouselItem>
@@ -611,12 +572,11 @@ const ProjectCarousel: FC<ProjectCarouselProps> = ({ projects, backgroundImages 
           activeIndex={activeIndex}
           next={next}
           previous={previous}
-          className="shadow-2xl overflow-hidden bg-gray-900"
+          className="overflow-hidden bg-[#3f4e53]"
           interval={6000}
         >
           {slides}
 
-          {/* Modern carousel controls with higher z-index */}
           <CarouselControl
             direction="prev"
             directionText="Previous"
