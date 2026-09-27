@@ -38,6 +38,8 @@ const LectureModal: FC<LectureModalProps> = ({ isOpen, toggle, lectureName, lect
   const [isVisible, setIsVisible] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
   const closeRef = useRef<HTMLButtonElement>(null);
+  const viewerRef = useRef<HTMLDivElement>(null);
+  const barRef = useRef<HTMLDivElement>(null);
   const paintTimer = useRef<number>();
 
   // Handle open/close animations
@@ -123,6 +125,20 @@ const LectureModal: FC<LectureModalProps> = ({ isOpen, toggle, lectureName, lect
 
   useEffect(() => () => window.clearTimeout(paintTimer.current), []);
 
+  // The stage is sized to leave room for the header, which grows when a
+  // long title wraps to two lines
+  useEffect(() => {
+    const viewer = viewerRef.current;
+    const bar = barRef.current;
+    if (!viewer || !bar) return;
+
+    const observer = new ResizeObserver(() => {
+      viewer.style.setProperty('--lv-bar-h', `${bar.offsetHeight}px`);
+    });
+    observer.observe(bar);
+    return () => observer.disconnect();
+  }, [isVisible]);
+
   // Handle escape key
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     if (e.key === 'Escape' && isOpen) {
@@ -162,6 +178,7 @@ const LectureModal: FC<LectureModalProps> = ({ isOpen, toggle, lectureName, lect
   // Portaled to <body> so no ancestor transform can break `position: fixed`.
   return createPortal(
     <div
+      ref={viewerRef}
       className={`lecture-viewer ${ZOOMS_IFRAMES ? 'lecture-viewer--zoom' : ''} fixed inset-0 z-[1050] flex items-center justify-center touch-none overscroll-contain backdrop-blur-[3px]`}
       style={{
         backgroundColor: 'rgba(38, 50, 54, 0.72)',
@@ -183,7 +200,7 @@ const LectureModal: FC<LectureModalProps> = ({ isOpen, toggle, lectureName, lect
       >
         <div className="lecture-viewer__frame relative flex flex-col overflow-hidden rounded-[2px] border-[1px] border-solid border-white bg-jk-teal shadow-[5px_6px_18px_0px_rgba(0,0,0,0.35)]">
           {/* Header */}
-          <div className="lecture-viewer__bar flex flex-none items-center gap-[0.75rem] pl-[0.875rem] pr-[0.375rem] text-white">
+          <div ref={barRef} className="lecture-viewer__bar flex flex-none items-center gap-[0.75rem] pl-[0.875rem] pr-[0.375rem] text-white">
             {lectureNumber !== undefined && (
               <span className="grid size-[1.75rem] flex-none place-items-center rounded-[2px] border-[1px] border-solid border-white/70 text-[0.75rem] font-semibold tabular-nums">
                 {lectureNumber}

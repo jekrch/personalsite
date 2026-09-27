@@ -71,7 +71,7 @@ body {
    would run past the viewport's height. On short landscape screens (phones
    turned sideways) the header becomes a rail on the right so the slide gets
    the full height. On phones it runs edge to edge.
-   The embed is drawn scaled up by --lv-zoom so its toolbar buttons are
+   In Chromium the embed is zoomed by --lv-zoom so its toolbar buttons are
    bigger targets. Its layout breaks below ~300px wide, so the zoom steps
    down on narrow phones to keep the unscaled width above that.
    A thin teal strip (--lv-foot) under the toolbar keeps the modal's edge
@@ -79,7 +79,8 @@ body {
    land on the backdrop. */
 .lecture-viewer {
   --lv-pad: 0px;
-  --lv-bar: 3.5rem;
+  /* The header grows when a long title wraps; LectureModal measures it */
+  --lv-bar: var(--lv-bar-h, 3.5rem);
   --lv-rail: 0px;
   --lv-zoom: 1.25;
   --lv-toolbar: calc(24px * var(--lv-zoom));
@@ -131,7 +132,8 @@ body {
 }
 
 .lecture-viewer__bar {
-  height: var(--lv-bar);
+  min-height: 3.5rem;
+  padding-block: 0.625rem;
 }
 
 .lecture-viewer__stage {
@@ -140,31 +142,24 @@ body {
   overflow: hidden;
 }
 
-/* The edges are pushed just outside the stage to crop the embed's grey
-   border, its orange focus ring and a dark line it leaves along the top.
-   Scaled with a transform by default, which upscales the slide images the
-   embed already drew, so they soften. */
-.lecture-viewer__embed {
-  position: absolute;
-  top: calc(-2px * var(--lv-zoom));
-  left: calc(-1px * var(--lv-zoom));
-  width: calc(100% / var(--lv-zoom) + 2px);
-  height: calc(100% / var(--lv-zoom) + 3px);
-  border: 0;
-  transform: scale(var(--lv-zoom));
-  transform-origin: 0 0;
+/* Chromium applies `zoom` to the frame's content as a higher pixel ratio,
+   so the embed draws its slides sharp at the bigger size. Elsewhere it
+   stays at its own size: WebKit lays a zoomed iframe out wrong (the slide
+   overflows), and scaling with a transform instead blurs the slides. */
+.lecture-viewer:not(.lecture-viewer--zoom) {
+  --lv-zoom: 1;
 }
 
-/* Chromium applies `zoom` to the frame's content as a higher pixel ratio,
-   so the embed fetches sharper slide images. WebKit doesn't shrink the
-   iframe's layout under `zoom` (the slide overflows), so it keeps the
-   transform. Under `zoom` the percentages stay unscaled. */
-.lecture-viewer--zoom .lecture-viewer__embed {
+/* The edges are pushed just outside the stage to crop the embed's grey
+   border, its orange focus ring and a dark line it leaves along the top.
+   Under `zoom` these px offsets scale with it; the percentages don't. */
+.lecture-viewer__embed {
+  position: absolute;
   top: -2px;
   left: -1px;
   width: calc(100% + 2px);
   height: calc(100% + 3px);
-  transform: none;
+  border: 0;
   zoom: var(--lv-zoom);
 }
 
