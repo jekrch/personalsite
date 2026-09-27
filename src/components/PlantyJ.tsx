@@ -68,13 +68,13 @@ const PlantyJ: FC = () => {
         PlantyJ is the project I built right after Comic Snaps for my partner Jenny. Jenny has a long standing interest in native ecology, permaculture, and urban environmental conservation, and over the last five years she's made remarkable progress on our property, building out mutually sustaining food webs and teaching me a lot about Minnesota's interconnected biodiversity.
         </p>
         <p>
-         The app is an agentic garden journal: a way to record what's growing where, watch it change across the seasons, and ask questions about the whole collection in plain English.
+         The app is a garden journal with an agent built in. It records what's growing where and how it changes across the seasons, and you can ask it questions about the whole collection.
         </p>
 
         <ImageCarousel items={imagePaths} className="!min-h-[27em] !max-h-[30em]" />
 
         <p className="mt-4">
-        This is driven from a Telegram group. Jenny snaps a plant with a short caption and it lands on the site as a static gallery entry, with the plant, its zone, and its tags parsed out of the caption. She can ask the bot a question about the collection (which natives are still missing a tag, which zones don't have a photo yet, what caption to use for a new posting) and it answers from a live rollup of every plant, zone, and photo. And if she describes a change in plain English, or just asks a question whose answer implies one, the bot drafts a numbered list of its own commands to make that change and waits for a /confirm before anything is written. That last part is the agentic piece: it proposes, you approve, it runs in the background.
+        This is driven from a Telegram group. Jenny takes a picture of a plant with a short caption and it's deployed on the site as a static gallery entry, with the plant, its zone, and its tags parsed out of the caption. She can ask the bot a question about the collection (which natives are still missing a tag, which zones don't have a photo yet, what caption to use for a new posting) and it answers from a live rollup of every plant, zone, and photo. And if she describes a change in plain English, or just asks a question whose answer implies one, the bot drafts a numbered list of its own commands to make that change and waits for a /confirm before anything is written. That last part is what makes it agentic. The bot proposes the changes, and nothing runs until she approves them.
         </p>
 
         <p>
@@ -86,7 +86,7 @@ const PlantyJ: FC = () => {
         </p>
 
         <p>
-        The wrinkle here is the agent. Anything that needs an LLM (the question answering, the change proposals, the ecological analysis) is never run inside the webhook. The worker writes a job to a KV backed queue and returns immediately, and a one minute cron drains that queue, calls Gemini, and posts the result back to Telegram. Gemini calls routinely take ten to sixty seconds, well past a webhook timeout, so decoupling them through the queue is what makes the agent usable at all.
+        The wrinkle here is the agent. Anything that needs an LLM (the question answering, the change proposals, the ecological analysis) is never run inside the webhook. The worker writes a job to a KV backed queue and returns immediately, and a one minute cron drains that queue, calls Gemini, and posts the result back to Telegram. Gemini calls routinely take ten to sixty seconds, well past a webhook timeout, so without the queue the agent wouldn't work at all.
         </p>
 
         <MermaidDiagram chart={architectureChart} className="my-6 flex justify-center [&_svg]:max-w-full [&_svg]:h-auto" />
@@ -96,17 +96,17 @@ const PlantyJ: FC = () => {
         </p>
 
         <p>
-        Expanding on the agentic component, I added an ecological fit analysis. For every plant or animal paired with the zone it was photographed in, the bot can produce a short write up of how well that specimen fits that niche, grounded against Google Search so the cited sources can't be hallucinated, and tagged with a GOOD, BAD, or MIXED verdict. Those run through Gemini's Batch API to keep the cost down, so it's a submit then poll workflow, and the verdicts surface on the site in the organism info drawer, on the phylogenetic tree, and as a filter on the gallery.
+        I also added an ecological fit analysis. For every plant or animal paired with the zone it was photographed in, the bot can produce a short write up of how well that specimen fits that niche, grounded against Google Search so the cited sources are real, and tagged with a GOOD, BAD, or MIXED verdict. Those run through Gemini's Batch API to keep the cost down, so it's a submit then poll workflow, and the verdicts surface on the site in the organism info drawer, on the phylogenetic tree, and as a filter on the gallery.
         </p>
 
         <TelegramChat className="mb-6 w-full max-w-sm mx-auto md:float-right md:mx-0 md:ml-10 lg:ml-16 xl:ml-20 md:mb-3 md:w-[20rem] lg:w-[21rem]" />
 
         <p>
-        Another agentic piece I'm fond of is photo identification. When we find something we can't name, we send the photo with /identify as the caption and an optional hint about what it might be or where it is. That runs on the same queued cron path as the question answering, so the webhook never blocks on it, and the image goes to Gemini's vision model grounded against the live rollup of every known plant and zone, the property's location and USDA zone, and the current date so seasonality informs what's plausible. The bot replies with up to three ranked candidates, each with a common and scientific name, a confidence, a one line note on what to look for to confirm it, and a ready to ingest caption: if it's clearly a plant already in the journal the caption reuses that plant's short code so the photo just attaches to it, otherwise it drafts a fresh entry. A /pick commits the chosen option exactly like a normal photo upload.
+        Another agentic piece I'm fond of is photo identification. When we find something we can't name, we send the photo with /identify as the caption and an optional hint about what it might be or where it is. That runs on the same queued cron path as the question answering, so the webhook never blocks on it, and the image goes to Gemini's vision model grounded against the live rollup of every known plant and zone, the property's location and USDA zone, and the current date so seasonality informs what's plausible. The bot replies with up to three ranked candidates, each with a common and scientific name, a confidence, a one line note on what to look for to confirm it, and a ready to ingest caption. If it's clearly a plant already in the journal, the caption reuses that plant's short code so the photo just attaches to it. Otherwise it drafts a fresh entry. A /pick commits the chosen option exactly like a normal photo upload.
         </p>
 
         <p>
-        I've included a real example from the Telegram group, scrollable here: an /identify run that lands a new native Heuchera with /pick, followed by an /ask that drafts a batch of ecological relationships and waits for /confirm before writing any of them.
+        I've included a real example from the Telegram group, scrollable here: an /identify run that commits a new native Heuchera with /pick, followed by an /ask that drafts a batch of ecological relationships and waits for /confirm before writing any of them.
         </p>
 
         <p>
@@ -114,11 +114,11 @@ const PlantyJ: FC = () => {
         </p>
 
         <p>
-        After capturing a number of ecological relationships, I added a view that depicts them through a force directed graph, with every plant and animal as a node and typed edges running between them: host plant, pollinator, predator and prey, seed forager, fruit and nut consumer, and so on. The relationships and the relationship types themselves are managed from Telegram, so as Jenny records who eats what and which insect lays its eggs on which plant, the food web she's been building in the yard turns into something you can actually see and pull apart. You can filter the graph down to a single relationship type, search for an organism, pan and zoom around it, and click any node to open the same detail panel the phylogenetic tree uses. The selected node is encoded in the URL as well, so a particular slice of the web is just a link you can send to someone.
+        After capturing a number of ecological relationships, I added a view that depicts them through a force directed graph, with every plant and animal as a node and typed edges running between them: host plant, pollinator, predator and prey, seed forager, fruit and nut consumer, and so on. The relationships and the relationship types themselves are managed from Telegram, so as Jenny records who eats what and which insect lays its eggs on which plant, the graph fills in with the food web she's been building in the yard. You can filter the graph down to a single relationship type, search for an organism, pan and zoom around it, and click any node to open the same detail panel the phylogenetic tree uses. The selected node is also stored in the URL, so you can link someone straight to a specific part of the web.
         </p>
 
         <p>
-        It's been a genuinely useful app for us. The Telegram first flow means Jenny can log a plant from the garden on her phone without thinking about any of the machinery behind it, and watching the food web she's built turn into a queryable, photographed record has been its own reward. If you have questions or ideas for new features, feel free to reach out.
+        It's turned out to be really useful for us. The Telegram first flow means Jenny can log a plant from the garden on her phone without thinking about anything behind it, and it's been great to have everything in the yard documented and searchable in one place. If you have questions or ideas for new features, feel free to reach out.
         </p>
 
         <div className="clear-both" />
