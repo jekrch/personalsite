@@ -73,19 +73,23 @@ body {
    the full height. On phones it runs edge to edge.
    The embed is drawn scaled up by --lv-zoom so its toolbar buttons are
    bigger targets. Its layout breaks below ~300px wide, so the zoom steps
-   down on narrow phones to keep the unscaled width above that. */
+   down on narrow phones to keep the unscaled width above that.
+   A thin teal strip (--lv-foot) under the toolbar keeps the modal's edge
+   away from its buttons, so a slightly low tap doesn't look like it will
+   land on the backdrop. */
 .lecture-viewer {
   --lv-pad: 0px;
   --lv-bar: 3.5rem;
   --lv-rail: 0px;
   --lv-zoom: 1.25;
   --lv-toolbar: calc(24px * var(--lv-zoom));
+  --lv-foot: 0.75rem;
   --lv-border: 0px;
   --lv-vh: 100vh;
   --lv-w: min(
     calc(100vw - 2 * var(--lv-pad) - var(--lv-rail) - var(--lv-border)),
     60rem,
-    calc((var(--lv-vh) - 2 * var(--lv-pad) - var(--lv-bar) - var(--lv-toolbar) - var(--lv-border)) * 4 / 3)
+    calc((var(--lv-vh) - 2 * var(--lv-pad) - var(--lv-bar) - var(--lv-toolbar) - var(--lv-foot) - var(--lv-border)) * 4 / 3)
   );
 }
 
@@ -122,6 +126,10 @@ body {
   }
 }
 
+.lecture-viewer__frame {
+  padding-bottom: var(--lv-foot);
+}
+
 .lecture-viewer__bar {
   height: var(--lv-bar);
 }
@@ -132,10 +140,10 @@ body {
   overflow: hidden;
 }
 
-/* Scaled with a transform, not `zoom`: WebKit doesn't shrink an iframe's
-   layout under `zoom`, so the slide would overflow. The edges are pushed
-   just outside the stage to crop the embed's grey border, its orange focus
-   ring and a dark line it leaves along the top. */
+/* The edges are pushed just outside the stage to crop the embed's grey
+   border, its orange focus ring and a dark line it leaves along the top.
+   Scaled with a transform by default, which upscales the slide images the
+   embed already drew, so they soften. */
 .lecture-viewer__embed {
   position: absolute;
   top: calc(-2px * var(--lv-zoom));
@@ -147,32 +155,17 @@ body {
   transform-origin: 0 0;
 }
 
-/* Recolors the embed's grey toolbar to the site teal without blocking its
-   buttons: first drain its color (the orange PowerPoint logo included),
-   then screen-blend a teal that lifts its #444 to #5b8592. White glyphs
-   and the white margin above stay white. */
-.lecture-viewer__tint {
-  position: absolute;
-  inset: auto 0 0;
-  height: calc(var(--lv-toolbar) + 4px);
-  pointer-events: none;
-}
-
-.lecture-viewer__tint::before,
-.lecture-viewer__tint::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-}
-
-.lecture-viewer__tint::before {
-  background: #808080;
-  mix-blend-mode: saturation;
-}
-
-.lecture-viewer__tint::after {
-  background: #1f596a;
-  mix-blend-mode: screen;
+/* Chromium applies `zoom` to the frame's content as a higher pixel ratio,
+   so the embed fetches sharper slide images. WebKit doesn't shrink the
+   iframe's layout under `zoom` (the slide overflows), so it keeps the
+   transform. Under `zoom` the percentages stay unscaled. */
+.lecture-viewer--zoom .lecture-viewer__embed {
+  top: -2px;
+  left: -1px;
+  width: calc(100% + 2px);
+  height: calc(100% + 3px);
+  transform: none;
+  zoom: var(--lv-zoom);
 }
 
 .lecture-viewer__hint--touch {
@@ -195,6 +188,7 @@ body {
     --lv-bar: 0px;
     --lv-rail: 3rem;
     --lv-zoom: 1.25;
+    --lv-foot: 0.375rem;
   }
 
   .lecture-viewer__frame {

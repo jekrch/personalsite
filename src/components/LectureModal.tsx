@@ -18,6 +18,8 @@ interface LectureModalProps {
 const PAINT_DELAY_MS = 1200;
 // Give up on the loader if the load event never arrives.
 const LOAD_TIMEOUT_MS = 12000;
+// Chromium-only API; see .lecture-viewer--zoom in App.css
+const ZOOMS_IFRAMES = 'userAgentData' in navigator;
 
 const ICON_BTN =
   'flex size-[2.5rem] flex-none items-center justify-center rounded-[2px] bg-transparent !text-white/80 no-underline transition-colors duration-150 hover:bg-white/15 hover:!text-white hover:no-underline focus-visible:bg-white/15 focus-visible:outline-none';
@@ -160,7 +162,7 @@ const LectureModal: FC<LectureModalProps> = ({ isOpen, toggle, lectureName, lect
   // Portaled to <body> so no ancestor transform can break `position: fixed`.
   return createPortal(
     <div
-      className="lecture-viewer fixed inset-0 z-[1050] flex items-center justify-center touch-none overscroll-contain backdrop-blur-[3px]"
+      className={`lecture-viewer ${ZOOMS_IFRAMES ? 'lecture-viewer--zoom' : ''} fixed inset-0 z-[1050] flex items-center justify-center touch-none overscroll-contain backdrop-blur-[3px]`}
       style={{
         backgroundColor: 'rgba(38, 50, 54, 0.72)',
         opacity: isAnimating ? 1 : 0,
@@ -277,7 +279,6 @@ const LectureModal: FC<LectureModalProps> = ({ isOpen, toggle, lectureName, lect
               allowFullScreen
               onLoad={handleIframeLoad}
             />
-            <div className="lecture-viewer__tint" aria-hidden />
           </div>
         </div>
 
