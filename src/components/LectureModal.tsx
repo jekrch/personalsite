@@ -1,12 +1,15 @@
 import { FC, useState, useEffect, useCallback, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { resampleSafariChrome } from '../utils/safariChrome';
+import { textbookPageUrl } from './lectures';
 
 interface LectureModalProps {
   isOpen: boolean;
   toggle: () => void;
   lectureName: string;
   lectureNumber?: number;
+  // Assigned pages in the course textbook (Klenk), e.g. "74–83, 95–100"
+  readingPages?: string;
   url: string;
 }
 
@@ -19,7 +22,16 @@ const LOAD_TIMEOUT_MS = 12000;
 const ICON_BTN =
   'flex size-[2.5rem] flex-none items-center justify-center rounded-[2px] bg-transparent !text-white/80 no-underline transition-colors duration-150 hover:bg-white/15 hover:!text-white hover:no-underline focus-visible:bg-white/15 focus-visible:outline-none';
 
-const LectureModal: FC<LectureModalProps> = ({ isOpen, toggle, lectureName, lectureNumber, url }) => {
+const READING_LINE = 'flex min-w-0 items-center gap-[0.375rem]';
+
+// Marks a textbook reading, here and in the lecture list
+export const BookIcon: FC = () => (
+  <svg className="size-[0.8rem] flex-none" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24" aria-hidden>
+    <path d="M12 6.5C10.5 5.3 8.2 4.5 4 4.5v13c4.2 0 6.5.8 8 2 1.5-1.2 3.8-2 8-2v-13c-4.2 0-6.5.8-8 2zM12 6.5v13" />
+  </svg>
+);
+
+const LectureModal: FC<LectureModalProps> = ({ isOpen, toggle, lectureName, lectureNumber, readingPages, url }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isVisible, setIsVisible] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
@@ -134,6 +146,17 @@ const LectureModal: FC<LectureModalProps> = ({ isOpen, toggle, lectureName, lect
 
   if (!isVisible) return null;
 
+  const readingUrl = readingPages ? textbookPageUrl(readingPages) : undefined;
+  const reading = (
+    <>
+      <BookIcon />
+      <span className="truncate">
+        <span className="sr-only">Reading: </span>
+        Klenk <span aria-hidden className="text-white/45">·</span> pp. <span className="tabular-nums">{readingPages}</span>
+      </span>
+    </>
+  );
+
   // Portaled to <body> so no ancestor transform can break `position: fixed`.
   return createPortal(
     <div
@@ -164,12 +187,36 @@ const LectureModal: FC<LectureModalProps> = ({ isOpen, toggle, lectureName, lect
                 {lectureNumber}
               </span>
             )}
-            <h2
-              id="lecture-viewer-title"
-              className="lecture-viewer__title m-0 min-w-0 flex-1 text-[0.95rem] font-semibold leading-tight line-clamp-2"
-            >
-              {lectureName}
-            </h2>
+            <div className="lecture-viewer__title min-w-0 flex-1">
+              <h2
+                id="lecture-viewer-title"
+                className="m-0 text-[0.95rem] font-semibold leading-[1.15] line-clamp-2"
+              >
+                {lectureName}
+              </h2>
+              {readingPages && (
+                <p className="mb-0 mt-[0.1875rem] flex min-w-0 text-[0.68rem] font-light uppercase leading-[1rem] tracking-wider">
+                  {readingUrl ? (
+                    <a
+                      href={readingUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`${READING_LINE} !text-white/75 no-underline decoration-white/40 underline-offset-2 transition-colors duration-150 hover:!text-white hover:underline focus-visible:!text-white focus-visible:underline focus-visible:outline-none`}
+                      title="Open Understanding Symbolic Logic on the Internet Archive"
+                    >
+                      {reading}
+                    </a>
+                  ) : (
+                    <span
+                      className={`${READING_LINE} text-white/75`}
+                      title={`Reading: Klenk, Understanding Symbolic Logic, pp. ${readingPages}`}
+                    >
+                      {reading}
+                    </span>
+                  )}
+                </p>
+              )}
+            </div>
             <div className="lecture-viewer__actions flex flex-none items-center">
               <a
                 href={url}
@@ -219,7 +266,7 @@ const LectureModal: FC<LectureModalProps> = ({ isOpen, toggle, lectureName, lect
 
             <iframe
               key={url}
-              className="absolute inset-0 block h-full w-full border-0"
+              className="lecture-viewer__embed block"
               style={{
                 opacity: isLoading ? 0 : 1,
                 transition: 'opacity 500ms ease-in-out',
@@ -230,12 +277,18 @@ const LectureModal: FC<LectureModalProps> = ({ isOpen, toggle, lectureName, lect
               allowFullScreen
               onLoad={handleIframeLoad}
             />
+            <div className="lecture-viewer__tint" aria-hidden />
           </div>
         </div>
 
         {/* Invisible buffer under the slide toolbar so a tap that lands just
             short of its small controls doesn't hit the backdrop and close */}
         <div className="absolute inset-x-0 top-full h-[3rem]" aria-hidden />
+
+        <p className="lecture-viewer__hint pointer-events-none absolute inset-x-0 top-full m-0 px-[1rem] pt-[0.375rem] text-center text-[0.7rem] font-light uppercase leading-[1rem] tracking-wider text-white/80">
+          <span className="lecture-viewer__hint--mouse">Click the slide for the next step · After a click, ← goes back</span>
+          <span className="lecture-viewer__hint--touch">Tap slide for the next step · Swipe right to go back</span>
+        </p>
       </div>
     </div>,
     document.body

@@ -248,6 +248,9 @@ const SoundCloudPlayer = () => {
     const iframeRef = useRef<HTMLIFrameElement>(null)
     const widgetRef = useRef<SCWidget | null>(null)
     const playTimer = useRef<number>()
+    // Whether anyone has asked for playback yet. Until then, play events are
+    // just the widget loading the first track (see the ready handler).
+    const playRequested = useRef(false)
     // Last reported position and when we heard it, so we can animate between
     // the widget's (fairly coarse) progress events.
     const clock = useRef({ pos: 0, at: 0 })
@@ -304,8 +307,16 @@ const SoundCloudPlayer = () => {
         widget.bind(EVENTS.READY, () => {
             setMode("api")
             fetchSounds()
+            // The widget only fetches a track's stream when it's first asked
+            // to play, and by the time that comes back mobile browsers no
+            // longer count the play as coming from the tap, so it starts and
+            // immediately stops. Seeking is the one API call that loads the
+            // stream without playing, so the first tap can play straight away.
+            // It does announce a play, though, which the play handler ignores.
+            widget.seekTo(0)
         })
         widget.bind(EVENTS.PLAY, (e) => {
+            if (!playRequested.current) return
             window.clearTimeout(playTimer.current)
             setBlocked(false)
             setPlaying(true)
@@ -373,6 +384,7 @@ const SoundCloudPlayer = () => {
     const requestPlay = useCallback((action: (widget: SCWidget) => void) => {
         const widget = widgetRef.current
         if (!widget) return
+        playRequested.current = true
         window.clearTimeout(playTimer.current)
         playTimer.current = window.setTimeout(() => setBlocked(true), PLAY_TIMEOUT_MS)
         action(widget)

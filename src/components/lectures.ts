@@ -2,6 +2,7 @@ export const lectures = [
   {
     _id: "6045094e5e2aa2036a9cb380",
     number: 1,
+    pages: "4–17",
     course: "211",
     name: "Arguments and Validity",
     url:
@@ -10,6 +11,7 @@ export const lectures = [
   {
     _id: "6045094e5e2aa2036a9cb381",
     number: 2,
+    pages: "21–31",
     course: "211",
     name: "Formalization in Sentential Logic",
     url:
@@ -18,6 +20,7 @@ export const lectures = [
   {
     _id: "6045094e5e2aa2036a9cb382",
     number: 3,
+    pages: "33–42",
     course: "211",
     name: "Sentential Operators and Truth Tables",
     url:
@@ -26,6 +29,7 @@ export const lectures = [
   {
     _id: "6045094e5e2aa2036a9cb383",
     number: 4,
+    pages: "42–48",
     course: "211",
     name: "Computing Truth Values",
     url:
@@ -34,6 +38,7 @@ export const lectures = [
   {
     _id: "604509de5e2aa2036a9d5cf6",
     number: 5,
+    pages: "51–65",
     course: "211",
     name: "Symbolizing English Sentences",
     url:
@@ -42,6 +47,7 @@ export const lectures = [
   {
     _id: "604509de5e2aa2036a9d5cf7",
     number: 6,
+    pages: "65–69",
     course: "211",
     name: "Symbolizing Multiply Complex Sentences",
     url:
@@ -50,6 +56,7 @@ export const lectures = [
   {
     _id: "604509de5e2aa2036a9d5cf8",
     number: 7,
+    pages: "74–83, 95–100",
     course: "211",
     name: "Truth Tables for Testing Validity",
     url:
@@ -58,6 +65,7 @@ export const lectures = [
   {
     _id: "604509de5e2aa2036a9d5cf9",
     number: 8,
+    pages: "100–107",
     course: "211",
     name: "Equivalence, Implication, and Consistency",
     url:
@@ -66,6 +74,7 @@ export const lectures = [
   {
     _id: "6045094e5e2aa2036a9cb384",
     number: 9,
+    pages: "83–91",
     course: "211",
     name: "Shortcut Validity Tests",
     url:
@@ -74,6 +83,7 @@ export const lectures = [
   {
     _id: "6045094e5e2aa2036a9cb385",
     number: 10,
+    pages: "113–122",
     course: "211",
     name: "Introduction to Proofs",
     url:
@@ -82,6 +92,7 @@ export const lectures = [
   {
     _id: "6045094e5e2aa2036a9cb386",
     number: 11,
+    pages: "122–127",
     course: "211",
     name: "Rules of Inference",
     url:
@@ -90,6 +101,7 @@ export const lectures = [
   {
     _id: "6045094e5e2aa2036a9cb387",
     number: 12,
+    pages: "128–138",
     course: "211",
     name: "Proofs",
     url:
@@ -98,6 +110,7 @@ export const lectures = [
   {
     _id: "6045094e5e2aa2036a9cb388",
     number: 13,
+    pages: "147–152",
     course: "211",
     name: "Rules of Replacement",
     url:
@@ -106,6 +119,7 @@ export const lectures = [
   {
     _id: "6045094e5e2aa2036a9cb389",
     number: 14,
+    pages: "152–158",
     course: "211",
     name: "More Rules of Replacement",
     url:
@@ -114,6 +128,7 @@ export const lectures = [
   {
     _id: "6043fcbfbd2f8c349c38048e",
     number: 15,
+    pages: "158–167",
     course: "211",
     name: "Replacement Rules and Proof Strategies",
     url:
@@ -122,6 +137,7 @@ export const lectures = [
   {
     _id: "6043fcbfbd2f8c349c38048f",
     number: 16,
+    pages: "175–189",
     course: "211",
     name: "More Strategies and Conditional Proof",
     url:
@@ -130,6 +146,7 @@ export const lectures = [
   {
     _id: "6043fcbfbd2f8c349c380490",
     number: 17,
+    pages: "175–189",
     course: "211",
     name: "Subproofs",
     url:
@@ -146,6 +163,7 @@ export const lectures = [
   {
     _id: "6043fcbfbd2f8c349c380492",
     number: 19,
+    pages: "189–194, 201–209, 212–222",
     course: "211",
     name: "Theorems and Predicate Logic",
     url:
@@ -154,6 +172,7 @@ export const lectures = [
   {
     _id: "6043fcbfbd2f8c349c380493",
     number: 20,
+    pages: "226–229, 238–244",
     course: "211",
     name: "Q.N. and Categorical Sentences",
     url:
@@ -162,6 +181,7 @@ export const lectures = [
   {
     _id: "6043fcbfbd2f8c349c380494",
     number: 21,
+    pages: "249–258",
     course: "211",
     name: "C.Q.N. and Symbolizing Complex Sentences",
     url:
@@ -170,6 +190,7 @@ export const lectures = [
   {
     _id: "6043fcbfbd2f8c349c380495",
     number: 22,
+    pages: "299–304",
     course: "211",
     name: "Symbolizing Arguments, and Invalidity in PL",
     url:
@@ -178,6 +199,7 @@ export const lectures = [
   {
     _id: "6043fcbfbd2f8c349c380496",
     number: 23,
+    pages: "304–311",
     course: "211",
     name: "The Natural Interpretation And Model Universe Methods",
     url:
@@ -186,6 +208,7 @@ export const lectures = [
   {
     _id: "6043fcbfbd2f8c349c380497",
     number: 24,
+    pages: "263–268, 273–277",
     course: "211",
     name: "The Model Universe Method, U.I. and E.G.",
     url:
@@ -194,6 +217,7 @@ export const lectures = [
   {
     _id: "6043fcbfbd2f8c349c380498",
     number: 25,
+    pages: "278–285",
     course: "211",
     name: "Existential Instantiation and Universal Generalization",
     url:
@@ -202,6 +226,7 @@ export const lectures = [
   {
     _id: "6043fcbfbd2f8c349c380499",
     number: 26,
+    pages: "285–294",
     course: "211",
     name: "More Proofs In Predicate Logic",
     url:
@@ -218,6 +243,7 @@ export const lectures = [
   {
     _id: "6043fcbfbd2f8c349c38049b",
     number: 28,
+    pages: "313–326",
     course: "211",
     name: "Relational Predicate Logic",
     url:
@@ -226,6 +252,7 @@ export const lectures = [
   {
     _id: "6043fcbfbd2f8c349c38049c",
     number: 29,
+    pages: "327–335",
     course: "211",
     name: "Symbolizing Complex Sentences",
     url:
@@ -234,6 +261,7 @@ export const lectures = [
   {
     _id: "6043fcbfbd2f8c349c38049d",
     number: 30,
+    pages: "341–349",
     course: "211",
     name: "More Translations and Proofs",
     url:
@@ -242,6 +270,7 @@ export const lectures = [
   {
     _id: "6043fcbfbd2f8c349c38049e",
     number: 31,
+    pages: "349–353",
     course: "211",
     name: "Proofs and Invalidity",
     url:
@@ -250,6 +279,7 @@ export const lectures = [
   {
     _id: "6043fcbfbd2f8c349c38049f",
     number: 32,
+    pages: "341–353",
     course: "211",
     name: "Model Universe Method and Proofs",
     url:
@@ -258,11 +288,25 @@ export const lectures = [
   {
     _id: "6043fcbfbd2f8c349c3804a0",
     number: 33,
+    pages: "355–366",
     course: "211",
     name: "Identity",
     url:
       "https://onedrive.live.com/embed?resid=44623A506125B0D6%211245&authkey=AOSf39tKwU0Rnps&em=2&wdAr=1.3333333333333333"
   }
 ]
+
+// Internet Archive scan of the 5th edition: a 2008 Pearson custom printing
+// that keeps the original page numbers but ends before p. 341, so the
+// relational proofs and identity readings aren't in it.
+export const TEXTBOOK_URL = "https://archive.org/details/understandingsym0000klen";
+const TEXTBOOK_LAST_PAGE = 340;
+
+// Opens the scan at the first page of a reading like "74–83, 95–100".
+// Visitors who haven't borrowed the book get sent to its main page instead.
+export const textbookPageUrl = (pages: string) => {
+  const first = parseInt(pages, 10);
+  return first <= TEXTBOOK_LAST_PAGE ? `${TEXTBOOK_URL}/page/${first}` : undefined;
+};
 
 export default lectures;

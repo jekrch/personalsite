@@ -2,13 +2,14 @@ import { useEffect, useState } from 'react';
 import "../App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Container } from "reactstrap";
-import lectures from "./lectures";
-import LectureModal from "./LectureModal";
+import lectures, { TEXTBOOK_URL } from "./lectures";
+import LectureModal, { BookIcon } from "./LectureModal";
 
 interface Lecture {
   _id: string;
   name: string;
   number: number;
+  pages?: string;
   url: string;
 }
 
@@ -42,13 +43,17 @@ const LogicLectures = () => {
         toggle={toggle}
         lectureName={lecture?.name ?? ''}
         lectureNumber={lecture?.number}
+        readingPages={lecture?.pages}
         url={lecture?.url ?? ''}
       />
 
       <div className="mb-[2rem]">
         <p>
           I created these lecture slides for a logic course that I designed and
-          taught while in graduate school at the University of Wisconsin-Madison. They complement readings taken from: Virginia Klenk's <i>Understanding Symbolic Logic. 5th ed.</i>
+          taught while in graduate school at the University of Wisconsin-Madison. They complement readings taken from: Virginia Klenk's{" "}
+          <a href={TEXTBOOK_URL} target="_blank" rel="noopener noreferrer">
+            <i>Understanding Symbolic Logic. 5th ed.</i>
+          </a>
         </p>
 
         <a
@@ -90,7 +95,16 @@ const LogicLectures = () => {
                 </span>
               </span>
 
-              <span className="min-w-0 flex-1 leading-snug">{item.name}</span>
+              <span className="min-w-0 flex-1">
+                <span className="block leading-snug">{item.name}</span>
+                {item.pages && (
+                  <span className="mt-[0.125rem] flex items-center gap-[0.375rem] text-[0.68rem] font-light uppercase leading-[1rem] tracking-wider text-[#5b8592]">
+                    <BookIcon />
+                    <span className="sr-only">Reading: </span>
+                    <span className="truncate">pp. <span className="tabular-nums">{item.pages}</span></span>
+                  </span>
+                )}
+              </span>
 
               <span className="flex flex-none items-center gap-[0.25rem] text-[0.7rem] font-semibold uppercase tracking-wider text-[#5b8592]">
                 <span className="hidden xs:inline">view</span>
