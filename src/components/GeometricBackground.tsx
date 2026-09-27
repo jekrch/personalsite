@@ -106,10 +106,16 @@ const GeometricBackground: React.FC = () => {
     };
   }, []);
 
+  // iOS Safari 26 tints its status bar and toolbar from the fixed element at
+  // each screen edge, and this layer covers both. With no background-color to
+  // read, Safari snapshots whatever is painted there when it becomes the edge
+  // element again (e.g. an overlay's dark canvas or pinned body as it closes)
+  // and keeps that opaque band until reload. Safari skips a hidden fixed
+  // container, so the wrapper is hidden and only the drawing is visible.
   return (
-    <div className="fixed inset-0 -z-0 overflow-hidden pointer-events-none">
+    <div className="fixed inset-0 -z-0 overflow-hidden pointer-events-none invisible">
       <svg
-        className="absolute w-full h-full"
+        className="absolute w-full h-full visible"
         xmlns="http://www.w3.org/2000/svg"
         preserveAspectRatio="none"
         viewBox="0 0 1440 900"

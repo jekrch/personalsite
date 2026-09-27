@@ -641,11 +641,24 @@ body {
   backface-visibility: hidden;
 }
 
-/* Mid-slide, the outgoing and incoming slides are translated by fractional
-   device pixels on phones, leaving a hairline seam between them. Paint the
-   track the same teal as the slides so the seam can't flash the page bg. */
-.image-carousel .carousel-inner {
-  background-color: var(--jk-teal);
+/* Mid-slide, the outgoing and incoming slides are composited separately and
+   snapped to device pixels independently on phones, so a hairline of the
+   teal behind them flickers between the dark screenshots. Keep the two
+   slides overlapping by 1px for the whole slide (both ends shift together),
+   with the incoming one on top to hide the overlap. */
+.image-carousel .carousel-item-next,
+.image-carousel .carousel-item-prev {
+  z-index: 1;
+}
+
+.image-carousel .carousel-item-next:not(.carousel-item-start),
+.image-carousel .active.carousel-item-end {
+  transform: translateX(calc(100% - 1px));
+}
+
+.image-carousel .carousel-item-prev:not(.carousel-item-end),
+.image-carousel .active.carousel-item-start {
+  transform: translateX(calc(-100% + 1px));
 }
 
 .carousel-inner {

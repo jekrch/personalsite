@@ -232,6 +232,10 @@ const LectureModal: FC<LectureModalProps> = ({ isOpen, toggle, lectureName, lect
             />
           </div>
         </div>
+
+        {/* Invisible buffer under the slide toolbar so a tap that lands just
+            short of its small controls doesn't hit the backdrop and close */}
+        <div className="absolute inset-x-0 top-full h-[3rem]" aria-hidden />
       </div>
     </div>,
     document.body
