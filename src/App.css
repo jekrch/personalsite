@@ -660,6 +660,17 @@ body {
   transform: translateZ(0);
 }
 
+/* Carousel image viewer (@jekrch/react-viewport-lightbox). Theme color is
+   read from <html>, so it lives on :root; it must be opaque. */
+:root {
+  --rvl-theme-color: #0c0c0e;
+}
+
+.image-carousel-viewer {
+  --rvl-z: 1050;
+  --rvl-overlay-bg: rgba(12, 12, 14, 0.94);
+}
+
 .loader-wrapper {
   position: absolute;
   top: 0;

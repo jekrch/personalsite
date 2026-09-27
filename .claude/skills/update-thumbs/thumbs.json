@@ -1,0 +1,780 @@
+{
+  "defaults": {
+    "outDir": "public/images",
+    "viewport": { "width": 1280, "height": 800 },
+    "scale": 2,
+    "colorScheme": "dark",
+    "wait": 1500
+  },
+  "projects": {
+    "criterion-club": {
+      "name": "Criterion Club",
+      "aliases": ["film club", "filmclub", "criterion"],
+      "site": "https://criterionclub.org/",
+      "shots": [
+        {
+          "file": "filmclub1.png",
+          "note": "Home: nav, selection-committee hero, first row of Recent Club Picks",
+          "path": "/#/",
+          "waitFor": "text=Recent Club Picks",
+          "clip": { "top": 0, "aspect": 1.45 }
+        },
+        {
+          "file": "filmclub2.png",
+          "note": "Almanac: founded header, watch-time/films-logged cards, country-of-origin chart",
+          "path": "/#/almanac",
+          "waitFor": "text=Films by Country of Origin",
+          "clip": {
+            "top": "text=The Almanac",
+            "bottom": "div[class*='group/card']:has-text('Films by Country of Origin')",
+            "pad": 28
+          }
+        },
+        {
+          "file": "filmclub3.png",
+          "note": "Jacob's profile: Member Stats + Most Divergent Scores, top of In Their Own Words",
+          "path": "/#/profile/Jacob",
+          "waitFor": "text=Member Stats",
+          "clip": {
+            "top": "div[class*='group/card']:has-text('Member Stats')",
+            "aspect": 1.5,
+            "pad": 24
+          }
+        },
+        {
+          "file": "filmclub4.png",
+          "note": "Film detail page (Ali: Fear Eats the Soul): poster, metadata, crew",
+          "path": "/#/films/tt0071141",
+          "waitFor": "h1:has-text('Fear Eats the Soul')",
+          "clip": { "top": 0, "aspect": 1.3 }
+        }
+      ]
+    },
+    "juxtaglobe": {
+      "name": "JuxtaGlobe",
+      "aliases": ["juxta globe", "globe"],
+      "site": "https://www.juxtaglobe.com/",
+      "wait": 5000,
+      "shots": [
+        {
+          "file": "juxtaglobe1.png",
+          "note": "Antipodal mode centered on Minneapolis: antipodal + primary globes and the side panel",
+          "path": "/antipodal?lat=44.98&lng=-93.26&alt=2.5",
+          "waitFor": "h1:has-text('JuxtaGlobe')",
+          "clip": { "top": 0, "aspect": 1.6 }
+        },
+        {
+          "file": "juxtaglobe2.png",
+          "note": "Dual-point mode zoomed in with the street map overlay: England (secondary) beside Minnesota (primary)",
+          "path": "/dual-point?lat=45.083&lng=-93.767&alt=0.3&lat2=52.296&lng2=-2.308&alt2=0.3&map=t",
+          "waitFor": "h1:has-text('JuxtaGlobe')",
+          "wait": 9000,
+          "clip": { "top": 0, "aspect": 1.6 }
+        },
+        {
+          "file": "juxtaglobe3.png",
+          "note": "Options & Info modal with Middle Jurassic selected as the secondary globe",
+          "path": "/middle-jurassic?lat=44.98&lng=-93.26&alt=2.5",
+          "waitFor": "h1:has-text('JuxtaGlobe')",
+          "actions": [ { "click": "button:has-text('Display Options')", "wait": 1500 } ],
+          "clip": { "top": 0, "aspect": 1.6 }
+        },
+        {
+          "file": "juxtaglobe4.png",
+          "note": "Early Cretaceous mode over West Africa: prehistoric globe beside the modern one",
+          "path": "/early-cretaceous?lat=16.575&lng=-4.966&alt=2.5",
+          "waitFor": "h1:has-text('JuxtaGlobe')",
+          "clip": { "top": 0, "aspect": 1.6 }
+        }
+      ]
+    },
+    "chordbuildr": {
+      "name": "Chord Buildr",
+      "aliases": ["chord buildr", "chordbuilder"],
+      "site": "https://chordbuildr.com/",
+      "viewport": { "width": 1200, "height": 780 },
+      "shots": [
+        {
+          "file": "chordbuildr3.png",
+          "note": "Desktop, guitar format: Cmaj7 | A13 | Fmaj13 | G11 | E7 with chord selectors and fretboard diagrams",
+          "path": "/?s=el:80:g:3.3.-4&p=(1Cmaj7*)(1A13)(1Fmaj13)(1G11)(1E7)",
+          "waitFor": "a:has-text('Fmaj13')",
+          "fullPage": false,
+          "clip": { "top": 0, "aspect": 1.54 }
+        },
+        {
+          "file": "chordbuildr1.png",
+          "note": "Desktop, piano format: same progression with highlighted piano keyboards",
+          "path": "/?s=el:80:p:3.3.-4&p=(1Cmaj7*)(1A13)(1Fmaj13)(1G11)(1E7)",
+          "waitFor": "a:has-text('Fmaj13')",
+          "fullPage": false,
+          "clip": { "top": 0, "aspect": 1.54 }
+        },
+        {
+          "file": "chordbuildr2.png",
+          "note": "Desktop: settings modal (electric guitar synth, EQ knobs, ukulele format) over the progression",
+          "path": "/?s=el:80:u:3.3.-4&p=(1Cmaj7*)(1A13)(1Fmaj13)(1G11)(1E7)",
+          "waitFor": "a:has-text('Fmaj13')",
+          "fullPage": false,
+          "actions": [ { "click": "button:has(svg[data-icon=cog])", "wait": 1500 } ],
+          "clip": { "top": 0, "aspect": 1.54 }
+        },
+        {
+          "file": "chordbuildr4.png",
+          "note": "Mobile portrait (kept portrait like the original), piano format",
+          "path": "/?s=el:80:p:3.3.-4&p=(1Cmaj7*)(1A13)(1Fmaj13)(1G11)(1E7)",
+          "waitFor": "a:has-text('Fmaj13')",
+          "viewport": { "width": 375, "height": 667 },
+          "fullPage": false,
+          "clip": { "top": 0, "height": 667 }
+        },
+        {
+          "file": "chordbuildr5.png",
+          "note": "Mobile portrait (kept portrait like the original), ukulele format",
+          "path": "/?s=el:80:u:3.3.-4&p=(1Cmaj7*)(1A13)(1Fmaj13)(1G11)(1E7)",
+          "waitFor": "a:has-text('Fmaj13')",
+          "viewport": { "width": 375, "height": 667 },
+          "fullPage": false,
+          "clip": { "top": 0, "height": 667 }
+        }
+      ]
+    },
+    "modal-chordbuildr": {
+      "name": "Modal Chord Buildr",
+      "aliases": [
+        "modal",
+        "modal chord buildr",
+        "chord analyzr"
+      ],
+      "site": "https://modal.chordbuildr.com/",
+      "viewport": {
+        "width": 1280,
+        "height": 940
+      },
+      "fullPage": false,
+      "localStorage": {
+        "mcb-song-library": {
+          "format": "mcb-song-library",
+          "version": 1,
+          "savedAt": "2026-07-12T12:00:00.000Z",
+          "songs": [
+            {
+              "id": "seed-0",
+              "title": "Red River Valley",
+              "source": "[Gmaj7]From this valley they [G6]say you are [D7]going,\nWe will [Am7]miss your bright [D7]eyes and sweet [Gmaj7]smile,\nFor they [G7]say you are taking the [Cmaj7]sunshine\nThat has [G]brightened our [Em7]pathway a [Am7]while. [D7]\n\n[Gmaj7]Come and sit by my [G6]side if you [D7]love me,\nDo not [Am7]hasten to [D7]bid me a[Gmaj7]dieu,\nBut re[G7]member the Red River [Cmaj7]Valley,\nAnd the [G]one who has [Em7]loved you [Am7]so [D7]true. [G6]",
+              "createdAt": "2026-07-12T12:00:00.000Z",
+              "updatedAt": "2026-07-12T12:00:00.000Z"
+            },
+            {
+              "id": "seed-1",
+              "title": "Shenandoah",
+              "source": "Oh [D]Shenan[G]doah, [D]I long to [Bm]see you,\nA[G]way, you [Em7]rolling [D]river,\nOh [Bm]Shenan[A]doah, I [F#m]long to [Bm]see you,\nA[G]way, I'm [D]bound a[A7]way\n'Cross the [Bm]wide [G]Mis[A7]sou[D]ri.",
+              "createdAt": "2026-07-12T12:00:00.000Z",
+              "updatedAt": "2026-07-12T12:00:00.000Z"
+            },
+            {
+              "id": "seed-2",
+              "title": "Down in the Valley",
+              "source": "[C]Down in the valley, the valley so [G7]low,\nHang your head over, hear the wind [C]blow.",
+              "createdAt": "2026-07-12T12:00:00.000Z",
+              "updatedAt": "2026-07-12T12:00:00.000Z"
+            },
+            {
+              "id": "seed-3",
+              "title": "Home on the Range",
+              "source": "Oh, [G]give me a [G7]home where the [C]buffalo [Am]roam,\nWhere the [G]deer and the [A7]antelope [D7]play.",
+              "createdAt": "2026-07-12T12:00:00.000Z",
+              "updatedAt": "2026-07-12T12:00:00.000Z"
+            },
+            {
+              "id": "seed-4",
+              "title": "Oh! Susanna",
+              "source": "I [C]come from Alabama with my [G7]banjo on my [C]knee,\nI'm going to Louisiana, my true [G7]love for to [C]see.",
+              "createdAt": "2026-07-12T12:00:00.000Z",
+              "updatedAt": "2026-07-12T12:00:00.000Z"
+            }
+          ]
+        }
+      },
+      "shots": [
+        {
+          "file": "modal1.png",
+          "note": "Top of the builder: BOTH view with Amaj9 (5 notes) selected and the sequencer playing it on an 8-step up/down pattern set in the URL (8 arpeggio notes on the staff, keys lit), key/mode/voice controls, 7-chord sequence bar (A Lydian progression from the ?s= state URL)",
+          "path": "/?s=v9_d_3_1.2.3.4.5.4.3.2_1o-1-0-0_x_5.Gn9-1-4-8-bkd3%2C2.Gn4-8-b-3-6kd3%2C4s.an8-b-3-6kd3%2C0s.bn1-4-8-b-3kd3%2C3s.20n6-9-b-1-4kd3%2C6.Inb-4-6kd3%2C5.1mn9-1-4-8-3kd3",
+          "waitFor": "text=Amaj7#11",
+          "actions": [
+            {
+              "click": "button:has-text('BOTH')",
+              "wait": 1000
+            },
+            {
+              "click": "button:has-text('Amaj9')",
+              "wait": 500
+            },
+            {
+              "click": "button >> text=\"Play\"",
+              "wait": 1500
+            }
+          ],
+          "clip": {
+            "top": 0,
+            "aspect": 1.36
+          }
+        },
+        {
+          "file": "modal2.png",
+          "note": "Chord Explorer scrolled to the top, two chord cards expanded to show their notes",
+          "path": "/?s=v9_d_3_1.2.3.4_1o-1-0-0_x_5.Gn9-1-4-8-bkd3%2C2.Gn4-8-b-3-6kd3%2C4s.an8-b-3-6kd3%2C0s.bn1-4-8-b-3kd3%2C3s.20n6-9-b-1-4kd3%2C6.Inb-4-6kd3%2C5.1mn9-1-4-8-3kd3",
+          "waitFor": "text=Amaj7#11",
+          "actions": [
+            {
+              "click": "button:has-text('BOTH')",
+              "wait": 1000
+            },
+            {
+              "click": "button[title='Show notes'] >> nth=0",
+              "wait": 400
+            },
+            {
+              "click": "button[title='Show notes'] >> nth=1",
+              "wait": 400
+            },
+            {
+              "eval": "(() => { const el = [...document.querySelectorAll('h2,h3')].find((e) => e.textContent.trim().toUpperCase() === 'CHORD EXPLORER'); const sc = el.closest('.overflow-y-auto'); sc.scrollTop += el.getBoundingClientRect().top - 64; })()",
+              "wait": 1000
+            }
+          ],
+          "clip": {
+            "top": 0,
+            "aspect": 1.36
+          }
+        },
+        {
+          "file": "modal3.png",
+          "note": "Piano Settings panel opened from Controls → SETTINGS (basic / effects / extended / EQ sliders)",
+          "path": "/?s=v9_d_3_1.2.3.4_1o-1-0-0_x_5.Gn9-1-4-8-bkd3%2C2.Gn4-8-b-3-6kd3%2C4s.an8-b-3-6kd3%2C0s.bn1-4-8-b-3kd3%2C3s.20n6-9-b-1-4kd3%2C6.Inb-4-6kd3%2C5.1mn9-1-4-8-3kd3",
+          "waitFor": "text=Amaj7#11",
+          "actions": [
+            {
+              "click": "button:has-text('BOTH')",
+              "wait": 1000
+            },
+            {
+              "click": "button:has-text('Settings')",
+              "wait": 1000
+            },
+            {
+              "eval": "(() => { const el = [...document.querySelectorAll('h2,h3')].find((e) => e.textContent.trim().toUpperCase() === 'PIANO SETTINGS'); const sc = el.closest('.overflow-y-auto'); sc.scrollTop += el.getBoundingClientRect().top - 64; })()",
+              "wait": 1000
+            }
+          ],
+          "clip": {
+            "top": 0,
+            "aspect": 1.36
+          }
+        },
+        {
+          "file": "modal4.png",
+          "note": "Sequencer panel expanded (SHOW): step pattern, timing, pattern presets, custom pattern",
+          "path": "/?s=v9_d_3_1.2.3.4_1o-1-0-0_x_5.Gn9-1-4-8-bkd3%2C2.Gn4-8-b-3-6kd3%2C4s.an8-b-3-6kd3%2C0s.bn1-4-8-b-3kd3%2C3s.20n6-9-b-1-4kd3%2C6.Inb-4-6kd3%2C5.1mn9-1-4-8-3kd3",
+          "waitFor": "text=Amaj7#11",
+          "actions": [
+            {
+              "click": "button:has-text('BOTH')",
+              "wait": 1000
+            },
+            {
+              "click": "button:has-text('Show')",
+              "wait": 1000
+            },
+            {
+              "eval": "(() => { const el = [...document.querySelectorAll('h2,h3')].find((e) => e.textContent.trim().toUpperCase() === 'SEQUENCER'); const sc = el.closest('.overflow-y-auto'); sc.scrollTop += el.getBoundingClientRect().top - 64; })()",
+              "wait": 1000
+            }
+          ],
+          "clip": {
+            "top": 0,
+            "aspect": 1.36
+          }
+        },
+        {
+          "file": "modal5.png",
+          "note": "Song Sheets, Edit mode with chords shown above the lyrics (seeded public-domain songs via localStorage)",
+          "path": "/#/songs",
+          "waitFor": "button:has-text('Use chords')",
+          "actions": [
+            {
+              "click": "button[title^='Chords on their own line']",
+              "wait": 800
+            }
+          ],
+          "clip": {
+            "top": 0,
+            "aspect": 1.36
+          }
+        },
+        {
+          "file": "modal6.png",
+          "note": "Song Sheets, rendered sheet with the Print & image options popover open (landscape)",
+          "path": "/#/songs",
+          "waitFor": "button:has-text('Use chords')",
+          "actions": [
+            {
+              "click": "button[title^='Rendered sheet']",
+              "wait": 800
+            },
+            {
+              "click": "button[title='Print & image options']",
+              "wait": 800
+            },
+            {
+              "click": "button:text-is('Landscape')",
+              "wait": 800
+            }
+          ],
+          "clip": {
+            "top": 0,
+            "aspect": 1.36
+          }
+        }
+      ]
+    },
+    "plantyj": {
+      "name": "PlantyJ",
+      "aliases": [
+        "planty j",
+        "plants"
+      ],
+      "site": "https://plantyj.com/",
+      "viewport": {
+        "width": 1280,
+        "height": 870
+      },
+      "fullPage": false,
+      "localStorage": {
+        "plantyj:welcomed": "1"
+      },
+      "wait": 2500,
+      "shots": [
+        {
+          "file": "plantyj1.png",
+          "note": "Wall view: header, view tabs, filter/sort bar, top of the photo grid",
+          "path": "/",
+          "waitFor": "button >> text=\"Wall\"",
+          "clip": {
+            "top": 0,
+            "aspect": 1.47
+          }
+        },
+        {
+          "file": "plantyj3.png",
+          "note": "Web view: species relationship graph (pollinator / predator-prey / host edges)",
+          "path": "/?view=web",
+          "waitFor": "text=Pollinator / Nectar Source",
+          "wait": 5000,
+          "clip": {
+            "top": 0,
+            "aspect": 1.47
+          }
+        },
+        {
+          "file": "plantyj4.png",
+          "note": "Photo detail (Wild Geranium) with the Details panel scrolled to About this species + classification",
+          "path": "/?plant=G+mac-1779035173",
+          "waitFor": "[role=dialog] button:has-text('Details')",
+          "actions": [
+            {
+              "click": "[role=dialog] button:has-text('Details')",
+              "wait": 1500
+            },
+            {
+              "eval": "(() => { const sc = document.querySelector('.info-modal-scroll'); const el = [...sc.querySelectorAll('*')].find((e) => e.children.length === 0 && e.textContent.trim() === 'About this species'); sc.scrollTop += el.getBoundingClientRect().top - sc.getBoundingClientRect().top - 24; })()",
+              "wait": 1000
+            }
+          ],
+          "clip": {
+            "top": 0,
+            "aspect": 1.47
+          }
+        },
+        {
+          "file": "plantyj5.png",
+          "note": "About modal, Stats tab scrolled to Zones / Eco fit (AI) / Machine ID",
+          "path": "/?info=stats",
+          "waitFor": "text=Biodiversity",
+          "actions": [
+            {
+              "eval": "(() => { const sc = document.querySelector('.info-modal-scroll'); const el = [...sc.querySelectorAll('*')].find((e) => e.children.length === 0 && e.textContent.trim() === 'Most photographed'); sc.scrollTop += el.getBoundingClientRect().top - sc.getBoundingClientRect().top - 70; })()",
+              "wait": 1000
+            }
+          ],
+          "clip": {
+            "top": 0,
+            "aspect": 1.47
+          }
+        },
+        {
+          "file": "plantyj6.png",
+          "note": "Photo detail (Silver Maple) with the Details panel scrolled to BioCLIP prediction, sources, eco-fit analysis",
+          "path": "/?plant=A+sci-1782574200",
+          "waitFor": "[role=dialog] button:has-text('Details')",
+          "actions": [
+            {
+              "click": "[role=dialog] button:has-text('Details')",
+              "wait": 1500
+            },
+            {
+              "eval": "(() => { const sc = document.querySelector('.info-modal-scroll'); const el = [...sc.querySelectorAll('*')].find((e) => e.children.length === 0 && e.textContent.trim() === 'BioCLIP prediction'); sc.scrollTop += el.getBoundingClientRect().top - sc.getBoundingClientRect().top - 24; })()",
+              "wait": 1000
+            }
+          ],
+          "clip": {
+            "top": 0,
+            "aspect": 1.47
+          }
+        },
+        {
+          "file": "plantyj7.png",
+          "note": "About modal, Stats tab top: days of PlantyJ, photo/plant/animal/zone counts, biodiversity chart",
+          "path": "/?info=stats",
+          "waitFor": "text=Biodiversity",
+          "clip": {
+            "top": 0,
+            "aspect": 1.47
+          }
+        },
+        {
+          "file": "plantyj8.png",
+          "note": "Tree view: taxonomy tree from the kingdoms down, with species thumbnails",
+          "path": "/?view=tree",
+          "waitFor": "text=Magnoliopsida",
+          "wait": 4000,
+          "clip": {
+            "top": 0,
+            "aspect": 1.47
+          }
+        }
+      ]
+    },
+    "eurovision-ranker": {
+      "name": "Eurovision Ranker",
+      "aliases": [
+        "eurovision",
+        "esc ranker"
+      ],
+      "site": "https://www.eurovision-ranker.com/",
+      "viewport": {
+        "width": 1180,
+        "height": 740
+      },
+      "fullPage": false,
+      "shots": [
+        {
+          "file": "eurovision-ranker1.png",
+          "note": "Fresh start (intro dismissed): 2026 country list and the empty ranking column with theme picker",
+          "path": "/",
+          "waitFor": "button:has-text('Get Started')",
+          "actions": [
+            {
+              "eval": "[...document.querySelectorAll('button')].find((b) => b.innerText.trim() === 'Get Started')?.click()",
+              "wait": 1500
+            }
+          ],
+          "clip": {
+            "top": 0,
+            "height": 740
+          }
+        },
+        {
+          "file": "eurovision-ranker2.png",
+          "note": "2026 Final ranking (loaded from the ESC results) with flags, artists, songs, totals",
+          "path": "/?r=.hv8cwnl1gro6a4ik.b0je.gyq.dh&y=26&n=Final&v=f-t",
+          "waitFor": "text=Bangaranga",
+          "clip": {
+            "top": 0,
+            "height": 740
+          }
+        },
+        {
+          "file": "eurovision-ranker3.png",
+          "note": "2026 Final ranked with vocals/song/staging categories: category tabs and per-category ranks (synthetic category orders)",
+          "path": "/?r=.hv8cwnl1gro6a4ik.b0je.gyq.dh&y=26&n=Final&c=vocals-1|song-1|staging-1&r1=v.hc8nw1lgro6a4ik.b0je.gyq.dh&r2=.h8vwcln1gro6a4ik.b0je.gyq.dh&r3=8.hvclwn1gro6a4ik.b0je.gyq.dh",
+          "waitFor": "text=Bangaranga",
+          "clip": {
+            "top": 0,
+            "height": 740
+          }
+        },
+        {
+          "file": "eurovision-ranker4.png",
+          "note": "Config modal, Rankings tab: ESC contest rankings and contestants-by-country loaders",
+          "path": "/?r=.hv8cwnl1gro6a4ik.b0je.gyq.dh&y=26&n=Final&v=f-t",
+          "waitFor": "text=Bangaranga",
+          "actions": [
+            {
+              "click": "svg.configCog",
+              "wait": 1200
+            }
+          ],
+          "clip": {
+            "top": 0,
+            "height": 740
+          }
+        },
+        {
+          "file": "eurovision-ranker5.png",
+          "note": "Advanced table view (?g=t): searchable contestant table with pagination",
+          "path": "/?y=26&g=t",
+          "waitFor": "input[placeholder='Search...']",
+          "actions": [
+            {
+              "eval": "[...document.querySelectorAll('button')].find((b) => b.innerText.trim() === 'Get Started')?.click()",
+              "wait": 1500
+            }
+          ],
+          "clip": {
+            "top": 0,
+            "height": 740
+          }
+        },
+        {
+          "file": "eurovision-ranker6.png",
+          "note": "Sorter: Choose Your Preference head-to-head comparison",
+          "path": "/?r=.hv8cwnl1gro6a4ik.b0je.gyq.dh&y=26&n=Final&v=f-t",
+          "waitFor": "text=Bangaranga",
+          "actions": [
+            {
+              "click": "button[aria-label='Open Sorter']",
+              "wait": 2000
+            }
+          ],
+          "clip": {
+            "top": 0,
+            "height": 740
+          }
+        },
+        {
+          "file": "eurovision-ranker7.png",
+          "note": "Ranking ⋯ menu open with the Copy submenu (URL / Text / CSV / JSON)",
+          "path": "/?r=.hv8cwnl1gro6a4ik.b0je.gyq.dh&y=26&n=Final&v=f-t",
+          "waitFor": "text=Bangaranga",
+          "actions": [
+            {
+              "click": "button:has(svg[data-icon=ellipsis])",
+              "wait": 800
+            },
+            {
+              "click": "[role=menu] >> text=Copy",
+              "wait": 1000
+            }
+          ],
+          "clip": {
+            "top": 0,
+            "height": 740
+          }
+        },
+        {
+          "file": "eurovision-ranker8.png",
+          "note": "Ranking heat map modal (map of Europe shaded by rank)",
+          "path": "/?r=.hv8cwnl1gro6a4ik.b0je.gyq.dh&y=26&n=Final&v=f-t",
+          "waitFor": "text=Bangaranga",
+          "actions": [
+            {
+              "click": "button:has(svg[data-icon=ellipsis])",
+              "wait": 800
+            },
+            {
+              "click": "[role=menuitem]:has-text('Heat Map')",
+              "wait": 3500
+            }
+          ],
+          "clip": {
+            "top": 0,
+            "height": 740
+          }
+        }
+      ]
+    },
+    "comic-snaps": {
+      "name": "Comic Snaps",
+      "aliases": [
+        "comic snaps",
+        "snaps",
+        "comics"
+      ],
+      "site": "https://snaps.jacobkrch.com/",
+      "viewport": {
+        "width": 1280,
+        "height": 985
+      },
+      "fullPage": false,
+      "wait": 2500,
+      "shots": [
+        {
+          "file": "comicSnaps1.png",
+          "note": "Home: C0MIC SNAPS header, filter/sort bar, top of the panel mosaic",
+          "path": "/",
+          "waitFor": "button[aria-label^='View ']",
+          "clip": {
+            "top": 0,
+            "aspect": 1.3
+          }
+        },
+        {
+          "file": "comicSnaps2.png",
+          "note": "Full-screen view of Eightball #8 (Daniel Clowes, 'Nature Boy' page)",
+          "path": "/?panel=eightball-8-1771806205",
+          "waitFor": "[aria-label$='full view']",
+          "clip": {
+            "top": 0,
+            "aspect": 1.3
+          }
+        },
+        {
+          "file": "comicSnaps3.png",
+          "note": "Similarity graph for Eightball #8: nearest panels by SigLIP",
+          "path": "/?panel=eightball-8-1771806205",
+          "waitFor": "[aria-label$='full view']",
+          "actions": [
+            {
+              "click": "button[aria-label='Similarity graph']",
+              "wait": 3500
+            }
+          ],
+          "clip": {
+            "top": 0,
+            "aspect": 1.3
+          }
+        },
+        {
+          "file": "comicSnaps4.png",
+          "note": "'How SigLIP works' explainer opened from the similarity graph",
+          "path": "/?panel=eightball-8-1771806205",
+          "waitFor": "[aria-label$='full view']",
+          "actions": [
+            {
+              "click": "button[aria-label='Similarity graph']",
+              "wait": 3500
+            },
+            {
+              "click": "button:has-text('How SigLIP works')",
+              "wait": 1500
+            }
+          ],
+          "clip": {
+            "top": 0,
+            "aspect": 1.3
+          }
+        },
+        {
+          "file": "comicSnaps5.png",
+          "note": "Trencher #1 full view with the details panel open (series, covers, artist bio)",
+          "path": "/?panel=trencher-1-1778732037",
+          "waitFor": "[aria-label$='full view']",
+          "actions": [
+            {
+              "click": "button[aria-label='Show details']",
+              "wait": 2500
+            }
+          ],
+          "clip": {
+            "top": 0,
+            "aspect": 1.3
+          }
+        },
+        {
+          "file": "comicSnaps6.png",
+          "note": "Series view filtered to James Tynion IV (credits filter): one shelf row per series with cover strips, credits, ratings",
+          "path": "/?view=series&credits=James%20Tynion%20IV",
+          "waitFor": "section.shelf-row",
+          "wait": 3500,
+          "clip": {
+            "top": 0,
+            "aspect": 1.3
+          }
+        },
+        {
+          "file": "comicSnaps7.png",
+          "note": "James Tynion IV's person profile (opened from the Writer credit on Nice House by the Sea #11), scrolled to the 'Worked with' collaborator graph",
+          "path": "/?panel=the-nice-house-by-the-sea-11-1786902531",
+          "waitFor": "[aria-label$='full view']",
+          "actions": [
+            {
+              "click": "button[aria-label='Show details']",
+              "wait": 2500
+            },
+            {
+              "click": "[role=dialog] button:text-is('James Tynion IV')",
+              "wait": 3000
+            },
+            {
+              "eval": "(() => { const el = [...document.querySelectorAll('span')].find((e) => e.textContent.trim() === 'Worked with'); const sc = el.closest('.info-modal-scroll'); sc.scrollTop += el.getBoundingClientRect().top - sc.getBoundingClientRect().top - 140; })()",
+              "wait": 1500
+            }
+          ],
+          "clip": {
+            "top": 0,
+            "aspect": 1.3
+          }
+        }
+      ]
+    },
+    "gbmeter": {
+      "name": "GB Energy Meter",
+      "aliases": ["gbmeter", "energy meter", "green button"],
+      "site": "https://gbmeter.com/",
+      "shots": [
+        {
+          "file": "gbmeter1.png",
+          "note": "Landing page: header and the Load Energy Data card (Choose File / Try the Demo)",
+          "path": "/",
+          "waitFor": "button:has-text('Try the Demo')",
+          "viewport": { "width": 1100, "height": 800 },
+          "clip": { "top": 0, "aspect": 1.58 }
+        },
+        {
+          "file": "gbmeter2.png",
+          "note": "Demo data, Analysis tab: monthly cost timeline with temperature overlay and a bar tooltip, down to the Hour/Day/Month row",
+          "path": "/",
+          "waitFor": "button:has-text('Try the Demo')",
+          "viewport": { "width": 900, "height": 900 },
+          "actions": [
+            { "click": "button:has-text('Try the Demo')", "wait": 4000 },
+            { "click": "button:text-is('Month')", "wait": 1000 },
+            { "click": "button[title='Add temperature overlay']", "wait": 1500 },
+            { "fill": "input[placeholder='Zip code or city name']", "value": "Minneapolis", "wait": 1500 },
+            { "press": "Enter", "wait": 5000 },
+            { "press": "Escape", "wait": 800 },
+            { "hover": ".recharts-wrapper >> nth=0", "wait": 800 }
+          ],
+          "clip": { "top": "button:text-is('Analysis')", "bottom": "button:text-is('Timeline')", "pad": 22 }
+        },
+        {
+          "file": "gbmeter3.png",
+          "note": "Demo data: Hour/Day/Month toggles and the filter panel (temperature, days, months, hours)",
+          "path": "/",
+          "waitFor": "button:has-text('Try the Demo')",
+          "viewport": { "width": 780, "height": 900 },
+          "actions": [
+            { "click": "button:has-text('Try the Demo')", "wait": 4000 },
+            { "click": "button:text-is('Month')", "wait": 1000 }
+          ],
+          "clip": { "top": "button:text-is('Hour')", "bottom": "button:has-text('Add time range')", "pad": 22 }
+        },
+        {
+          "file": "gbmeter4.png",
+          "note": "Demo data: the Explore Your Data question picker modal over the dashboard",
+          "path": "/",
+          "waitFor": "button:has-text('Try the Demo')",
+          "viewport": { "width": 1100, "height": 700 },
+          "fullPage": false,
+          "actions": [
+            { "click": "button:has-text('Try the Demo')", "wait": 4000 },
+            { "click": "button:has-text('Answer Questions')", "wait": 1500 }
+          ],
+          "clip": { "top": 0, "aspect": 1.58 }
+        }
+      ]
+    }
+  }
+}

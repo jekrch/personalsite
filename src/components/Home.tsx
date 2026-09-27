@@ -62,6 +62,8 @@ const projects = [
       "/images/comicSnaps3.png",
       "/images/comicSnaps4.png",
       "/images/comicSnaps5.png",
+      "/images/comicSnaps6.png",
+      "/images/comicSnaps7.png",
     ]
   },
   {

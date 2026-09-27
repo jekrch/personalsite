@@ -1,4 +1,5 @@
-import { useState, useCallback, useEffect, useRef, FC } from "react";
+import { useState, useCallback, useEffect, useMemo, useRef, FC } from "react";
+import { createPortal } from "react-dom";
 import {
   Carousel,
   CarouselItem,
@@ -7,9 +8,8 @@ import {
 } from "reactstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import classNames from "classnames";
-import Lightbox from "yet-another-react-lightbox";
-import Zoom from "yet-another-react-lightbox/plugins/zoom";
-import "yet-another-react-lightbox/styles.css";
+import { ImageViewer, type ViewerItem } from "@jekrch/react-viewport-lightbox";
+import "@jekrch/react-viewport-lightbox/styles.css";
 
 interface ImageCarouselProps {
   items: string[];
@@ -30,6 +30,21 @@ const ImageCarousel: FC<ImageCarouselProps> = ({ items, className }) => {
   const [minAspectRatio, setMinAspectRatio] = useState<number | null>(null);
   const [lightboxOpen, setLightboxOpen] = useState<boolean>(false);
   const pointerStart = useRef<{ x: number; y: number } | null>(null);
+  const imageRefs = useRef<(HTMLImageElement | null)[]>([]);
+
+  const viewerItems = useMemo(
+    (): ViewerItem[] => items.map((src) => ({ id: src, src })),
+    [items]
+  );
+
+  // zoom the viewer out of (and back into) the carousel's visible image;
+  // hidden slides measure 0x0, so fall back to the fade for those
+  const getOrigin = useCallback((index: number) => {
+    const el = imageRefs.current[index];
+    if (!el) return null;
+    const { width, height } = el.getBoundingClientRect();
+    return width > 0 && height > 0 ? el : null;
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -91,7 +106,7 @@ const ImageCarousel: FC<ImageCarouselProps> = ({ items, className }) => {
     []
   );
 
-  const slides = items.map((src) => (
+  const slides = items.map((src, i) => (
     <CarouselItem
       onExiting={onExiting}
       onExited={onExited}
@@ -106,6 +121,9 @@ const ImageCarousel: FC<ImageCarouselProps> = ({ items, className }) => {
       >
         <div className="group relative h-full w-full flex items-center justify-center">
           <img
+            ref={(el) => {
+              imageRefs.current[i] = el;
+            }}
             src={src}
             alt=""
             draggable={false}
@@ -167,28 +185,20 @@ const ImageCarousel: FC<ImageCarouselProps> = ({ items, className }) => {
         />
       </Carousel>
 
-      <Lightbox
-        open={lightboxOpen}
-        close={() => setLightboxOpen(false)}
-        index={activeIndex}
-        on={{ view: ({ index }) => setActiveIndex(index) }}
-        slides={items.map((src) => ({ src }))}
-        plugins={[Zoom]}
-        zoom={{
-          maxZoomPixelRatio: 3,
-          zoomInMultiplier: 2,
-          doubleTapDelay: 250,
-          doubleClickDelay: 300,
-          scrollToZoom: true,
-        }}
-        animation={{ fade: 250, swipe: 300 }}
-        carousel={{ finite: items.length <= 1, padding: 0 }}
-        controller={{ closeOnBackdropClick: true }}
-        styles={{
-          container: { backgroundColor: "rgba(12, 12, 14, 0.94)" },
-          button: { filter: "none" },
-        }}
-      />
+      {lightboxOpen &&
+        createPortal(
+          <ImageViewer
+            items={viewerItems}
+            index={activeIndex}
+            onIndexChange={setActiveIndex}
+            onClose={() => setLightboxOpen(false)}
+            getOrigin={getOrigin}
+            loop={items.length > 1}
+            closeOnBackdropClick
+            classNames={{ root: "image-carousel-viewer" }}
+          />,
+          document.body
+        )}
     </div>
   );
 };
