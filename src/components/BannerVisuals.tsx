@@ -1,4 +1,4 @@
-import { FC } from "react"
+import { CSSProperties, FC } from "react"
 
 // Objects for the home page Banners. Each lines up with the card's text on
 // the left (via the Banner's --pad), runs off the card's right (and sometimes
@@ -46,20 +46,44 @@ const WAVEFORM = Array.from(
     (_, i) => 0.2 + 0.8 * Math.abs(Math.sin(i * 0.9) * Math.cos(i * 0.23 + 1))
 )
 
-const Waveform: FC<{ className?: string; fill: string; opacity?: number }> = ({
-    className = "",
-    fill,
-    opacity = 1,
-}) => (
+// With `grow`, each bar is drawn full height and scaled down from the bottom,
+// so when the heights change the bars rise or fall into place left to right.
+export const Waveform: FC<{
+    className?: string
+    style?: CSSProperties
+    fill: string
+    opacity?: number
+    bars?: number[]
+    grow?: boolean
+}> = ({ className = "", style, fill, opacity = 1, bars = WAVEFORM, grow = false }) => (
     <svg
         aria-hidden
         className={`absolute inset-0 h-full w-full ${className}`}
-        viewBox={`0 0 ${WAVEFORM.length * 3} 40`}
+        style={style}
+        viewBox={`0 0 ${bars.length * 3} 40`}
         preserveAspectRatio="none"
     >
-        {WAVEFORM.map((h, i) => (
-            <rect key={i} x={i * 3} y={40 - h * 40} width={2} height={h * 40} fill={fill} fillOpacity={opacity} />
-        ))}
+        {bars.map((h, i) =>
+            grow ? (
+                <rect
+                    key={i}
+                    x={i * 3}
+                    y={0}
+                    width={2}
+                    height={40}
+                    fill={fill}
+                    fillOpacity={opacity}
+                    style={{
+                        transform: `scaleY(${h})`,
+                        transformBox: "fill-box",
+                        transformOrigin: "bottom",
+                        transition: `transform 600ms cubic-bezier(0.2, 0.8, 0.2, 1) ${i * 6}ms`,
+                    }}
+                />
+            ) : (
+                <rect key={i} x={i * 3} y={40 - h * 40} width={2} height={h * 40} fill={fill} fillOpacity={opacity} />
+            )
+        )}
     </svg>
 )
 

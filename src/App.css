@@ -149,6 +149,126 @@ body {
   margin-right: auto;
 }
 
+/* Navbar menu toggle, drawn as the logo's layered squares. Closed, the two
+   offset frames hide behind the main square (hover peeks them out a little).
+   Opening fans them out along the diagonal one after the other, overshooting
+   slightly before settling; closing tucks them back in, reverse order.
+   Frames move by inset rather than transform so the 1px lines stay crisp. */
+.menu-toggle {
+  --frame-offset: 4px;
+  --frame-peek: 1.5px;
+  position: relative;
+  transition: transform 150ms ease-out;
+}
+
+.menu-toggle:active {
+  transform: scale(0.94);
+}
+
+.menu-toggle > .hamburger-react {
+  flex-shrink: 0;
+}
+
+.menu-toggle__square,
+.menu-toggle__frame {
+  position: absolute;
+  inset: 0;
+  border: 1px solid #fff;
+  border-radius: 0.125rem;
+  pointer-events: none;
+}
+
+.menu-toggle__square {
+  border-color: rgb(255 255 255 / 0.8);
+  transition: border-color 200ms;
+}
+
+.menu-toggle__frame {
+  opacity: 0;
+  transition:
+    top 220ms cubic-bezier(0.5, 0, 0.75, 0),
+    right 220ms cubic-bezier(0.5, 0, 0.75, 0),
+    bottom 220ms cubic-bezier(0.5, 0, 0.75, 0),
+    left 220ms cubic-bezier(0.5, 0, 0.75, 0),
+    opacity 120ms ease-in 100ms;
+}
+
+/* Close: the frame that left last comes back first */
+.menu-toggle__frame--up {
+  transition-delay: 60ms, 60ms, 60ms, 60ms, 160ms;
+}
+
+.menu-toggle.is-open .menu-toggle__square,
+.menu-toggle:has(:focus-visible) .menu-toggle__square {
+  border-color: #fff;
+}
+
+.menu-toggle.is-open .menu-toggle__frame {
+  opacity: 1;
+  transition:
+    top 480ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    right 480ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    bottom 480ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    left 480ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    opacity 120ms ease-out;
+}
+
+.menu-toggle.is-open .menu-toggle__frame--down {
+  transition-delay: 70ms;
+}
+
+.menu-toggle.is-open .menu-toggle__frame--up {
+  top: calc(-1 * var(--frame-offset));
+  right: calc(-1 * var(--frame-offset));
+  bottom: var(--frame-offset);
+  left: var(--frame-offset);
+}
+
+.menu-toggle.is-open .menu-toggle__frame--down {
+  top: var(--frame-offset);
+  right: var(--frame-offset);
+  bottom: calc(-1 * var(--frame-offset));
+  left: calc(-1 * var(--frame-offset));
+}
+
+@media (hover: hover) {
+  .menu-toggle:hover .menu-toggle__square {
+    border-color: #fff;
+  }
+
+  .menu-toggle:not(.is-open):hover .menu-toggle__frame {
+    opacity: 0.45;
+    transition-duration: 250ms;
+    transition-timing-function: ease-out;
+    transition-delay: 0ms;
+  }
+
+  .menu-toggle:not(.is-open):hover .menu-toggle__frame--up {
+    top: calc(-1 * var(--frame-peek));
+    right: calc(-1 * var(--frame-peek));
+    bottom: var(--frame-peek);
+    left: var(--frame-peek);
+  }
+
+  .menu-toggle:not(.is-open):hover .menu-toggle__frame--down {
+    top: var(--frame-peek);
+    right: var(--frame-peek);
+    bottom: calc(-1 * var(--frame-peek));
+    left: calc(-1 * var(--frame-peek));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .menu-toggle,
+  .menu-toggle:active {
+    transform: none;
+  }
+
+  .menu-toggle .menu-toggle__frame {
+    transition: opacity 150ms !important;
+  }
+}
+
 @keyframes tada {
   0% {
     transform: scale(1);
@@ -784,3 +904,39 @@ body {
   }
 }
 
+
+/* Music page player: content settling in once SoundCloud answers */
+.jk-fade-in {
+  animation: jk-fade-in 500ms ease-out both;
+}
+
+@keyframes jk-fade-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .jk-fade-in { animation-name: jk-fade-in-still; }
+}
+
+@keyframes jk-fade-in-still {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Now-playing bars on the Music page's track list */
+.jk-eq-bar {
+  height: 100%;
+  transform-origin: bottom;
+  animation: jk-eq 0.9s ease-in-out infinite alternate;
+}
+
+@keyframes jk-eq {
+  0% { transform: scaleY(0.25); }
+  50% { transform: scaleY(1); }
+  100% { transform: scaleY(0.5); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .jk-eq-bar { animation: none; transform: scaleY(0.6); }
+}

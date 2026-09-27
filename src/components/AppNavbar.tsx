@@ -267,16 +267,19 @@ const AppNavbar: FC = () => {
             />
           </NavbarBrand>
 
-          <div className="ml-auto w-10 h-10 my-auto border-slate-400 hover:border-slate-300 focus:border-slate-300 border-1 rounded-md mr-2">
-            <div className="-mt-1 -ml-[0.32em]">
-              <Hamburger
-                toggled={state.isOpen}
-                toggle={toggle}
-                size={18}
-                color="#edeef0"
-                aria-label="Toggle navigation"
-              />
-            </div>
+          {/* The square is a layer rather than a border on the wrapper so it
+              shares a box with the frames and all three line up (see App.css) */}
+          <div className={classNames("menu-toggle ml-auto mr-2 my-auto w-10 h-10 flex items-center justify-center", { "is-open": state.isOpen })}>
+            <div aria-hidden className="menu-toggle__square" />
+            <div aria-hidden className="menu-toggle__frame menu-toggle__frame--up" />
+            <div aria-hidden className="menu-toggle__frame menu-toggle__frame--down" />
+            <Hamburger
+              toggled={state.isOpen}
+              toggle={toggle}
+              size={18}
+              color="#fff"
+              label="Toggle navigation"
+            />
           </div>
         </Container>
 
