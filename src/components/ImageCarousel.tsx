@@ -10,6 +10,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import classNames from "classnames";
 import { ImageViewer, type ViewerItem } from "@jekrch/react-viewport-lightbox";
 import "@jekrch/react-viewport-lightbox/styles.css";
+import { resampleSafariChrome } from "../utils/safariChrome";
 
 interface ImageCarouselProps {
   items: string[];
@@ -36,6 +37,18 @@ const ImageCarousel: FC<ImageCarouselProps> = ({ items, className }) => {
     (): ViewerItem[] => items.map((src) => ({ id: src, src })),
     [items]
   );
+
+  // the viewer unpins the page and restores its colors as it unmounts, which
+  // iOS Safari won't notice on its own: its bars would stay black
+  const wasLightboxOpen = useRef(false);
+  useEffect(() => {
+    if (lightboxOpen) {
+      wasLightboxOpen.current = true;
+    } else if (wasLightboxOpen.current) {
+      wasLightboxOpen.current = false;
+      resampleSafariChrome();
+    }
+  }, [lightboxOpen]);
 
   // zoom the viewer out of (and back into) the carousel's visible image;
   // hidden slides measure 0x0, so fall back to the fade for those
@@ -164,7 +177,7 @@ const ImageCarousel: FC<ImageCarouselProps> = ({ items, className }) => {
         activeIndex={activeIndex}
         next={next}
         previous={previous}
-        className="shadow-[5px_6px_11px_0px_rgba(0,_0,_0,_0.3)] overflow-hidden rounded-sm hover:duration-200 hover:shadow-[rgba(0,_0,_0,_0.4)]"
+        className="image-carousel shadow-[5px_6px_11px_0px_rgba(0,_0,_0,_0.3)] overflow-hidden rounded-sm hover:duration-200 hover:shadow-[rgba(0,_0,_0,_0.4)]"
         interval={lightboxOpen ? false : 5000}
       >
         <CarouselIndicators

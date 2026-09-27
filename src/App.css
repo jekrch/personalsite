@@ -637,8 +637,15 @@ body {
 .carousel-item {
   /* No translateZ/scale here: promoting each slide to its own scaled GPU
      layer makes screenshots resample at CSS (1x) resolution and look soft
-     on high-DPI screens. Slides sit on a solid bg, so no seam to hide. */
+     on high-DPI screens. */
   backface-visibility: hidden;
+}
+
+/* Mid-slide, the outgoing and incoming slides are translated by fractional
+   device pixels on phones, leaving a hairline seam between them. Paint the
+   track the same teal as the slides so the seam can't flash the page bg. */
+.image-carousel .carousel-inner {
+  background-color: var(--jk-teal);
 }
 
 .carousel-inner {

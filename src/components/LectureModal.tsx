@@ -1,5 +1,6 @@
 import { FC, useState, useEffect, useCallback, useRef } from 'react';
 import { createPortal } from 'react-dom';
+import { resampleSafariChrome } from '../utils/safariChrome';
 
 interface LectureModalProps {
   isOpen: boolean;
@@ -91,6 +92,8 @@ const LectureModal: FC<LectureModalProps> = ({ isOpen, toggle, lectureName, lect
       // 'instant' so Bootstrap's smooth scroll-behavior doesn't animate it
       window.scrollTo({ top: scrollY, behavior: 'instant' });
       delete html.dataset.scrollLocked;
+      // Otherwise iOS Safari keeps its bars tinted with the pinned body's teal
+      resampleSafariChrome();
     };
   }, [isVisible]);
 
