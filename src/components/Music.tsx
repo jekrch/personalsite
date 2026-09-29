@@ -5,6 +5,7 @@ import {
 } from "reactstrap"
 import "bootstrap/dist/css/bootstrap.min.css"
 import SoundCloudPlayer from "./SoundCloudPlayer"
+import YouTubeVideo from "./YouTubeVideo"
 
 const Music: FC = () => {
 
@@ -21,6 +22,12 @@ const Music: FC = () => {
         </p>
 
         <SoundCloudPlayer />
+
+        <p className="mb-10 mt-10">
+          And if you could use a little holiday cheer, here's my bedroom pop take on "The Christmas Song":
+        </p>
+
+        <YouTubeVideo id="LPX5udlegpU" title="The Christmas Song" />
 
         <div className="mt-10" />
       </Container>
