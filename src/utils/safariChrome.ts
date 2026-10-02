@@ -1,4 +1,4 @@
-const isIOS = () =>
+export const isIOS = () =>
   /iP(hone|ad|od)/.test(navigator.platform ?? '') ||
   (navigator.userAgent.includes('Mac') && navigator.maxTouchPoints > 1);
 

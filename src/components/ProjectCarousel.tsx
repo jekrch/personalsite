@@ -38,14 +38,40 @@ const EDGE_FADE_PX = 56;
 // every strip drifts at the same pace regardless of tile count or tile size.
 const MARQUEE_PX_PER_SEC = 20;
 
+// A box within a track, traced by a ghost outline.
+interface GhostRect {
+  left: number;
+  top: number;
+  width: number;
+  height: number;
+}
+
+// A marquee-ing strip's tiles (one copy, relative to the track) and the
+// distance after which they repeat, for tracing them past the card's edges.
+interface StripLayout {
+  track: HTMLDivElement;
+  tiles: GhostRect[];
+  loopWidth: number;
+}
+
+// Strip ghosts fade in over this fraction of the slide's width, matching the
+// strip's own edge fade (its mask's 9% / 91% stops).
+const STRIP_FADE_FRACTION = 0.09;
+
 // A row of sampled project views pinned to the bottom of the slide. If the
 // row is wider than the slide it slowly marquees through all of them;
-// otherwise it sits static and centered.
-const BottomCardStrip: FC<{ tiles: string[] }> = ({ tiles }) => {
+// otherwise it sits static and centered. While marquee-ing it reports its
+// layout through `onLayout` (null otherwise).
+const BottomCardStrip: FC<{ tiles: string[]; onLayout?: (layout: StripLayout | null) => void }> = ({
+  tiles,
+  onLayout,
+}) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const [overflow, setOverflow] = useState<boolean>(false);
   const [loopWidth, setLoopWidth] = useState<number>(0);
+  const onLayoutRef = useRef(onLayout);
+  onLayoutRef.current = onLayout;
 
   useEffect(() => {
     const measure = () => {
@@ -55,7 +81,21 @@ const BottomCardStrip: FC<{ tiles: string[] }> = ({ tiles }) => {
       // When marquee-ing the track holds two copies, so compare against half.
       const setWidth = overflow ? track.scrollWidth / 2 : track.scrollWidth;
       if (overflow && setWidth > 0) setLoopWidth(setWidth);
-      setOverflow(setWidth > container.clientWidth + 4);
+      const overflows = setWidth > container.clientWidth + 4;
+      setOverflow(overflows);
+
+      if (overflow && overflows) {
+        const trackRect = track.getBoundingClientRect();
+        const rects = Array.from(track.children)
+          .slice(0, tiles.length)
+          .map((tile) => {
+            const r = tile.getBoundingClientRect();
+            return { left: r.left - trackRect.left, top: r.top - trackRect.top, width: r.width, height: r.height };
+          });
+        onLayoutRef.current?.({ track, tiles: rects, loopWidth: setWidth });
+      } else {
+        onLayoutRef.current?.(null);
+      }
     };
 
     measure();
@@ -346,14 +386,6 @@ const useMomentumScroll = (
   return stopRef;
 };
 
-// A button's box within the tab track, traced by its ghost outline.
-interface GhostRect {
-  left: number;
-  top: number;
-  width: number;
-  height: number;
-}
-
 interface ProjectCarouselProps {
   projects: ProjectItem[];
   backgroundImages?: string[]; // Optional background images for rotation
@@ -396,8 +428,35 @@ const ProjectCarousel: FC<ProjectCarouselProps> = ({ projects, backgroundImages 
   const touchStartYRef = useRef<number | null>(null);
   const touchHandledRef = useRef<boolean>(false);
 
+  // Ghost outlines of the bottom image strip, carried past the card's edges.
+  // They trace the strip of `stripGhostIndex`, which catches up with the
+  // active slide once a slide change has finished; they're faded out between.
+  const cardRef = useRef<HTMLDivElement>(null);
+  const stripGhostLayerRef = useRef<HTMLDivElement>(null);
+  const stripGhostTrackRef = useRef<HTMLDivElement>(null);
+  const [stripLayouts, setStripLayouts] = useState<Record<number, StripLayout | null>>({});
+  const [stripGhostIndex, setStripGhostIndex] = useState<number>(activeIndex);
+  const activeIndexRef = useRef(activeIndex);
+  activeIndexRef.current = activeIndex;
+  const stripGhostLayout = stripLayouts[stripGhostIndex] ?? null;
+  const stripGhostsShown = stripGhostIndex === activeIndex && !animating;
+
+  const handleStripLayout = useCallback((index: number, layout: StripLayout | null) => {
+    setStripLayouts((prev) => {
+      const old = prev[index] ?? null;
+      const same =
+        old === layout ||
+        (old && layout && old.track === layout.track && old.loopWidth === layout.loopWidth &&
+          JSON.stringify(old.tiles) === JSON.stringify(layout.tiles));
+      return same ? prev : { ...prev, [index]: layout };
+    });
+  }, []);
+
   const onExiting = useCallback(() => setAnimating(true), []);
-  const onExited = useCallback(() => setAnimating(false), []);
+  const onExited = useCallback(() => {
+    setAnimating(false);
+    setStripGhostIndex(activeIndexRef.current);
+  }, []);
 
   const next = useCallback(() => {
     if (animating) return;
@@ -650,6 +709,70 @@ const ProjectCarousel: FC<ProjectCarouselProps> = ({ projects, backgroundImages 
     syncGhosts();
   }, [ghostRects, syncGhosts]);
 
+  // Pin the strip ghosts to the real strip every frame (it marquees, and
+  // slides out with its slide), while the ghost layer is on screen. Also
+  // tell the layer's mask where the card's edges are and how wide the
+  // strip's own edge fade is.
+  useEffect(() => {
+    const layer = stripGhostLayerRef.current;
+    const ghostTrack = stripGhostTrackRef.current;
+    const card = cardRef.current;
+    if (!stripGhostLayout || !layer || !ghostTrack || !card) return;
+    const track = stripGhostLayout.track;
+
+    const measure = () => {
+      const layerRect = layer.getBoundingClientRect();
+      const cardRect = card.getBoundingClientRect();
+      layer.style.setProperty('--reach-l', `${cardRect.left - layerRect.left}px`);
+      layer.style.setProperty('--reach-r', `${layerRect.right - cardRect.right}px`);
+      layer.style.setProperty('--ghost-fade', `${cardRect.width * STRIP_FADE_FRACTION}px`);
+    };
+
+    let frame: number | null = null;
+    const sync = () => {
+      const layerRect = layer.getBoundingClientRect();
+      const trackRect = track.getBoundingClientRect();
+      // Hidden slide (no layout): leave the ghosts where they last were.
+      if (trackRect.width > 0) {
+        ghostTrack.style.transform =
+          `translate(${trackRect.left - layerRect.left}px, ${trackRect.top - layerRect.top}px)`;
+      }
+      frame = requestAnimationFrame(sync);
+    };
+    const start = () => {
+      if (frame === null) frame = requestAnimationFrame(sync);
+    };
+    const stop = () => {
+      if (frame !== null) cancelAnimationFrame(frame);
+      frame = null;
+    };
+
+    measure();
+    let resizeObserver: ResizeObserver | undefined;
+    if (typeof ResizeObserver !== 'undefined') {
+      resizeObserver = new ResizeObserver(measure);
+      resizeObserver.observe(layer);
+      resizeObserver.observe(card);
+    }
+
+    // Off screen, or hidden on phones (display: none never intersects).
+    let intersectionObserver: IntersectionObserver | undefined;
+    if (typeof IntersectionObserver !== 'undefined') {
+      intersectionObserver = new IntersectionObserver(([entry]) =>
+        entry.isIntersecting ? start() : stop(),
+      );
+      intersectionObserver.observe(layer);
+    } else {
+      start();
+    }
+
+    return () => {
+      stop();
+      resizeObserver?.disconnect();
+      intersectionObserver?.disconnect();
+    };
+  }, [stripGhostLayout]);
+
   // Re-evaluate the edge fades whenever the strip's size or contents change
   useEffect(() => {
     updateEdgeFades();
@@ -728,7 +851,10 @@ const ProjectCarousel: FC<ProjectCarouselProps> = ({ projects, backgroundImages 
           </>
         )}
         {project.gallery && project.gallery.length > 0 && (
-          <BottomCardStrip tiles={mosaicTiles} />
+          <BottomCardStrip
+            tiles={mosaicTiles}
+            onLayout={(layout) => handleStripLayout(index, layout)}
+          />
         )}
       </div>
 
@@ -920,7 +1046,8 @@ const ProjectCarousel: FC<ProjectCarouselProps> = ({ projects, backgroundImages 
       </div>
 
       <div
-        className="rounded-sm shadow-[5px_6px_11px_0px_rgba(0,_0,_0,_0.3)] transition-shadow duration-200 group-hover/card:shadow-[rgba(0,_0,_0,_0.4)]"
+        ref={cardRef}
+        className="relative rounded-sm shadow-[5px_6px_11px_0px_rgba(0,_0,_0,_0.3)] transition-shadow duration-200 group-hover/card:shadow-[rgba(0,_0,_0,_0.4)]"
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
@@ -950,6 +1077,37 @@ const ProjectCarousel: FC<ProjectCarouselProps> = ({ projects, backgroundImages 
             style={{ zIndex: 20 }}
           />
         </Carousel>
+
+        {/* Ghost outlines of the image strip's tiles, carried on past the
+            card's sides as they marquee, like the tab strip's (see
+            .strip-ghosts). Copies one loop either side of the real track's
+            two keep both gutters filled through the whole loop: the loop is
+            wider than the card, which is wider than either gutter. */}
+        {stripGhostLayout && (
+          <div
+            ref={stripGhostLayerRef}
+            aria-hidden
+            className="strip-ghosts"
+            style={{ opacity: stripGhostsShown ? 1 : 0 }}
+          >
+            <div ref={stripGhostTrackRef} className="absolute left-0 top-0">
+              {[-1, 0, 1, 2].flatMap((copy) =>
+                stripGhostLayout.tiles.map((r, i) => (
+                  <div
+                    key={`${copy}-${i}`}
+                    className="tab-band__ghost"
+                    style={{
+                      left: r.left + copy * stripGhostLayout.loopWidth,
+                      top: r.top,
+                      width: r.width,
+                      height: r.height,
+                    }}
+                  />
+                )),
+              )}
+            </div>
+          </div>
+        )}
       </div>
 
     </div>

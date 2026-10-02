@@ -1,4 +1,6 @@
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react"
+import { isIOS } from "../utils/safariChrome"
+import { useScrollLock } from "../utils/useScrollLock"
 
 // A single YouTube video in a card that matches the SoundCloud player. It
 // shows the video's thumbnail with a play button, and only swaps in the real
@@ -6,11 +8,18 @@ import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react"
 // YouTube up front. The player is built through YouTube's IFrame Player API
 // (https://developers.google.com/youtube/iframe_api_reference) so we hear when
 // it plays and pauses: while it plays, the rest of the page dims and it snows.
+//
+// iOS only starts a video with sound from a tap inside the player itself (the
+// tap on our thumbnail doesn't carry over to the iframe it swaps in), so there
+// the player loads as the card nears the screen and our thumbnail steps aside
+// once it's ready, leaving the first tap for YouTube's own play button.
 
 const API_SRC = "https://www.youtube.com/iframe_api"
 
 // How long the dim takes to fade, and so how long the snow outlives a pause.
 const FADE_MS = 700
+
+const PLAYS_ONLY_FROM_INSIDE = isIOS()
 
 interface YTPlayer {
     pauseVideo(): void
@@ -26,7 +35,10 @@ interface YTNamespace {
             width?: string
             height?: string
             playerVars?: Record<string, number | string>
-            events?: { onStateChange?: (e: { data: number }) => void }
+            events?: {
+                onReady?: () => void
+                onStateChange?: (e: { data: number }) => void
+            }
         }
     ) => YTPlayer
     PlayerState: { ENDED: number; PLAYING: number; PAUSED: number }
@@ -138,16 +150,28 @@ interface YouTubeVideoProps {
 const YouTubeVideo: FC<YouTubeVideoProps> = ({ id, title }) => {
     const mountRef = useRef<HTMLDivElement>(null)
     const playerRef = useRef<YTPlayer | null>(null)
+    const slotRef = useRef<HTMLDivElement>(null)
     const [started, setStarted] = useState(false)
+    const [ready, setReady] = useState(false)
     const [thumbLoaded, setThumbLoaded] = useState(false)
     const [playing, setPlaying] = useState(false)
-    // Keeps the snow falling while the dim fades back out.
-    const [snowing, setSnowing] = useState(false)
+    // Stays on while the dim fades back out, keeping the snow falling and the
+    // page locked until it's gone.
+    const [dimmed, setDimmed] = useState(false)
 
     const reduceMotion = useMemo(
         () => typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches,
         []
     )
+
+    useEffect(() => {
+        if (!PLAYS_ONLY_FROM_INSIDE || started || !slotRef.current) return
+        const observer = new IntersectionObserver(([entry]) => entry.isIntersecting && setStarted(true), {
+            rootMargin: "300px 0px",
+        })
+        observer.observe(slotRef.current)
+        return () => observer.disconnect()
+    }, [started])
 
     // The API replaces the element it's given with its iframe, so hand it a
     // throwaway div rather than one React owns.
@@ -165,8 +189,9 @@ const YouTubeVideo: FC<YouTubeVideoProps> = ({ id, title }) => {
                     videoId: id,
                     width: "100%",
                     height: "100%",
-                    playerVars: { autoplay: 1, rel: 0, playsinline: 1 },
+                    playerVars: { autoplay: PLAYS_ONLY_FROM_INSIDE ? 0 : 1, rel: 0, playsinline: 1 },
                     events: {
+                        onReady: () => setReady(true),
                         onStateChange: ({ data }) => {
                             if (data === YT.PlayerState.PLAYING) setPlaying(true)
                             else if (data === YT.PlayerState.PAUSED || data === YT.PlayerState.ENDED) setPlaying(false)
@@ -178,11 +203,12 @@ const YouTubeVideo: FC<YouTubeVideoProps> = ({ id, title }) => {
             () => {
                 if (cancelled) return
                 const iframe = document.createElement("iframe")
-                iframe.src = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0`
+                iframe.src = `https://www.youtube-nocookie.com/embed/${id}?autoplay=${PLAYS_ONLY_FROM_INSIDE ? 0 : 1}&rel=0&playsinline=1`
                 iframe.title = title
                 iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 iframe.referrerPolicy = "strict-origin-when-cross-origin"
                 iframe.allowFullscreen = true
+                iframe.onload = () => setReady(true)
                 mount.appendChild(iframe)
             }
         )
@@ -191,15 +217,18 @@ const YouTubeVideo: FC<YouTubeVideoProps> = ({ id, title }) => {
             playerRef.current?.destroy()
             playerRef.current = null
             mount.replaceChildren()
+            setReady(false)
             setPlaying(false)
         }
     }, [started, id, title])
 
     useEffect(() => {
-        if (playing) return setSnowing(true)
-        const timer = window.setTimeout(() => setSnowing(false), FADE_MS)
+        if (playing) return setDimmed(true)
+        const timer = window.setTimeout(() => setDimmed(false), FADE_MS)
         return () => window.clearTimeout(timer)
     }, [playing])
+
+    useScrollLock(dimmed)
 
     const pause = useCallback(() => playerRef.current?.pauseVideo(), [])
 
@@ -212,10 +241,9 @@ const YouTubeVideo: FC<YouTubeVideoProps> = ({ id, title }) => {
 
     // While it plays, the card glides to the middle of the screen. The slot
     // stays put in the page, so the card is measured from there and moved
-    // with a transform, and nothing else on the page shifts. Scrolling or
-    // resizing while it plays keeps it centered without the glide, which would
-    // otherwise trail behind.
-    const slotRef = useRef<HTMLDivElement>(null)
+    // with a transform, and nothing else on the page shifts. The page is
+    // locked meanwhile, but resizing (or turning a phone) keeps it centered,
+    // without the glide, which would otherwise trail behind.
     const [shift, setShift] = useState({ x: 0, y: 0, glide: true })
 
     useEffect(() => {
@@ -238,11 +266,9 @@ const YouTubeVideo: FC<YouTubeVideoProps> = ({ id, title }) => {
             cancelAnimationFrame(frame)
             frame = requestAnimationFrame(() => centre(false))
         }
-        window.addEventListener("scroll", follow, { passive: true })
         window.addEventListener("resize", follow)
         return () => {
             cancelAnimationFrame(frame)
-            window.removeEventListener("scroll", follow)
             window.removeEventListener("resize", follow)
         }
     }, [playing])
@@ -254,7 +280,9 @@ const YouTubeVideo: FC<YouTubeVideoProps> = ({ id, title }) => {
     // The slot sits above the dim (the navbar's logo is z-50), and the dim is
     // hidden rather than just transparent when off, since iOS Safari tints its
     // bars from full-screen fixed layers but skips hidden ones (see
-    // GeometricBackground).
+    // GeometricBackground). The slot itself lets taps through: it stays where
+    // the card was, so while the card sits centered, a tap on that empty spot
+    // has to reach the dim to close it.
     return (
         <>
             <div
@@ -263,12 +291,12 @@ const YouTubeVideo: FC<YouTubeVideoProps> = ({ id, title }) => {
                 className={`fixed inset-0 z-[60] overflow-hidden bg-[rgba(10,20,26,0.8)] transition-[opacity,visibility] ${playing ? "visible opacity-100" : "invisible opacity-0"}`}
                 style={{ transitionDuration: `${FADE_MS}ms` }}
             >
-                {snowing && !reduceMotion && <Snow />}
+                {dimmed && !reduceMotion && <Snow />}
             </div>
 
-            <div ref={slotRef} className="relative z-[70]">
+            <div ref={slotRef} className="pointer-events-none relative z-[70]">
                 <div
-                    className={`rounded-sm border border-white bg-jk-teal p-[1.25rem] sm:p-8 ${playing ? "shadow-[0_24px_60px_0px_rgba(0,_0,_0,_0.55)]" : "shadow-[5px_6px_11px_0px_rgba(0,_0,_0,_0.3)]"}`}
+                    className={`pointer-events-auto rounded-sm border border-white bg-jk-teal p-[1.25rem] sm:p-8 ${playing ? "shadow-[0_24px_60px_0px_rgba(0,_0,_0,_0.55)]" : "shadow-[5px_6px_11px_0px_rgba(0,_0,_0,_0.3)]"}`}
                     style={{
                         transform: `translate3d(${shift.x}px, ${shift.y}px, 0)`,
                         transition:
@@ -279,9 +307,11 @@ const YouTubeVideo: FC<YouTubeVideoProps> = ({ id, title }) => {
                     }}
                 >
                     <div className="group relative aspect-video w-full overflow-hidden rounded-sm bg-white/15 shadow-lg">
-                        {started ? (
+                        {started && (
                             <div ref={mountRef} className="absolute inset-0 [&>iframe]:h-full [&>iframe]:w-full [&>iframe]:border-0" />
-                        ) : (
+                        )}
+                        {/* Stays over the player until it's ready to show. */}
+                        {!ready && (
                             <button
                                 type="button"
                                 onClick={() => setStarted(true)}
@@ -299,7 +329,7 @@ const YouTubeVideo: FC<YouTubeVideoProps> = ({ id, title }) => {
                                     style={{ opacity: thumbLoaded ? 1 : 0 }}
                                 />
                                 <span
-                                    className={`absolute left-1/2 top-1/2 flex h-16 w-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-black/35 text-white backdrop-blur-sm transition-[opacity,background-color] group-hover:bg-black/50 ${thumbLoaded ? "opacity-100" : "opacity-0"}`}
+                                    className={`absolute left-1/2 top-1/2 flex h-16 w-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-black/35 text-white backdrop-blur-sm transition-[opacity,background-color] group-hover:bg-black/50 ${thumbLoaded ? "opacity-100" : "opacity-0"} ${started ? "animate-pulse" : ""}`}
                                 >
                                     <svg aria-hidden viewBox="0 0 24 24" className="h-8 w-8" fill="currentColor">
                                         <path d="M8 5v14l11-7z" />

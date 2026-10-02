@@ -526,9 +526,13 @@ body {
    room for the slant and lines so nothing reaches the screen edge. The button
    scroller widens by the same overhang so the buttons run out under the
    slanted ends. */
-.tab-band {
+.tab-band,
+.strip-ghosts {
   /* Half of the free gutter; the other half is left for the ghost outlines. */
   --overhang: min(6rem, max(0px, ((100vw - 100%) / 2 - 2.5rem) / 2));
+}
+
+.tab-band {
   position: relative;
 }
 
@@ -591,7 +595,9 @@ body {
    rising through the button fade (--ghost-fade) to peak at the edge, holding
    most of that across the slanted end and its lines (--ghost-hold), then
    trailing off outward over --reach-l / --reach-r (measured in JS). --ghost-l
-   / --ghost-r switch a side on while buttons are hidden past it. */
+   / --ghost-r switch a side on while buttons are hidden past it.
+   .strip-ghosts does the same for the carousel's bottom image strip, out
+   past the card's sides (both always on: the strip marquees endlessly). */
 @property --ghost-l {
   syntax: '<number>';
   inherits: false;
@@ -604,7 +610,8 @@ body {
   initial-value: 0;
 }
 
-.tab-band__ghosts {
+.tab-band__ghosts,
+.strip-ghosts {
   --ghost-extent: min(var(--overhang) + 10rem, max(var(--overhang), (100vw - 100%) / 2 - 1rem));
   --ghost-peak: 0.6;
   --ghost-hold: 1.75rem;
@@ -637,7 +644,19 @@ body {
     rgba(0, 0, 0, calc(var(--ghost-peak) * var(--ghost-r) * 0.8)) calc(100% - var(--reach-r, 0px) + var(--ghost-hold)),
     transparent 100%
   );
+}
+
+.tab-band__ghosts {
   transition: --ghost-l 0.3s ease, --ghost-r 0.3s ease;
+}
+
+/* Faded out while the slides change, then back in tracing the new strip.
+   Trails off sooner than the tab ghosts. */
+.strip-ghosts {
+  --ghost-extent: min(var(--overhang) + 4rem, max(var(--overhang), (100vw - 100%) / 2 - 1rem));
+  --ghost-l: 1;
+  --ghost-r: 1;
+  transition: opacity 0.25s ease;
 }
 
 .tab-band__ghost {
@@ -662,7 +681,8 @@ body {
 
   .tab-band__shape::before,
   .tab-band__shape::after,
-  .tab-band__ghosts {
+  .tab-band__ghosts,
+  .strip-ghosts {
     display: none;
   }
 }
