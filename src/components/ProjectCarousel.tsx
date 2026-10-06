@@ -324,6 +324,12 @@ const useMomentumScroll = (
 
     const handlePointerMove = (e: PointerEvent) => {
       if (!pointerActive || e.pointerId !== pointerId) return;
+      // The release landed somewhere we didn't hear it (off the strip before
+      // capture, a context menu, a window switch): let go now.
+      if (!(e.buttons & 1)) {
+        endPointer(e);
+        return;
+      }
       const dx = e.clientX - startX;
       if (!dragging) {
         if (Math.abs(dx) < DRAG_THRESHOLD_PX) return;
