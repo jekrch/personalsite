@@ -76,6 +76,7 @@ const projects = [
       "/images/filmclub2.png",
       "/images/filmclub3.png",
       "/images/filmclub4.png",
+      "/images/filmclub5.png",
     ]
   },
   {
