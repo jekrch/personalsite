@@ -47,6 +47,13 @@
           "path": "/#/films/tt0071141",
           "waitFor": "h1:has-text('Fear Eats the Soul')",
           "clip": { "top": 0, "aspect": 1.3 }
+        },
+        {
+          "file": "filmclub5.png",
+          "note": "Log page: 'What we've been up to' header, Events card with Screenings/Logs/Lists filters, first month of logged films",
+          "path": "/#/log",
+          "waitFor": "h1:has-text('What we')",
+          "clip": { "top": 0, "aspect": 1.4 }
         }
       ]
     },
@@ -473,6 +480,10 @@
           "file": "eurovision-ranker1.png",
           "note": "Fresh start (intro dismissed): 2026 country list and the empty ranking column with theme picker",
           "path": "/",
+          "viewport": {
+            "width": 1000,
+            "height": 740
+          },
           "waitFor": "button:has-text('Get Started')",
           "actions": [
             {
@@ -487,8 +498,12 @@
         },
         {
           "file": "eurovision-ranker2.png",
-          "note": "2026 Final ranking (loaded from the ESC results) with flags, artists, songs, totals",
-          "path": "/?r=.hv8cwnl1gro6a4ik.b0je.gyq.dh&y=26&n=Final&v=f-t",
+          "note": "2026 Final ranking (loaded from the ESC results) with flags, artists, songs, totals (Pastel theme, t=p)",
+          "path": "/?r=.hv8cwnl1gro6a4ik.b0je.gyq.dh&y=26&n=Final&v=f-t&t=p",
+          "viewport": {
+            "width": 1000,
+            "height": 740
+          },
           "waitFor": "text=Bangaranga",
           "clip": {
             "top": 0,
@@ -499,6 +514,10 @@
           "file": "eurovision-ranker3.png",
           "note": "2026 Final ranked with vocals/song/staging categories: category tabs and per-category ranks (synthetic category orders)",
           "path": "/?r=.hv8cwnl1gro6a4ik.b0je.gyq.dh&y=26&n=Final&c=vocals-1|song-1|staging-1&r1=v.hc8nw1lgro6a4ik.b0je.gyq.dh&r2=.h8vwcln1gro6a4ik.b0je.gyq.dh&r3=8.hvclwn1gro6a4ik.b0je.gyq.dh",
+          "viewport": {
+            "width": 1000,
+            "height": 740
+          },
           "waitFor": "text=Bangaranga",
           "clip": {
             "top": 0,
@@ -509,6 +528,10 @@
           "file": "eurovision-ranker4.png",
           "note": "Config modal, Rankings tab: ESC contest rankings and contestants-by-country loaders",
           "path": "/?r=.hv8cwnl1gro6a4ik.b0je.gyq.dh&y=26&n=Final&v=f-t",
+          "viewport": {
+            "width": 1000,
+            "height": 740
+          },
           "waitFor": "text=Bangaranga",
           "actions": [
             {
@@ -539,8 +562,12 @@
         },
         {
           "file": "eurovision-ranker6.png",
-          "note": "Sorter: Choose Your Preference head-to-head comparison",
-          "path": "/?r=.hv8cwnl1gro6a4ik.b0je.gyq.dh&y=26&n=Final&v=f-t",
+          "note": "Sorter: Choose Your Preference head-to-head comparison (Ocean theme, t=o)",
+          "path": "/?r=.hv8cwnl1gro6a4ik.b0je.gyq.dh&y=26&n=Final&v=f-t&t=o",
+          "viewport": {
+            "width": 1000,
+            "height": 740
+          },
           "waitFor": "text=Bangaranga",
           "actions": [
             {
@@ -557,6 +584,10 @@
           "file": "eurovision-ranker7.png",
           "note": "Ranking ⋯ menu open with the Copy submenu (URL / Text / CSV / JSON)",
           "path": "/?r=.hv8cwnl1gro6a4ik.b0je.gyq.dh&y=26&n=Final&v=f-t",
+          "viewport": {
+            "width": 1000,
+            "height": 740
+          },
           "waitFor": "text=Bangaranga",
           "actions": [
             {

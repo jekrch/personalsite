@@ -140,7 +140,7 @@ const BottomCardStrip: FC<{ tiles: string[]; onLayout?: (layout: StripLayout | n
             <img
               src={src}
               alt=""
-              loading="lazy"
+              decoding="async"
               className="h-full w-auto max-w-none"
             />
           </div>
@@ -392,12 +392,68 @@ const useMomentumScroll = (
   return stopRef;
 };
 
+// How many images the preloader fetches at once. Enough to keep the
+// connection busy without starving the rest of the page.
+const PRELOAD_CONCURRENCY = 4;
+
+// Fetch and decode every image the carousel will show, before it's needed,
+// so slides and strip tiles never pop in while they're on screen. Slides are
+// queued in carousel order (first slide first), each with its hero, then
+// its background, then its strip. The decoded images are held in a ref so
+// the browser keeps them warm for the component's lifetime.
+const usePreloadImages = (projects: ProjectItem[], backgroundImages: string[]) => {
+  const heldRef = useRef<HTMLImageElement[]>([]);
+
+  const urls: string[] = [];
+  const seen = new Set<string>();
+  const enqueue = (src: string | undefined) => {
+    if (src && !seen.has(src)) {
+      seen.add(src);
+      urls.push(src);
+    }
+  };
+  projects.forEach((project, index) => {
+    enqueue(project.imageUrl);
+    if (backgroundImages.length > 0) enqueue(backgroundImages[index % backgroundImages.length]);
+    project.gallery?.forEach(enqueue);
+  });
+  // Keyed on the URLs themselves, so a fresh-but-equal props array (like the
+  // `backgroundImages = []` default) doesn't restart the queue every render.
+  const urlsKey = urls.join('\n');
+
+  useEffect(() => {
+    const queue = urlsKey ? urlsKey.split('\n') : [];
+    let cancelled = false;
+    const held: HTMLImageElement[] = [];
+    heldRef.current = held;
+
+    const loadNext = (): Promise<void> => {
+      const src = queue.shift();
+      if (cancelled || !src) return Promise.resolve();
+      const img = new Image();
+      img.decoding = 'async';
+      img.src = src;
+      held.push(img);
+      // decode() resolves once the image is fetched and ready to paint;
+      // a failed image shouldn't stall the rest of the queue.
+      return img.decode().catch(() => {}).then(loadNext);
+    };
+
+    for (let i = 0; i < PRELOAD_CONCURRENCY; i++) loadNext();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [urlsKey]);
+};
+
 interface ProjectCarouselProps {
   projects: ProjectItem[];
   backgroundImages?: string[]; // Optional background images for rotation
 }
 
 const ProjectCarousel: FC<ProjectCarouselProps> = ({ projects, backgroundImages = [] }) => {
+  usePreloadImages(projects, backgroundImages);
   const [activeIndex, setActiveIndex] = useState<number>(0);
   const [animating, setAnimating] = useState<boolean>(false);
   const [buttonsOverflow, setButtonsOverflow] = useState<boolean>(false);
