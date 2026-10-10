@@ -79,6 +79,14 @@
           "clip": { "top": 0, "aspect": 1.6 }
         },
         {
+          "file": "juxtaglobe5.png",
+          "note": "Dual-point zoomed in close on the normal terrain imagery (no map overlay): Minneapolis, MN (primary) beside Kilgobbin Church, Stepaside, Dublin (secondary)",
+          "path": "/dual-point?lat=44.9778&lng=-93.265&alt=0.02&lat2=53.2562&lng2=-6.2176&alt2=0.02",
+          "waitFor": "h1:has-text('JuxtaGlobe')",
+          "wait": 9000,
+          "clip": { "top": 0, "aspect": 1.6 }
+        },
+        {
           "file": "juxtaglobe3.png",
           "note": "Options & Info modal with Middle Jurassic selected as the secondary globe",
           "path": "/middle-jurassic?lat=44.98&lng=-93.26&alt=2.5",

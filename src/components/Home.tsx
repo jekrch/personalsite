@@ -87,6 +87,7 @@ const projects = [
     description: "A dual-globe map for exploring Earth's antipodes.",
     gallery: [
       "/images/juxtaglobe2.png",
+      "/images/juxtaglobe5.png",
       "/images/juxtaglobe3.png",
       "/images/juxtaglobe4.png",
     ]

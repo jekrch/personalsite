@@ -10,6 +10,7 @@ import PageHeader from "./PageHeader"
 const imagePaths = [
   "/images/juxtaglobe1.png",
   "/images/juxtaglobe2.png",
+  "/images/juxtaglobe5.png",
   "/images/juxtaglobe3.png",
   "/images/juxtaglobe4.png",
 ]
