@@ -653,7 +653,7 @@ body {
 /* Faded out while the slides change, then back in tracing the new strip.
    Trails off sooner than the tab ghosts. */
 .strip-ghosts {
-  --ghost-extent: min(var(--overhang) + 4rem, max(var(--overhang), (100vw - 100%) / 2 - 1rem));
+  --ghost-extent: min(5rem, max(var(--overhang), (100vw - 100%) / 2 - 1rem));
   --ghost-l: 1;
   --ghost-r: 1;
   transition: opacity 0.25s ease;
