@@ -65,7 +65,7 @@ const PlantyJ: FC = () => {
 
       <Container style={{ fontFamily: "helvetica", fontSize: 14 }} >
         <p>
-        PlantyJ is the project I built right after Comic Snaps for my partner Jenny. Jenny has a long standing interest in native ecology, permaculture, and urban environmental conservation, and over the last five years she's made remarkable progress on our property, building out mutually sustaining food webs and teaching me a lot about Minnesota's interconnected biodiversity.
+        PlantyJ is the project I built right after Comic Snaps for my partner Jenny. Jenny has a long standing interest in native ecology, permaculture, and urban environmental conservation, and over the last five years she's made remarkable progress on our property, building out food webs that sustain each other. She's also taught me a lot about how interconnected Minnesota's plants and wildlife are.
         </p>
         <p>
          The app is a garden journal with an agent built in. It records what's growing where and how it changes across the seasons, and you can ask it questions about the whole collection.
@@ -74,7 +74,7 @@ const PlantyJ: FC = () => {
         <ImageCarousel items={imagePaths} className="!min-h-[27em] !max-h-[30em]" />
 
         <p className="mt-4">
-        This is driven from a Telegram group. Jenny takes a picture of a plant with a short caption and it's deployed on the site as a static gallery entry, with the plant, its zone, and its tags parsed out of the caption. She can ask the bot a question about the collection (which natives are still missing a tag, which zones don't have a photo yet, what caption to use for a new posting) and it answers from a live rollup of every plant, zone, and photo. And if she describes a change in plain English, or just asks a question whose answer implies one, the bot drafts a numbered list of its own commands to make that change and waits for a /confirm before anything is written. That last part is what makes it agentic. The bot proposes the changes, and nothing runs until she approves them.
+        This is driven from a Telegram group. Jenny takes a picture of a plant with a short caption and it's deployed on the site as a static gallery entry, with the plant, its zone, and its tags parsed out of the caption. She can ask the bot a question about the collection (which natives are still missing a tag, which zones don't have a photo yet, what caption to use for a new posting) and it answers from a live rollup of every plant, zone, and photo. The agentic part is what happens when she describes a change in plain English, or just asks a question whose answer implies one. The bot drafts a numbered list of its own commands to make that change, and nothing is written until she replies with /confirm.
         </p>
 
         <p>
@@ -92,7 +92,7 @@ const PlantyJ: FC = () => {
         <MermaidDiagram chart={architectureChart} className="my-6 flex justify-center [&_svg]:max-w-full [&_svg]:h-auto" />
 
         <p>
-        On the backend, another GitHub Action runs a Python script whenever the plant data changes. It backfills per image metadata (pixel dimensions for layout placeholders), and it runs every new photo through BioCLIP, a vision model fine tuned on the Tree of Life dataset. BioCLIP gives two things: a 512 dimensional embedding used for similarity sorting that clusters by species and visual form, and a Tree of Life species prediction written back into the record with a confidence score. The same job enriches each species from GBIF for canonical taxonomy and vernacular names, POWO for native range, and Wikipedia for a description, with each source gated so re-runs only hit each API once and a third party hiccup never fails the build.
+        On the backend, another GitHub Action runs a Python script whenever the plant data changes. It backfills per image metadata (pixel dimensions for layout placeholders), and it runs every new photo through BioCLIP, a vision model fine tuned on the Tree of Life dataset. BioCLIP gives two things: a 512 dimensional embedding used for similarity sorting that clusters by species and visual form, and a Tree of Life species prediction written back into the record with a confidence score. The same job enriches each species from GBIF for canonical taxonomy and vernacular names, POWO for native range, and Wikipedia for a description, with each source tracked so re-runs only hit each API once and a third party hiccup never fails the build.
         </p>
 
         <p>
@@ -106,7 +106,7 @@ const PlantyJ: FC = () => {
         </p>
 
         <p>
-        I've included a real example from the Telegram group, scrollable here: an /identify run that commits a new native Heuchera with /pick, followed by an /ask that drafts a batch of ecological relationships and waits for /confirm before writing any of them.
+        The scrollable chat here is a real example from the Telegram group: an /identify run that commits a new native Heuchera with /pick, followed by an /ask that drafts a batch of ecological relationships and waits for /confirm before writing any of them.
         </p>
 
         <p>
