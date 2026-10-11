@@ -6,6 +6,8 @@ import {
 import "bootstrap/dist/css/bootstrap.min.css"
 import ImageCarousel from "./ImageCarousel"
 import PageHeader from "./PageHeader"
+import ProjectSources, { Integration, StackLayer, projectSourceSections } from "./ProjectSources"
+import SectionNav, { SectionHeading } from "./SectionNav"
 
 const imagePaths = [
   "/images/modal1.png",
@@ -16,10 +18,28 @@ const imagePaths = [
   "/images/modal6.png",
 ]
 
+const integrations: Integration[] = [
+  { name: "MIDI.js Soundfonts", url: "https://github.com/gleitz/midi-js-soundfonts", provides: "MusyngKite instrument samples for playback", calledFrom: "Browser" },
+  { name: "Google Identity Services", url: "https://developers.google.com/identity/gsi/web", provides: "OAuth token for optional Drive sync (drive.file scope)", calledFrom: "Browser" },
+  { name: "Google Drive API", url: "https://developers.google.com/drive/api", provides: "Saves and loads the song library as a JSON file in the user's own Drive", calledFrom: "Browser" },
+  { name: "Umami", url: "https://umami.is", provides: "Privacy-friendly page analytics", calledFrom: "Browser" },
+]
+
+const stack: StackLayer[] = [
+  { layer: "Frontend", tech: "React 18, TypeScript, Vite" },
+  { layer: "UI & state", tech: "Tailwind CSS 4, Zustand, Headless UI, dnd-kit (progression reordering), Heroicons, Lucide icons" },
+  { layer: "Music & audio", tech: "Web Audio via soundfont-player, Tonal (chord parsing), VexFlow (staff notation), react-piano, @tonejs/midi (MIDI export), html-to-image (song sheet export)" },
+  { layer: "Theory engine", tech: "PostgreSQL views for chord, scale, and mode relations; voice-leading graph and progression pathfinding in SQL; Flyway migrations" },
+  { layer: "API & MCP", tech: "Go, pgx, MCP Go SDK (streamable HTTP and stdio) for prompting progressions from LLM clients" },
+  { layer: "Data pipeline", tech: "Python (psycopg2) exports the database views to static JSON for the frontend" },
+  { layer: "Hosting", tech: "GitHub Pages, deployed by GitHub Actions; the live site reads the static JSON, so no server is needed" },
+  { layer: "Tooling & tests", tech: "Docker Compose, Bun, Vitest, Testing Library, ESLint, Prettier, SQL tests" },
+]
+
 const ChordBuildr: FC = () => {
 
   return (
-    <div className="App">
+    <div className="App mb-24">
       <PageHeader
         mainLink="https://modal.chordbuildr.com/"
         mainLinkText="modal.chordbuildr.com"
@@ -27,6 +47,9 @@ const ChordBuildr: FC = () => {
         githubText="(github)"
       />
       <Container style={{ fontFamily: "Helvetica", fontSize: 14 }}>
+        <SectionNav sections={[{ id: "overview", label: "Overview" }, ...projectSourceSections]} />
+
+        <SectionHeading id="overview" title="Overview" />
         <div className="mb-6">
           <p>
             After creating ChordBuildr, which focused on sharing and transcribing chord progressions, I began thinking about how I could use similar tools to enhance my music writing experience.
@@ -63,7 +86,9 @@ const ChordBuildr: FC = () => {
           <p> 
             This was motivated by my own experiences, transcribing chord charts for songs I wanted to learn and perform with others. This kind of work is finicky and intuitive, and having the right tools can make a huge difference. I hope to continue enhancing this with features that I find useful in my own composition process, and that others find useful in theirs.
           </p>
-        </div>     
+        </div>
+
+        <ProjectSources integrations={integrations} stack={stack} />
       </Container>
     </div>
   )

@@ -8,6 +8,8 @@ import ImageCarousel from "./ImageCarousel"
 import PageHeader from "./PageHeader"
 import MermaidDiagram from "./MermaidDiagram"
 import TelegramChat from "./TelegramChat"
+import ProjectSources, { Integration, StackLayer, projectSourceSections } from "./ProjectSources"
+import SectionNav, { SectionHeading } from "./SectionNav"
 
 const architectureChart = `flowchart TD
   user([User])
@@ -52,6 +54,34 @@ const imagePaths = [
     "/images/plantyj7.png",
 ]
 
+const integrations: Integration[] = [
+  { name: "Telegram Bot API", url: "https://core.telegram.org/bots/api", provides: "Photos, captions, and commands in (webhook); bot replies out", calledFrom: "Bot Worker" },
+  { name: "Gemini API", url: "https://ai.google.dev/gemini-api/docs", provides: "/ask answers, change proposals, /identify, ecological fit analysis grounded with Google Search; context caching", calledFrom: "Bot Worker (cron)" },
+  { name: "GitHub API", url: "https://docs.github.com/en/rest", provides: "Commits photos, plant data, and relationships to the repo", calledFrom: "Bot Worker" },
+  { name: "GBIF API", url: "https://techdocs.gbif.org/en/openapi/", provides: "Canonical taxonomy and vernacular names", calledFrom: "Metadata Action, browser" },
+  { name: "POWO API", url: "https://powo.science.kew.org", provides: "Native range", calledFrom: "Metadata Action, browser" },
+  { name: "Wikipedia API", url: "https://www.mediawiki.org/wiki/API:Main_page", provides: "Species descriptions and summaries", calledFrom: "Metadata Action, browser" },
+  { name: "iNaturalist API", url: "https://api.inaturalist.org/v1/docs/", provides: "Taxon records; species autocomplete", calledFrom: "Metadata Action, browser" },
+  { name: "Wikidata API", url: "https://www.wikidata.org/wiki/Wikidata:Data_access", provides: "Traits such as toxicity and edibility", calledFrom: "Metadata Action" },
+  { name: "NatureServe Explorer API", url: "https://explorer.natureserve.org/api-docs/", provides: "Conservation status", calledFrom: "Metadata Action" },
+  { name: "Hugging Face Hub", url: "https://huggingface.co/imageomics/bioclip", provides: "BioCLIP weights for embeddings and Tree of Life species ID", calledFrom: "Embeddings Action" },
+  { name: "Google Identity Services", url: "https://developers.google.com/identity/gsi/web", provides: "Sign-in for Drive-backed gardens and share-link usernames", calledFrom: "Browser, public Worker" },
+  { name: "Google Drive API", url: "https://developers.google.com/drive/api", provides: "Stores user-owned gardens in their own Drive; serves published gardens through a read proxy", calledFrom: "Browser, public Worker" },
+  { name: "Umami", url: "https://umami.is", provides: "Privacy-friendly page analytics", calledFrom: "Browser" },
+]
+
+const stack: StackLayer[] = [
+  { layer: "Frontend", tech: "React 19, TypeScript, Vite, build-time prerender" },
+  { layer: "UI & visualization", tech: "Tailwind CSS 4, d3-hierarchy (phylogenetic tree), d3-force (relationship web), d3-shape, react-joyride (guided tour), Lucide icons" },
+  { layer: "Ingest & agent", tech: "Telegram bot webhook → Cloudflare Worker with a one-minute cron, @google/genai" },
+  { layer: "Queue & cache", tech: "Cloudflare KV (LLM job queue, Gemini context-cache state, share-link usernames)" },
+  { layer: "Data pipeline", tech: "GitHub Actions, Python 3.11, Pillow, ImageHash (pHash), scikit-image (CIELAB), NumPy" },
+  { layer: "ML models", tech: "PyTorch, OpenCLIP, pybioclip; BioCLIP" },
+  { layer: "Storage", tech: "JSON and images committed to the GitHub repo (no database); Drive gardens cached in IndexedDB" },
+  { layer: "Hosting", tech: "GitHub Pages; a separate Cloudflare Worker for the public garden proxy" },
+  { layer: "Tooling & tests", tech: "Bun, bun test" },
+]
+
 const PlantyJ: FC = () => {
   return (
     <div className="App mb-24">
@@ -64,6 +94,9 @@ const PlantyJ: FC = () => {
       />
 
       <Container style={{ fontFamily: "helvetica", fontSize: 14 }} >
+        <SectionNav sections={[{ id: "overview", label: "Overview" }, { id: "architecture", label: "Architecture" }, ...projectSourceSections]} />
+
+        <SectionHeading id="overview" title="Overview" />
         <p>
         PlantyJ is the project I built right after Comic Snaps for my partner Jenny. Jenny has a long standing interest in native ecology, permaculture, and urban environmental conservation, and over the last five years she's made remarkable progress on our property, building out food webs that sustain each other. She's also taught me a lot about how interconnected Minnesota's plants and wildlife are.
         </p>
@@ -86,10 +119,12 @@ const PlantyJ: FC = () => {
         </p>
 
         <p>
-        The wrinkle here is the agent. Anything that needs an LLM (the question answering, the change proposals, the ecological analysis) is never run inside the webhook. The worker writes a job to a KV backed queue and returns immediately, and a one minute cron drains that queue, calls Gemini, and posts the result back to Telegram. Gemini calls routinely take ten to sixty seconds, well past a webhook timeout, so without the queue the agent wouldn't work at all.
+        The main differentiator here is the agent. Anything that needs an LLM (the question answering, the change proposals, the ecological analysis) is never run inside the webhook. The worker writes a job to a KV backed queue and returns immediately, and a one minute cron drains that queue, calls Gemini, and posts the result back to Telegram. Gemini calls routinely take ten to sixty seconds, well past a webhook timeout, so without the queue the agent wouldn't work at all.
         </p>
 
-        <MermaidDiagram chart={architectureChart} className="my-6 flex justify-center [&_svg]:max-w-full [&_svg]:h-auto" />
+        <div id="architecture" className="scroll-mt-4">
+          <MermaidDiagram chart={architectureChart} className="my-6 flex justify-center [&_svg]:max-w-full [&_svg]:h-auto" />
+        </div>
 
         <p>
         On the backend, another GitHub Action runs a Python script whenever the plant data changes. It backfills per image metadata (pixel dimensions for layout placeholders), and it runs every new photo through BioCLIP, a vision model fine tuned on the Tree of Life dataset. BioCLIP gives two things: a 512 dimensional embedding used for similarity sorting that clusters by species and visual form, and a Tree of Life species prediction written back into the record with a confidence score. The same job enriches each species from GBIF for canonical taxonomy and vernacular names, POWO for native range, and Wikipedia for a description, with each source tracked so re-runs only hit each API once and a third party hiccup never fails the build.
@@ -121,7 +156,7 @@ const PlantyJ: FC = () => {
         It's turned out to be really useful for us. The Telegram first flow means Jenny can log a plant from the garden on her phone without thinking about anything behind it, and it's been great to have everything in the yard documented and searchable in one place. If you have questions or ideas for new features, feel free to reach out.
         </p>
 
-        <div className="clear-both" />
+        <ProjectSources integrations={integrations} stack={stack} />
       </Container>
     </div>
   )

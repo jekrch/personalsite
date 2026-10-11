@@ -6,6 +6,8 @@ import {
 import "bootstrap/dist/css/bootstrap.min.css"
 import ImageCarousel from "./ImageCarousel"
 import PageHeader from "./PageHeader"
+import ProjectSources, { Integration, StackLayer, projectSourceSections } from "./ProjectSources"
+import SectionNav, { SectionHeading } from "./SectionNav"
 
 const imagePaths = [
   "/images/gbmeter1.png",
@@ -14,10 +16,28 @@ const imagePaths = [
   "/images/gbmeter4.png",
 ]
 
+const integrations: Integration[] = [
+  { name: "Green Button", url: "https://www.greenbuttondata.org/", provides: "Standard utility export (ESPI XML) with interval usage and cost", calledFrom: "Browser (file import)" },
+  { name: "Open-Meteo Historical Weather API", url: "https://open-meteo.com/en/docs/historical-weather-api", provides: "Hourly outdoor temperatures for the weather overlay", calledFrom: "Browser" },
+  { name: "Open-Meteo Geocoding API", url: "https://open-meteo.com/en/docs/geocoding-api", provides: "ZIP code to coordinates for the weather lookup", calledFrom: "Browser" },
+  { name: "Google Identity Services", url: "https://developers.google.com/identity/gsi/web", provides: "OAuth token for optional Drive sync (drive.file scope)", calledFrom: "Browser" },
+  { name: "Google Drive API", url: "https://developers.google.com/drive/api", provides: "Stores datasets in a folder in the user's own Drive", calledFrom: "Browser" },
+  { name: "Umami", url: "https://umami.is", provides: "Privacy-friendly page analytics", calledFrom: "Browser" },
+]
+
+const stack: StackLayer[] = [
+  { layer: "Frontend", tech: "React 19, TypeScript, Vite" },
+  { layer: "UI & charts", tech: "Tailwind CSS 4, Recharts, Lucide icons" },
+  { layer: "Parsing", tech: "DOMParser for Green Button XML, PapaParse for CSV with auto-detected columns" },
+  { layer: "Storage", tech: "All client-side: IndexedDB for recent datasets and cached weather, optional Google Drive folder (no backend)" },
+  { layer: "Hosting", tech: "GitHub Pages (custom domain)" },
+  { layer: "Tooling & tests", tech: "Bun, bun test, happy-dom, fake-indexeddb, ESLint" },
+]
+
 const GbMeter: FC = () => {
 
   return (
-    <div className="App">
+    <div className="App mb-24">
       <PageHeader
         mainLink="https://gbmeter.com/"
         mainLinkText="gbmeter.com"
@@ -25,6 +45,9 @@ const GbMeter: FC = () => {
         githubText="(github)"
       />
       <Container style={{ fontFamily: "Helvetica", fontSize: 14 }}>
+        <SectionNav sections={[{ id: "overview", label: "Overview" }, ...projectSourceSections]} />
+
+        <SectionHeading id="overview" title="Overview" />
         <div className="mb-6">
           <p>
             After having a heat pump installed in our old Minneapolis house, I started paying close attention to our energy bill in order to get a better sense of our usage patterns and to understand where we might be able to improve efficiency. While the utility company provided a basic breakdown of our monthly consumption, I was looking for something more granular and visual that could help me track trends over time.
@@ -50,7 +73,9 @@ const GbMeter: FC = () => {
           <p>
             I'm still actively developing GB Meter and am open to feedback and suggestions. My hope is that it can serve as a useful tool for other homeowners like myself who are looking to better understand and manage their energy consumption.
           </p>
-        </div>     
+        </div>
+
+        <ProjectSources integrations={integrations} stack={stack} />
       </Container>
     </div>
   )

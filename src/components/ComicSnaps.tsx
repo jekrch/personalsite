@@ -7,6 +7,8 @@ import "bootstrap/dist/css/bootstrap.min.css"
 import ImageCarousel from "./ImageCarousel"
 import PageHeader from "./PageHeader"
 import MermaidDiagram from "./MermaidDiagram"
+import ProjectSources, { Integration, StackLayer, projectSourceSections } from "./ProjectSources"
+import SectionNav, { SectionHeading } from "./SectionNav"
 
 const architectureChart = `flowchart TD
   user([User])
@@ -50,6 +52,27 @@ const imagePaths = [
   "/images/comicSnaps7.png",
 ]
 
+const integrations: Integration[] = [
+  { name: "Telegram Bot API", url: "https://core.telegram.org/bots/api", provides: "Panel submissions and captions (webhook)", calledFrom: "Cloudflare Worker" },
+  { name: "GitHub API", url: "https://docs.github.com/en/rest", provides: "Commits images and gallery data to the repo", calledFrom: "Cloudflare Worker" },
+  { name: "MediaWiki API", url: "https://www.mediawiki.org/wiki/API:Main_page", provides: "Artist and series descriptions from Wikipedia", calledFrom: "Metadata Action" },
+  { name: "Comic Vine API", url: "https://comicvine.gamespot.com/api/", provides: "Fallback descriptions, publisher, start year, issue count, artist birth/death years, covers", calledFrom: "Metadata Action" },
+  { name: "Metron API", url: "https://metron.cloud", provides: "Artist and series backfill, per-issue creator credits, series covers", calledFrom: "Metadata Action" },
+  { name: "Hugging Face Hub", url: "https://huggingface.co", provides: "SigLIP (google/siglip-base-patch16-224) and DINOv2 (facebook/dinov2-small) weights", calledFrom: "Embeddings Action" },
+  { name: "PyTorch Hub", url: "https://pytorch.org/vision/stable/models.html", provides: "VGG-16 ImageNet weights for Gram-matrix style embeddings", calledFrom: "Embeddings Action" },
+]
+
+const stack: StackLayer[] = [
+  { layer: "Frontend", tech: "React 19, TypeScript, Vite" },
+  { layer: "UI & visualization", tech: "Tailwind CSS 4, React Flow (similarity graph), Recharts (stats), OGL (WebGL), Lucide icons" },
+  { layer: "Ingest", tech: "Telegram bot webhook → Cloudflare Worker (Wrangler)" },
+  { layer: "Data pipeline", tech: "GitHub Actions, Python 3.12, Pillow, ImageHash (pHash), scikit-image (CIELAB), NumPy" },
+  { layer: "ML models", tech: "PyTorch, torchvision, Hugging Face Transformers, scikit-learn (PCA); SigLIP, DINOv2, VGG-16" },
+  { layer: "Storage", tech: "JSON and images committed to the GitHub repo (no database)" },
+  { layer: "Hosting", tech: "GitHub Pages" },
+  { layer: "Tooling & tests", tech: "Bun, Vitest, pytest" },
+]
+
 const ComicSnaps: FC = () => {
   return (
     <div className="App mb-24">
@@ -62,6 +85,9 @@ const ComicSnaps: FC = () => {
       />
 
       <Container style={{ fontFamily: "helvetica", fontSize: 14 }}>
+        <SectionNav sections={[{ id: "overview", label: "Overview" }, { id: "architecture", label: "Architecture" }, ...projectSourceSections]} />
+
+        <SectionHeading id="overview" title="Overview" />
         <p>
         Comic Snaps is a web app I built for myself and friends to collect comic book panels we like. It's also been my excuse to try out different kinds of neural network image processing.
         </p>
@@ -76,7 +102,9 @@ const ComicSnaps: FC = () => {
         Here's the ingestion pipeline I ended up with: images and captions get posted to a Telegram channel, where a Telegram bot webhook picks them up and passes them to a Cloudflare Worker. The Worker commits the images and metadata directly to the GitHub repo. A GitHub Action then rebuilds the static frontend (React, TypeScript, Vite, and Tailwind), which is hosted on GitHub Pages.
         </p>
 
-        <MermaidDiagram chart={architectureChart} className="my-6 flex justify-center [&_svg]:max-w-full [&_svg]:h-auto" />
+        <div id="architecture" className="scroll-mt-4">
+          <MermaidDiagram chart={architectureChart} className="my-6 flex justify-center [&_svg]:max-w-full [&_svg]:h-auto" />
+        </div>
 
         <p>
         On the backend, another GitHub Action runs a Python script after each relevant repo update to compute metadata and neural network embeddings for new panels. The basic metadata covers pixel dimensions, dominant CIELAB colors, perceptual hashes (pHash), and a colorfulness metric that separates black-and-white art from color. The script also pulls artist and series descriptions from the MediaWiki API, then falls back to the Comic Vine API to fill in whatever's still missing and add fields like publisher, start year, issue count, and artist birth/death years.
@@ -93,6 +121,8 @@ const ComicSnaps: FC = () => {
         <p>
           It's been an interesting project to build out, and the simple pipeline makes posting easy to fit into my weekly comic book habit. I wrote up what I've learned about each image model in an explainer modal, which you can open from any of the similarity graphs. If you have questions or ideas for new features, feel free to reach out.
         </p>
+
+        <ProjectSources integrations={integrations} stack={stack} />
       </Container>
     </div>
   )
