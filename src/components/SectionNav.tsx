@@ -83,7 +83,7 @@ const SectionNav: FC<SectionNavProps> = ({ sections }) => {
               // ! to beat the global link colour in App.css, which outranks a plain utility.
               // The hover is instant (no fade to flicker between neighbours), stays inside
               // the dividers, and is left off touch screens, where it would stick after a tap.
-              className="whitespace-nowrap border-l border-white/50 bg-clip-padding px-3.5 py-2 text-[11px] font-medium leading-tight !text-white no-underline last:border-r [@media(hover:hover)]:hover:bg-white/20"
+              className="whitespace-nowrap border-l border-white/90 bg-clip-padding px-3.5 py-2 text-[11px] font-medium leading-tight !text-white no-underline last:border-r [@media(hover:hover)]:hover:bg-white/20"
             >
               {s.label}
             </Link>
