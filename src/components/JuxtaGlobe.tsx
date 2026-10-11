@@ -46,6 +46,7 @@ const JuxtaGlobe: FC = () => {
         mainLinkText="juxtaglobe.com"
         githubLink="https://github.com/jekrch/juxtaglobe"
         githubText="(github)"
+        startYear={2025}
       />
       <Container style={{ fontFamily: "Helvetica", fontSize: 14 }}>
         <SectionNav sections={[{ id: "overview", label: "Overview" }, ...projectSourceSections]} />

@@ -43,6 +43,7 @@ const GbMeter: FC = () => {
         mainLinkText="gbmeter.com"
         githubLink="https://github.com/jekrch/energy-meter"
         githubText="(github)"
+        startYear={2025}
       />
       <Container style={{ fontFamily: "Helvetica", fontSize: 14 }}>
         <SectionNav sections={[{ id: "overview", label: "Overview" }, ...projectSourceSections]} />

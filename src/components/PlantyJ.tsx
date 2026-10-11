@@ -91,6 +91,7 @@ const PlantyJ: FC = () => {
         mainLinkText="plantyj.com"
         githubLink="https://github.com/jekrch/plantyJ"
         githubText="(github)"
+        startYear={2026}
       />
 
       <Container style={{ fontFamily: "helvetica", fontSize: 14 }} >

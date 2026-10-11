@@ -47,6 +47,7 @@ const EurovisionRanker: FC = () => {
         mainLinkText="eurovision-ranker.com"
         githubLink="https://github.com/jekrch/eurovision-ranker"
         githubText="(github)"
+        startYear={2022}
       />
 
       <Container style={{ fontFamily: "helvetica", fontSize: 14 }}>

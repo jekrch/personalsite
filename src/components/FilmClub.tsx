@@ -46,6 +46,7 @@ const FilmClub: FC = () => {
         mainLinkText="criterionclub.org"
         githubLink="https://github.com/jekrch/film-club"
         githubText="(github)"
+        startYear={2023}
       />
 
       <Container style={{ fontFamily: "helvetica", fontSize: 14 }}>

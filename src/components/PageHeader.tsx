@@ -10,10 +10,14 @@ interface PageHeaderProps {
   mainLink: string,
   mainLinkText: string,
   githubLink: string,
-  githubText: string
+  githubText: string,
+  // year the project started; omit to hide the timeline
+  startYear?: number,
+  // omit for ongoing projects ("present")
+  endYear?: number
 }
 
-const PageHeader = ({ mainLink, mainLinkText, githubLink, githubText }: PageHeaderProps) => {
+const PageHeader = ({ mainLink, mainLinkText, githubLink, githubText, startYear, endYear }: PageHeaderProps) => {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -76,6 +80,19 @@ const PageHeader = ({ mainLink, mainLinkText, githubLink, githubText }: PageHead
               `}>
               {githubText || '(github)'}
             </a>
+          )}
+          {startYear && (
+            <span
+              className={`
+                flex items-center text-xs text-jk-teal tabular-nums whitespace-nowrap
+                transform transition-all duration-500 ease-out delay-300
+                ${isVisible ? 'translate-x-0 opacity-100' : '-translate-x-full opacity-0'}
+              `}>
+              <span aria-hidden="true" className="w-px h-3 bg-jk-teal opacity-30 mx-3" />
+              {endYear === undefined
+                ? `Since ${startYear}`
+                : startYear === endYear ? startYear : `${startYear}–${endYear}`}
+            </span>
           )}
         </div>
       </Container>

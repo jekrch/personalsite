@@ -41,6 +41,7 @@ const ChordBuildr: FC = () => {
         mainLinkText="chordbuildr.com"
         githubLink="https://github.com/jekrch/chord-buildr"
         githubText="(github)"
+        startYear={2020}
       />
       <Container style={{ fontFamily: "Helvetica", fontSize: 14 }}>
         <SectionNav sections={[{ id: "overview", label: "Overview" }, ...projectSourceSections]} />

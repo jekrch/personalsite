@@ -82,6 +82,7 @@ const ComicSnaps: FC = () => {
         mainLinkText="snaps.jacobkrch.com"
         githubLink="https://github.com/jekrch/comic-snaps"
         githubText="(github)"
+        startYear={2025}
       />
 
       <Container style={{ fontFamily: "helvetica", fontSize: 14 }}>
