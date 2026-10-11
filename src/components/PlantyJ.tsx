@@ -122,7 +122,7 @@ const PlantyJ: FC = () => {
         The main differentiator here is the agent. Anything that needs an LLM (the question answering, the change proposals, the ecological analysis) is never run inside the webhook. The worker writes a job to a KV backed queue and returns immediately, and a one minute cron drains that queue, calls Gemini, and posts the result back to Telegram. Gemini calls routinely take ten to sixty seconds, well past a webhook timeout, so without the queue the agent wouldn't work at all.
         </p>
 
-        <div id="architecture" className="scroll-mt-4">
+        <div id="architecture" className="section-anchor">
           <MermaidDiagram chart={architectureChart} className="my-6 flex justify-center [&_svg]:max-w-full [&_svg]:h-auto" />
         </div>
 

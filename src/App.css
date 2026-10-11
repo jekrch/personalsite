@@ -514,6 +514,12 @@ body {
   color: white;
 }
 
+/* Section anchors on project pages. A jump to one lands just below the sticky
+   SectionNav (about 36px tall, stuck under the safe area) with room to spare. */
+.section-anchor {
+  scroll-margin-top: calc(3.5rem + env(safe-area-inset-top));
+}
+
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }

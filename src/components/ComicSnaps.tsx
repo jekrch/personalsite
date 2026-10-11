@@ -102,7 +102,7 @@ const ComicSnaps: FC = () => {
         Here's the ingestion pipeline I ended up with: images and captions get posted to a Telegram channel, where a Telegram bot webhook picks them up and passes them to a Cloudflare Worker. The Worker commits the images and metadata directly to the GitHub repo. A GitHub Action then rebuilds the static frontend (React, TypeScript, Vite, and Tailwind), which is hosted on GitHub Pages.
         </p>
 
-        <div id="architecture" className="scroll-mt-4">
+        <div id="architecture" className="section-anchor">
           <MermaidDiagram chart={architectureChart} className="my-6 flex justify-center [&_svg]:max-w-full [&_svg]:h-auto" />
         </div>
 
