@@ -24,12 +24,12 @@ const integrations: Integration[] = [
 ]
 
 const stack: StackLayer[] = [
-  { layer: "Frontend", tech: "React 18, TypeScript, Vite, React Router" },
-  { layer: "UI", tech: "Tailwind CSS 3, shadcn/ui (Radix primitives, cmdk), Font Awesome, Lucide icons" },
+  { layer: "Frontend", tech: "React 19, TypeScript, Vite 8 (Rolldown), React Router 8" },
+  { layer: "UI", tech: "Tailwind CSS 3, shadcn/ui (Radix primitives, cmdk), Lucide icons, Web Animations API transitions" },
   { layer: "Music & audio", tech: "Tone.js (synth voices and samplers), Tonal (notes and Roman numeral progressions), react-chords (guitar/ukulele diagrams)" },
   { layer: "State", tech: "Progressions encoded in the URL for saving and sharing (no backend)" },
   { layer: "Hosting", tech: "GitHub Pages (custom domain)" },
-  { layer: "Tooling & tests", tech: "Vitest, Testing Library, ESLint" },
+  { layer: "Tooling & tests", tech: "Bun, Vitest (jsdom), ESLint, GitHub Actions CI" },
 ]
 
 const ChordBuildr: FC = () => {

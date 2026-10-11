@@ -107,7 +107,7 @@
       "name": "Chord Buildr",
       "aliases": ["chord buildr", "chordbuilder"],
       "site": "https://chordbuildr.com/",
-      "viewport": { "width": 1200, "height": 780 },
+      "viewport": { "width": 1100, "height": 780 },
       "shots": [
         {
           "file": "chordbuildr3.png",
@@ -115,7 +115,7 @@
           "path": "/?s=el:80:g:3.3.-4&p=(1Cmaj7*)(1A13)(1Fmaj13)(1G11)(1E7)",
           "waitFor": "a:has-text('Fmaj13')",
           "fullPage": false,
-          "clip": { "top": 0, "aspect": 1.54 }
+          "clip": { "top": 0, "aspect": 1.41 }
         },
         {
           "file": "chordbuildr1.png",
@@ -123,7 +123,7 @@
           "path": "/?s=el:80:p:3.3.-4&p=(1Cmaj7*)(1A13)(1Fmaj13)(1G11)(1E7)",
           "waitFor": "a:has-text('Fmaj13')",
           "fullPage": false,
-          "clip": { "top": 0, "aspect": 1.54 }
+          "clip": { "top": 0, "aspect": 1.41 }
         },
         {
           "file": "chordbuildr2.png",
@@ -131,8 +131,8 @@
           "path": "/?s=el:80:u:3.3.-4&p=(1Cmaj7*)(1A13)(1Fmaj13)(1G11)(1E7)",
           "waitFor": "a:has-text('Fmaj13')",
           "fullPage": false,
-          "actions": [ { "click": "button:has(svg[data-icon=cog])", "wait": 1500 } ],
-          "clip": { "top": 0, "aspect": 1.54 }
+          "actions": [ { "click": "button[aria-label=Settings]", "wait": 1500 } ],
+          "clip": { "top": 0, "aspect": 1.41 }
         },
         {
           "file": "chordbuildr4.png",

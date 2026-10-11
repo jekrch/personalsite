@@ -23,6 +23,10 @@ Playwright is pinned to 1.61.1 because that matches the Chromium build already c
 `~/.cache/ms-playwright` (chromium-1228). If the browser is missing, run
 `npx playwright install chromium` from the scripts dir.
 
+Under WSL, `capture.mjs` points Chromium at [scripts/fonts.conf](scripts/fonts.conf), which adds
+`/mnt/c/Windows/Fonts` and makes Segoe UI the default sans. Sites that use the OS font stack
+(`system-ui`, `"Segoe UI"`, `Verdana`) otherwise render in DejaVu Sans.
+
 ## 2. Make sure each project has shots in the manifest
 
 ```bash

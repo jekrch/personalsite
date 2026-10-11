@@ -10,10 +10,16 @@
 
 import { chromium } from "playwright";
 import { readFile, mkdir, stat } from "node:fs/promises";
+import { existsSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
+
+// Under WSL, render with the Windows system fonts (see fonts.conf). Chromium inherits this env.
+if (existsSync("/mnt/c/Windows/Fonts") && !process.env.FONTCONFIG_FILE) {
+  process.env.FONTCONFIG_FILE = path.join(here, "fonts.conf");
+}
 const skillDir = path.resolve(here, "..");
 const repoRoot = path.resolve(skillDir, "../../..");
 const manifest = JSON.parse(await readFile(path.join(skillDir, "thumbs.json"), "utf8"));
