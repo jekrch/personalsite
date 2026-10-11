@@ -63,35 +63,35 @@ const ComicSnaps: FC = () => {
 
       <Container style={{ fontFamily: "helvetica", fontSize: 14 }}>
         <p>
-        Comic Snaps is a web app that I built for myself and friends to collect panels that we like from comic books and explore the capabilities of different types of neural network based image processing.
+        Comic Snaps is a web app I built for myself and friends to collect comic book panels we like. It's also been my excuse to try out different kinds of neural network image processing.
         </p>
 
         <ImageCarousel items={imagePaths} className="!min-h-[27em] !max-h-[30em]" />
 
         <p className="mt-4">
-        One of the key goals for the app was to leverage automation to simplify the user experience, while at the same time keeping costs at zero. Sort of like code golf for cheapskates! I also wanted to use the project as an opportunity to explore different types of image embedding models. While you might expect image processing via neural networks to be computationally intensive, the truth is that the more purpose-built, moderately sized models can be surprisingly efficient when deployed correctly. 
+        I wanted automation to handle as much of the posting process as possible, and I wanted it to cost nothing to run. Sort of like code golf for cheapskates! I was also curious about image embedding models. Neural network image processing sounds computationally expensive, but purpose-built, moderately sized models can be surprisingly efficient when deployed correctly.
         </p>
 
         <p>
-        The final streamlined ingestion pipeline that I landed on looked like this: images and captions are submitted in a Telegram channel which are picked up by a Telegram bot webhook, and then routed through a Cloudflare Worker which commits the images and metadata directly to the GitHub repo. A GithHub action then triggers a rebuild of the static frontend, which is implemented with React, TypeScript, Vite, and Tailwind, and hosted on GitHub Pages.
+        Here's the ingestion pipeline I ended up with: images and captions get posted to a Telegram channel, where a Telegram bot webhook picks them up and passes them to a Cloudflare Worker. The Worker commits the images and metadata directly to the GitHub repo. A GitHub Action then rebuilds the static frontend (React, TypeScript, Vite, and Tailwind), which is hosted on GitHub Pages.
         </p>
 
         <MermaidDiagram chart={architectureChart} className="my-6 flex justify-center [&_svg]:max-w-full [&_svg]:h-auto" />
 
         <p>
-        On the backend, another GitHub Action runs a python script following each relevant repo update to compute metadata and neural network embeddings for new panels. Basic metadata extraction includes calculating pixel dimensions, dominant CIELAB colors, perceptual hashes (pHash), and a colorfulness metric to distinguish between black-and-white and color art. Additionally, the script integrates with the MediaWiki API to auto-populate artist and series descriptions, falling back to the Comic Vine API to fill in any remaining gaps along with supplemental fields like publisher, start year, issue count, and artist birth/death years.
+        On the backend, another GitHub Action runs a Python script after each relevant repo update to compute metadata and neural network embeddings for new panels. The basic metadata covers pixel dimensions, dominant CIELAB colors, perceptual hashes (pHash), and a colorfulness metric that separates black-and-white art from color. The script also pulls artist and series descriptions from the MediaWiki API, then falls back to the Comic Vine API to fill in whatever's still missing and add fields like publisher, start year, issue count, and artist birth/death years.
         </p>
 
         <p>
-        To enable some more interesting visual categorization, the system generates three distinct types of embeddings. It uses SigLIP (768-dimensional) for conceptual and semantic similarity, DINOv2 (384-dimensional) for structural and compositional alignment, and VGG-16 Gram matrices (reduced via PCA) to capture mark-making styles (e.g. hatching, stippling, and inking) independent of the panel's subject matter.
+        For more interesting visual categorization, the script generates three kinds of embeddings. SigLIP (768 dimensions) handles conceptual and semantic similarity, and DINOv2 (384 dimensions) handles structure and composition. VGG-16 Gram matrices, reduced with PCA, capture mark-making style (hatching, stippling, inking) regardless of what the panel depicts.
         </p>
 
         <p>
-        These embeddings power the frontend's sorting and discovery features. The gallery can be organized into greedy nearest-neighbor chains based on any of the computed distance metrics. Furthermore, users can open a force-directed similarity graph to explore the collection, where node positioning and edge thickness visually represent the mathematical distance between different compositions, semantic meanings, or rendering styles.
+        The frontend uses these embeddings for sorting and browsing. You can arrange the gallery into greedy nearest-neighbor chains using any of the distance metrics, or open a force-directed similarity graph of the whole collection, where node positions and edge thickness show how close panels are in composition, meaning, or rendering style.
         </p>
 
         <p>
-          It's been an interesting project to build out, and the simple pipeline has made it easy to incorporate the posting process with my weekly comic book habit. I spent some time compiling what I've learned about each image model in an explainer modal that you can access from each similarity graph. If you have any questions or ideas for new features, feel free to reach out.
+          It's been an interesting project to build out, and the simple pipeline makes posting easy to fit into my weekly comic book habit. I wrote up what I've learned about each image model in an explainer modal, which you can open from any of the similarity graphs. If you have questions or ideas for new features, feel free to reach out.
         </p>
       </Container>
     </div>
