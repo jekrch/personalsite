@@ -15,6 +15,7 @@ import GeometricBackground from './components/GeometricBackground';
 import GbMeter from './components/GbMeter';
 import ComicSnaps from './components/ComicSnaps';
 import PlantyJ from './components/PlantyJ';
+import PageTransition from './components/PageTransition';
 
 const rootElement = document.getElementById('root') as Container;
 const root = createRoot(rootElement);
@@ -30,19 +31,21 @@ root.render(
       
       {/* constrained-width routes */}
       <div className="app content-max-width">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/logiclectures" element={<LogicLectures />} />
-          <Route path="/chordbuildr" element={<ChordBuildr />} />
-          <Route path="/modal-chordbuildr" element={<ModalChordBuildr />} />
-          <Route path="/eurovision-ranker" element={<EurovisionRanker />} />
-          <Route path="/music" element={<Music />} />
-          <Route path="/criterion-club" element={<FilmClub />} />
-          <Route path="/juxtaglobe" element={<JuxtaGlobe />} />
-          <Route path="/gb-meter" element={<GbMeter />} />
-          <Route path="/comic-snaps" element={<ComicSnaps />} />
-          <Route path="/plantyj" element={<PlantyJ />} />
-        </Routes>
+        <PageTransition>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/logiclectures" element={<LogicLectures />} />
+            <Route path="/chordbuildr" element={<ChordBuildr />} />
+            <Route path="/modal-chordbuildr" element={<ModalChordBuildr />} />
+            <Route path="/eurovision-ranker" element={<EurovisionRanker />} />
+            <Route path="/music" element={<Music />} />
+            <Route path="/criterion-club" element={<FilmClub />} />
+            <Route path="/juxtaglobe" element={<JuxtaGlobe />} />
+            <Route path="/gb-meter" element={<GbMeter />} />
+            <Route path="/comic-snaps" element={<ComicSnaps />} />
+            <Route path="/plantyj" element={<PlantyJ />} />
+          </Routes>
+        </PageTransition>
       </div>
       
       {/* render social bar globally, including on comics-25 */}

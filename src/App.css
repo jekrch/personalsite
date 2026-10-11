@@ -745,6 +745,34 @@ body {
   -webkit-animation: smoothReveal 0.7s cubic-bezier(0.22, 1, 0.36, 1) backwards;
 }
 
+/* Route enter, applied by PageTransition. Opacity is full by 65% while the
+   lift keeps easing out, so the page reads as settling rather than fading.
+   `backwards` fill, not `forwards`: a lingering transform would make the page
+   the containing block for its `position: fixed` modals and lightboxes. */
+@keyframes page-enter {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 14px, 0);
+  }
+  65% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.page-enter {
+  animation: page-enter 420ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-enter {
+    animation: none;
+  }
+}
+
 /* Scroll-in reveal for home page Banners: the card eases up from slightly
    faded, then its object settles a beat later. Starts partly visible so it
    reads as a settle rather than an appearance. `transform: none` once shown
