@@ -20,7 +20,6 @@ const architectureChart = `flowchart TD
   sheet[Google Sheet: historical data]
   films[OMDb · TMDb]
   pages[GitHub Pages]
-  raw[raw.githubusercontent.com]
 
   user -->|sign in| gis
   user -->|"edit + ID token"| worker
@@ -33,15 +32,13 @@ const architectureChart = `flowchart TD
   sheet -->|CSV| sync
   sync -->|film details| films
   sync -->|commit| repo
-  repo --> raw
   pages -->|static site| user
-  raw -->|live edits| user
 
   classDef teal fill:#5b8592,stroke:#3f5e69,color:#ffffff
   classDef gray fill:#e5e7eb,stroke:#9ca3af,color:#374151
   classDef ext fill:#f3f4f6,stroke:#9ca3af,color:#4b5563
   class repo,worker,deploy teal
-  class sync,pages,raw gray
+  class sync,pages gray
   class user,gis,sheet,films ext
 `
 
