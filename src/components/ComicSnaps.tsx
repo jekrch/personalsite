@@ -90,12 +90,16 @@ const ComicSnaps: FC = () => {
 
         <SectionHeading id="overview" title="Overview" />
         <p>
-        Comic Snaps is a web app I built for myself and friends to collect comic book panels we like. It's also been my excuse to try out different kinds of neural network image processing.
+        Comic Snaps is a web app I built for myself and friends to collect and document comic book panels we like. With comics being a short-form serialized medium, it's easy to find yourself swiming in a sea of different artists, colorists, writers, letterers. Despite my love of various titles, I often found it difficult to keep track of the creators behind them. Comic Snaps has made this a breeze; leveraging automation and some generous public integrations to handle all of the leg-work. 
+        </p>
+        <p>
+        I've also used this project as an opportunity to try out different kinds of open-source neural network vision models and offer some interactive and educational primers on how they work.
         </p>
 
         <ImageCarousel items={imagePaths} className="!min-h-[27em] !max-h-[30em]" />
 
-        <p className="mt-4">
+        <SectionHeading id="architecture" title="Architecture" className="mt-10" />
+        <p>
         I wanted automation to handle as much of the posting process as possible, and I wanted it to cost nothing to run. Sort of like code golf for cheapskates! I was also curious about image embedding models. Neural network image processing sounds computationally expensive, but purpose-built, moderately sized models can be surprisingly efficient when deployed correctly.
         </p>
 
@@ -103,9 +107,7 @@ const ComicSnaps: FC = () => {
         Here's the ingestion pipeline I ended up with: images and captions get posted to a Telegram channel, where a Telegram bot webhook picks them up and passes them to a Cloudflare Worker. The Worker commits the images and metadata directly to the GitHub repo. A GitHub Action then rebuilds the static frontend (React, TypeScript, Vite, and Tailwind), which is hosted on GitHub Pages.
         </p>
 
-        <div id="architecture" className="section-anchor">
-          <MermaidDiagram chart={architectureChart} className="my-6 flex justify-center [&_svg]:max-w-full [&_svg]:h-auto" />
-        </div>
+        <MermaidDiagram chart={architectureChart} className="my-6 flex justify-center [&_svg]:max-w-full [&_svg]:h-auto" />
 
         <p>
         On the backend, another GitHub Action runs a Python script after each relevant repo update to compute metadata and neural network embeddings for new panels. The basic metadata covers pixel dimensions, dominant CIELAB colors, perceptual hashes (pHash), and a colorfulness metric that separates black-and-white art from color. The script also pulls artist and series descriptions from the MediaWiki API, then falls back to the Comic Vine API to fill in whatever's still missing and add fields like publisher, start year, issue count, and artist birth/death years.

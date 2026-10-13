@@ -111,6 +111,7 @@ const PlantyJ: FC = () => {
         This is driven from a Telegram group. Jenny takes a picture of a plant with a short caption and it's deployed on the site as a static gallery entry, with the plant, its zone, and its tags parsed out of the caption. She can ask the bot a question about the collection (which natives are still missing a tag, which zones don't have a photo yet, what caption to use for a new posting) and it answers from a live rollup of every plant, zone, and photo. The agentic part is what happens when she describes a change in plain English, or just asks a question whose answer implies one. The bot drafts a numbered list of its own commands to make that change, and nothing is written until she replies with /confirm.
         </p>
 
+        <SectionHeading id="architecture" title="Architecture" className="mt-10" />
         <p>
         Like Comic Snaps, one of the goals was to lean on automation so the day to day experience is just taking photos and typing questions, while keeping the running cost at zero. There's no database and no server I pay for. The repo is the database, the static site reads JSON straight out of it, and every heavier feature is bolted on as a GitHub Action or a cron driven Cloudflare Worker.
         </p>
@@ -123,9 +124,7 @@ const PlantyJ: FC = () => {
         The main differentiator here is the agent. Anything that needs an LLM (the question answering, the change proposals, the ecological analysis) is never run inside the webhook. The worker writes a job to a KV backed queue and returns immediately, and a one minute cron drains that queue, calls Gemini, and posts the result back to Telegram. Gemini calls routinely take ten to sixty seconds, well past a webhook timeout, so without the queue the agent wouldn't work at all.
         </p>
 
-        <div id="architecture" className="section-anchor">
-          <MermaidDiagram chart={architectureChart} className="my-6 flex justify-center [&_svg]:max-w-full [&_svg]:h-auto" />
-        </div>
+        <MermaidDiagram chart={architectureChart} className="my-6 flex justify-center [&_svg]:max-w-full [&_svg]:h-auto" />
 
         <p>
         On the backend, another GitHub Action runs a Python script whenever the plant data changes. It backfills per image metadata (pixel dimensions for layout placeholders), and it runs every new photo through BioCLIP, a vision model fine tuned on the Tree of Life dataset. BioCLIP gives two things: a 512 dimensional embedding used for similarity sorting that clusters by species and visual form, and a Tree of Life species prediction written back into the record with a confidence score. The same job enriches each species from GBIF for canonical taxonomy and vernacular names, POWO for native range, and Wikipedia for a description, with each source tracked so re-runs only hit each API once and a third party hiccup never fails the build.
