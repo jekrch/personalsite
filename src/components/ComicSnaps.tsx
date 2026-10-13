@@ -107,7 +107,7 @@ const ComicSnaps: FC = () => {
         Here's the ingestion pipeline I ended up with: images and captions get posted to a Telegram channel, where a Telegram bot webhook picks them up and passes them to a Cloudflare Worker. The Worker commits the images and metadata directly to the GitHub repo. A GitHub Action then rebuilds the static frontend (React, TypeScript, Vite, and Tailwind), which is hosted on GitHub Pages.
         </p>
 
-        <MermaidDiagram chart={architectureChart} className="my-6 flex justify-center [&_svg]:max-w-full [&_svg]:h-auto" />
+        <MermaidDiagram chart={architectureChart} />
 
         <p>
         On the backend, another GitHub Action runs a Python script after each relevant repo update to compute metadata and neural network embeddings for new panels. The basic metadata covers pixel dimensions, dominant CIELAB colors, perceptual hashes (pHash), and a colorfulness metric that separates black-and-white art from color. The script also pulls artist and series descriptions from the MediaWiki API, then falls back to the Comic Vine API to fill in whatever's still missing and add fields like publisher, start year, issue count, and artist birth/death years.

@@ -124,7 +124,7 @@ const PlantyJ: FC = () => {
         The main differentiator here is the agent. Anything that needs an LLM (the question answering, the change proposals, the ecological analysis) is never run inside the webhook. The worker writes a job to a KV backed queue and returns immediately, and a one minute cron drains that queue, calls Gemini, and posts the result back to Telegram. Gemini calls routinely take ten to sixty seconds, well past a webhook timeout, so without the queue the agent wouldn't work at all.
         </p>
 
-        <MermaidDiagram chart={architectureChart} className="my-6 flex justify-center [&_svg]:max-w-full [&_svg]:h-auto" />
+        <MermaidDiagram chart={architectureChart} />
 
         <p>
         On the backend, another GitHub Action runs a Python script whenever the plant data changes. It backfills per image metadata (pixel dimensions for layout placeholders), and it runs every new photo through BioCLIP, a vision model fine tuned on the Tree of Life dataset. BioCLIP gives two things: a 512 dimensional embedding used for similarity sorting that clusters by species and visual form, and a Tree of Life species prediction written back into the record with a confidence score. The same job enriches each species from GBIF for canonical taxonomy and vernacular names, POWO for native range, and Wikipedia for a description, with each source tracked so re-runs only hit each API once and a third party hiccup never fails the build.

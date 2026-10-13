@@ -40,8 +40,9 @@ const architectureChart = `flowchart TD
   api --> pg
   api -->|email| brevo
   apiRepo -->|Actions build| ghcr
-  ghcr -->|docker pull| api
-  tf -->|provisions| droplet
+  ghcr -->|"pull + restart"| api
+  tf -->|"provisions · cloud-init"| droplet
+  caddy ~~~ apiRepo
 
   classDef teal fill:#5b8592,stroke:#3f5e69,color:#ffffff
   classDef gray fill:#e5e7eb,stroke:#9ca3af,color:#374151
@@ -110,12 +111,18 @@ const EurovisionRanker: FC = () => {
         <ImageCarousel items={imagePaths} className="min-h-[20em] lg:min-h-[35em] md:min-h-[35em] sm:min-h-[25em] max-sm:min-h-[25em]" />
         <SectionHeading id="architecture" title="Architecture" className="mt-10" />
         <p>
-          The ranker is a static React app on GitHub Pages. Its contest data (votes, results, and participants) comes from my <a href="https://github.com/jekrch/eurovision-scraper" target="_blank" rel="noopener noreferrer">eurovision-scraper</a>: a set of Scrapy spiders that crawl Wikipedia, and Python and Go scripts in the repo use that output to maintain the CSV files the app ships with. Since rankings are stored in the URL, browsing and ranking never hit a server. Accounts for saving rankings and groups are optional. They're backed by a Go API in a private repo, which GitHub Actions builds into a Docker image on GHCR.
+          The ranker is a static React app on GitHub Pages. Its contest data comes from my <a href="https://github.com/jekrch/eurovision-scraper" target="_blank" rel="noopener noreferrer">eurovision-scraper</a>, a set of Scrapy spiders that crawl Wikipedia, and Python and Go scripts turn that output into the CSV files the app ships with. Rankings live in the URL, so the API is only needed for optional accounts with saved rankings and groups. It's written in Go and lives in a private repo.
         </p>
         <p>
-          To keep hosting cheap, the API runs on one small DigitalOcean droplet. A private Terraform repo provisions the droplet along with its firewall, reserved IP, and a block volume for Postgres. Postgres runs on the same droplet, and Caddy sits in front of the API to handle TLS.
+          To keep hosting cheap, the API, Postgres 16, and Caddy (for TLS) run on one small DigitalOcean droplet. Terraform in a private repo provisions it with a firewall, a reserved IP, and a block volume for the database, and cloud-init sets up Docker Compose on first boot.
         </p>
-        <MermaidDiagram chart={architectureChart} className="my-6 flex justify-center [&_svg]:max-w-full [&_svg]:h-auto" />
+        <MermaidDiagram chart={architectureChart} />
+        <p>
+          GitHub Actions runs the Go tests on each push to main and publishes an image to GHCR tagged with the commit SHA. A release pulls that image on the droplet and restarts only the API container. Migrations are embedded in the binary and run on startup. To roll back, I re-tag an earlier image; schema fixes go forward as new migrations.
+        </p>
+        <p>
+          The droplet is a single point of failure, but only for accounts. If it goes down, people can still rank and share full ranking URLs; they lose sign-in, saved rankings, groups, and short share links. The database lives on a block volume that Terraform won't destroy, so recovering from a lost droplet means re-running Terraform, which reattaches the volume and the reserved IP.
+        </p>
 
         <ProjectSources integrations={integrations} stack={stack} />
       </Container>
