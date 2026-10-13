@@ -90,7 +90,7 @@ const ComicSnaps: FC = () => {
 
         <SectionHeading id="overview" title="Overview" />
         <p>
-        Comic Snaps is a web app I built for myself and friends to collect and document comic book panels we like. With comics being a short-form serialized medium, it's easy to find yourself swiming in a sea of different artists, colorists, writers, letterers. Despite my love of various titles, I often found it difficult to keep track of the creators behind them. Comic Snaps has made this a breeze; leveraging automation and some generous public integrations to handle all of the leg-work. 
+        Comic Snaps is a web app I built for myself and friends to collect and document comic book panels we like. With comics being a highly collaborative, serialized, typically short-form medium, it's easy to find yourself swiming in a sea of different artists, colorists, writers, letterers. Despite my love of various titles, I often found it difficult to keep track of the beloved creators behind them. Comic Snaps has made this a breeze; leveraging automation and some generous public integrations to handle all of the leg-work. 
         </p>
         <p>
         I've also used this project as an opportunity to try out different kinds of open-source neural network vision models and offer some interactive and educational primers on how they work.
