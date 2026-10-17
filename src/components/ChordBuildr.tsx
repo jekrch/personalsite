@@ -13,6 +13,8 @@ const imagePaths = [
   "/images/chordbuildr1.png",
   "/images/chordbuildr2.png",
   "/images/chordbuildr3.png",
+  "/images/chordbuildr6.png",
+  "/images/chordbuildr7.png",
   "/images/chordbuildr4.png",
   "/images/chordbuildr5.png",
 ]
@@ -25,7 +27,8 @@ const integrations: Integration[] = [
 
 const stack: StackLayer[] = [
   { layer: "Frontend", tech: "React 19, TypeScript, Vite 8 (Rolldown), React Router 8" },
-  { layer: "UI", tech: "Tailwind CSS 3, shadcn/ui (Radix primitives, cmdk), Lucide icons, Web Animations API transitions" },
+  { layer: "UI", tech: "Tailwind CSS 3, shadcn/ui (Radix primitives, cmdk), dnd-kit (drag-to-reorder chords and sections), Lucide icons, Web Animations API transitions" },
+  { layer: "Export", tech: "html-to-image (renders the chord chart to a downloadable PNG)" },
   { layer: "Music & audio", tech: "Tone.js (synth voices and samplers), Tonal (notes and Roman numeral progressions), react-chords (guitar/ukulele diagrams)" },
   { layer: "State", tech: "Progressions encoded in the URL for saving and sharing (no backend)" },
   { layer: "Hosting", tech: "GitHub Pages (custom domain)" },

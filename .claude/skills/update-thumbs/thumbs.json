@@ -151,6 +151,38 @@
           "viewport": { "width": 375, "height": 667 },
           "fullPage": false,
           "clip": { "top": 0, "height": 667 }
+        },
+        {
+          "file": "chordbuildr6.png",
+          "note": "Desktop, guitar Tab view with three sections (section breaks are (-) in the URL, the 't' suffix on the format picks Tab): Am9 D9 Gmaj7 Cmaj7 / F#m7b5 B7b9 / Em9 A13 Cmaj9 B7#5, slashes in the chord bar mark the breaks",
+          "path": "/?s=el:80:gt:3.3.-4&p=(1Am9)(1D9)(1Gmaj7)(1Cmaj7)(-)(1F%23m7b5)(1B7b9)(-)(1Em9)(1A13)(1Cmaj9)(1B7%235)",
+          "waitFor": "button[aria-label='Play B7#5']",
+          "fullPage": false,
+          "clip": { "top": 0, "aspect": 1.41 }
+        },
+        {
+          "file": "chordbuildr7.png",
+          "note": "Export dialog, Tabs mode, light sheet at 80% size: same sectioned progression titled 'Late Light' with Verse / Pre-chorus / Chorus labels and a note, all three sections plus the notes field visible above Print / Download",
+          "path": "/?s=el:80:gt:3.3.-4&p=(1Am9)(1D9)(1Gmaj7)(1Cmaj7)(-)(1F%23m7b5)(1B7b9)(-)(1Em9)(1A13)(1Cmaj9)(1B7%235)",
+          "waitFor": "button[aria-label='Play B7#5']",
+          "viewport": { "width": 1280, "height": 940 },
+          "fullPage": false,
+          "actions": [
+            { "click": "button:has-text('Export')", "wait": 1000 },
+            { "click": "[role=dialog] [role=radio]:has-text('Tabs')", "wait": 300 },
+            { "click": "[role=dialog] [role=radio]:has-text('Light')", "wait": 300 },
+            { "click": "[role=dialog] button[aria-label=Smaller]", "wait": 200 },
+            { "click": "[role=dialog] button[aria-label=Smaller]", "wait": 200 },
+            { "fill": "[aria-label=Title]", "value": "Late Light" },
+            { "fill": "[aria-label=Subtitle]", "value": "Slow bossa · ♩ = 92" },
+            { "fill": "[aria-label='Section 1 label']", "value": "Verse" },
+            { "fill": "[aria-label='Section 1 note']", "value": "Play twice" },
+            { "fill": "[aria-label='Section 2 label']", "value": "Pre-chorus" },
+            { "fill": "[aria-label='Section 2 note']", "value": "Let the B7♭9 ring" },
+            { "fill": "[aria-label='Section 3 label']", "value": "Chorus" },
+            { "fill": "[aria-label=Notes]", "value": "Capo off. Last time through, end on Em9.", "wait": 800 }
+          ],
+          "clip": { "top": 0, "height": 940 }
         }
       ]
     },

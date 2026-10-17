@@ -113,6 +113,8 @@ const projects = [
     gallery: [
       "/images/chordbuildr1.png",
       "/images/chordbuildr2.png",
+      "/images/chordbuildr6.png",
+      "/images/chordbuildr7.png",
       "/images/chordbuildr4.png",
       "/images/chordbuildr5.png",
       "/images/chordbuildrios.jpg",
