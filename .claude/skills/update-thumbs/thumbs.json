@@ -426,13 +426,17 @@
         },
         {
           "file": "plantyj4.png",
-          "note": "Photo detail (Wild Geranium) with the Details panel scrolled to About this species + classification",
+          "note": "Photo detail (Wild Geranium) with the Details panel scrolled to About this species + classification. Conservation status and Seasonal timeline are collapsed so they stay out of this shot (plantyj9 covers them on Witch Hazel)",
           "path": "/?plant=G+mac-1779035173",
           "waitFor": "[role=dialog] button:has-text('Details')",
           "actions": [
             {
               "click": "[role=dialog] button:has-text('Details')",
               "wait": 1500
+            },
+            {
+              "eval": "(() => { const sc = document.querySelector('.info-modal-scroll'); for (const t of ['Conservation status', 'Seasonal timeline']) { const el = [...sc.querySelectorAll('*')].find((e) => e.children.length === 0 && e.textContent.trim() === t); if (el) el.closest('.items-baseline').parentElement.style.display = 'none'; } })()",
+              "wait": 300
             },
             {
               "eval": "(() => { const sc = document.querySelector('.info-modal-scroll'); const el = [...sc.querySelectorAll('*')].find((e) => e.children.length === 0 && e.textContent.trim() === 'About this species'); sc.scrollTop += el.getBoundingClientRect().top - sc.getBoundingClientRect().top - 24; })()",
@@ -496,6 +500,26 @@
           "path": "/?view=tree",
           "waitFor": "text=Magnoliopsida",
           "wait": 4000,
+          "clip": {
+            "top": 0,
+            "aspect": 1.47
+          }
+        },
+        {
+          "file": "plantyj9.png",
+          "note": "Photo detail (Witch Hazel) with the Details panel scrolled so About this species + classification lead into Conservation status (G5 global / S2 Imperiled in MN) and the Seasonal timeline (fall flowering); BioCLIP's Norway maple guess stays out of frame",
+          "path": "/?plant=H+vir-1777602105",
+          "waitFor": "[role=dialog] button:has-text('Details')",
+          "actions": [
+            {
+              "click": "[role=dialog] button:has-text('Details')",
+              "wait": 1500
+            },
+            {
+              "eval": "(() => { const sc = document.querySelector('.info-modal-scroll'); const el = [...sc.querySelectorAll('*')].find((e) => e.children.length === 0 && e.textContent.trim() === 'About this species'); sc.scrollTop += el.getBoundingClientRect().top - sc.getBoundingClientRect().top - 8; })()",
+              "wait": 1000
+            }
+          ],
           "clip": {
             "top": 0,
             "aspect": 1.47

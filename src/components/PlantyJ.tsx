@@ -49,6 +49,7 @@ const imagePaths = [
     "/images/plantyj8.png",
     "/images/plantyj3.png",
     "/images/plantyj4.png",
+    "/images/plantyj9.png",
     "/images/plantyj5.png",
     "/images/plantyj6.png",
     "/images/plantyj7.png",

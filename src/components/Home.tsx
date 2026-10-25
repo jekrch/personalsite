@@ -19,6 +19,7 @@ const projects = [
       "/images/plantyj6.png",
       "/images/plantyj7.png",
       "/images/plantyj8.png",
+      "/images/plantyj9.png",
     ]
   },
   {
