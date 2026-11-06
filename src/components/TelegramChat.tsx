@@ -1,134 +1,13 @@
 import { FC, useEffect, useRef, useState } from "react"
 
-type Sender = "jenny" | "bot"
+import type { ChatMessage, ChatTranscript } from "./telegramChats"
 
-interface ChatMessage {
-  from: Sender
-  time: string
-  text: string
-  /** photo sent with the message, rendered above the caption */
-  image?: string
-  /** faded cost/usage footer line Gemini-backed replies print */
-  meta?: string
-}
-
-const SENDER_LABEL: Record<Sender, string> = {
-  jenny: "Jenny Krch",
-  bot: "plantyj-bot",
-}
-
-// the transcript scrolled through below — a real /identify -> /pick run
-// followed by an agentic /ask -> /confirm run, on one evening
-const CONVERSATION: ChatMessage[] = [
-  {
-    from: "jenny",
-    time: "9:04 PM",
-    image: "/images/telegramExample.png",
-    text: "/identify perennial in fy maybe a native huechera",
-  },
-  {
-    from: "bot",
-    time: "9:04 PM",
-    text: "Identifying — options will arrive shortly.",
-  },
-  {
-    from: "bot",
-    time: "9:06 PM",
-    text: `The very hairy stems and scalloped, rounded leaf shape are a textbook match for Prairie Alumroot, our local native Heuchera.
-
-Identification options:
-
-1. Prairie Alumroot (Heuchera richardsonii) — high confidence
-   new plant. Rounded, shallowly lobed basal leaves and extremely hairy (hirsute) petioles strongly confirm a native Heuchera. Zone set from your note.
-   caption: // Heuchera richardsonii // Prairie Alumroot // fy
-   → /pick 1
-
-2. Foamflower (Tiarella cordifolia) — low confidence
-   existing plant "T cor". Another native woodland plant with hairy stems, but its leaves are typically more deeply cleft (maple-like) than these.
-   caption: T cor // // // fy
-   → /pick 2
-
-Reply /pick N to save the photo with that identification (committed like a normal upload), or /cancel to discard.`,
-    meta: "[$0.0058 | 2,706 in / 242 out]",
-  },
-  {
-    from: "jenny",
-    time: "9:07 PM",
-    text: "/pick 1",
-  },
-  {
-    from: "bot",
-    time: "9:08 PM",
-    text: `Picked option 1: Prairie Alumroot (Heuchera richardsonii) — high confidence
-
-Added pic #93: H ric
-  Common: Prairie Alumroot
-  Full: Heuchera richardsonii
-  Zone: Front Yard (fy)
-  → images/H ric/1779156477.jpg`,
-  },
-  {
-    from: "jenny",
-    time: "9:13 PM",
-    text: "/ask propose any relevant new relationships for the newer plants and swallowtail caterpillar.",
-  },
-  {
-    from: "bot",
-    time: "9:13 PM",
-    text: "Queued — reply will arrive shortly.",
-  },
-  {
-    from: "bot",
-    time: "9:14 PM",
-    text: `I've proposed a few new ecological relationships for your recent additions, avoiding the companion type as requested.
-
-Specifically, I linked the Black Swallowtail to the Golden Alexanders as a host plant (since you found caterpillars on them), added Pearly Everlasting as a host plant for the American Painted Lady, connected the new Prairie Violet to your Carpenter Ants for seed dispersal, and noted Cardinals as frugivores for the Black Chokeberry.
-
-You can review the numbered list below and run /confirm to apply them!
-
-Proposed commands:
-  1. /relate host-plant // P pol // Z aur
-     Your photo notes several Black Swallowtail caterpillars were found on the Golden Alexanders.
-  2. /relate host-plant // V virg // A mar
-     Pearly Everlasting is a primary host plant for the American Painted Lady caterpillar.
-  3. /relate seed-disperser // C pen // V ped
-     Like your other violets, the new Prairie Violet relies on ants for seed dispersal (myrmecochory).
-  4. /relate frugivore // c card // A mel
-     Cardinals will forage the berries produced by your new Black Chokeberry.
-
-Reply /confirm to run all, /confirm 1 3 to run a subset, or /cancel to drop.`,
-    meta: "[$0.0299 | +12,890 cache-create, 25,780 cached, 28,075 in / 281 out]",
-  },
-  {
-    from: "jenny",
-    time: "9:16 PM",
-    text: "/confirm",
-  },
-  {
-    from: "bot",
-    time: "9:16 PM",
-    text: "Queued 4 command(s) — batched in chunks of 25/min (~1 min). Summary will arrive when complete.",
-  },
-  {
-    from: "bot",
-    time: "9:17 PM",
-    text: `Ran 4 command(s):
-1. /relate host-plant // P pol // Z aur
-   OK: Related #44: P pol → Z aur (Host Plant)
-2. /relate host-plant // V virg // A mar
-   OK: Related #45: V virg → A mar (Host Plant)
-3. /relate seed-disperser // C pen // V ped
-   OK: Related #46: C pen → V ped (Seed Disperser)
-4. /relate frugivore // c card // A mel
-   OK: Related #47: c card → A mel (Fruit / Nut Consumer)`,
-  },
-]
-
-const Bubble: FC<{ message: ChatMessage; showName: boolean }> = ({
-  message,
-  showName,
-}) => {
-  const outgoing = message.from === "jenny"
+const Bubble: FC<{
+  message: ChatMessage
+  showName: boolean
+  botName: string
+}> = ({ message, showName, botName }) => {
+  const outgoing = message.from === "user"
 
   // user messages are slash commands — highlight the command token the way
   // Telegram renders it as a tappable link (not as code/monospace)
@@ -165,7 +44,7 @@ const Bubble: FC<{ message: ChatMessage; showName: boolean }> = ({
         <div className="px-3 py-1.5">
           {showName && !outgoing && (
             <div className="mb-0.5 text-[11.5px] font-semibold text-[#79b0bb]">
-              {SENDER_LABEL[message.from]}
+              {botName}
             </div>
           )}
 
@@ -191,10 +70,11 @@ const Bubble: FC<{ message: ChatMessage; showName: boolean }> = ({
 }
 
 interface TelegramChatProps {
+  chat: ChatTranscript
   className?: string
 }
 
-const TelegramChat: FC<TelegramChatProps> = ({ className }) => {
+const TelegramChat: FC<TelegramChatProps> = ({ chat, className }) => {
   const [expanded, setExpanded] = useState(false)
 
   // grab-to-scroll with mobile-style physics: drag to fling the transcript,
@@ -359,12 +239,16 @@ const TelegramChat: FC<TelegramChatProps> = ({ className }) => {
           <polyline points="15 18 9 12 15 6" />
         </svg>
         <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-jk-teal/30 text-base">
-          🌿
+          {"image" in chat.avatar ? (
+            <img src={chat.avatar.image} alt="" className="h-5 w-5" />
+          ) : (
+            chat.avatar.emoji
+          )}
         </div>
         <div className="min-w-0 flex-1">
-          <div className="truncate text-sm font-semibold">PlantyJ</div>
+          <div className="truncate text-sm font-semibold">{chat.title}</div>
           <div className="truncate text-[11px] text-white/50">
-            Jenny Krch, plantyj-bot
+            {chat.userName}, {chat.botName}
           </div>
         </div>
         <svg
@@ -396,17 +280,17 @@ const TelegramChat: FC<TelegramChatProps> = ({ className }) => {
         <div ref={contentRef} className="will-change-transform">
           <div className="mb-3 flex justify-center">
             <span className="rounded-full bg-white/[0.07] px-3 py-0.5 text-[10.5px] font-medium text-white/60">
-              May 18, 2026
+              {chat.date}
             </span>
           </div>
 
           <div className="space-y-2">
-            {CONVERSATION.map((message, i) => {
-              const prev = CONVERSATION[i - 1]
+            {chat.messages.map((message, i) => {
+              const prev = chat.messages[i - 1]
               const showName = !prev || prev.from !== message.from
               return (
                 <div key={i} className={showName && i > 0 ? "pt-1.5" : ""}>
-                  <Bubble message={message} showName={showName} />
+                  <Bubble message={message} showName={showName} botName={chat.botName} />
                 </div>
               )
             })}

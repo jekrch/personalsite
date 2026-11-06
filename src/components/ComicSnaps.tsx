@@ -7,6 +7,8 @@ import "bootstrap/dist/css/bootstrap.min.css"
 import ImageCarousel from "./ImageCarousel"
 import PageHeader from "./PageHeader"
 import MermaidDiagram from "./MermaidDiagram"
+import TelegramChat from "./TelegramChat"
+import { comicSnapsChat } from "./telegramChats"
 import ProjectSources, { Integration, StackLayer, projectSourceSections } from "./ProjectSources"
 import SectionNav, { SectionHeading } from "./SectionNav"
 
@@ -42,8 +44,50 @@ const architectureChart = `flowchart TD
   class wiki,vine,user ext
 `
 
+const agentChart = `flowchart TD
+  user([User])
+  tg[Telegram Bot]
+  cf[Cloudflare Worker]
+  queue[(Cloudflare Queue)]
+  agent[Gemini tool loop]
+  tools[Rollup · Metron · Comic Vine]
+  research[Research: web search · fetch · pick]
+  kv[(KV: pending proposals · threads)]
+  repo[(GitHub Repo)]
+  restoreJob[Restore job: read-only, no credentials]
+  judge[Gemini judge: install · retry · skip]
+  publishJob[Publish job: install · verify · before/after to chat]
+  branch[(restore/seq branch)]
+  metaAction[GitHub Actions: metadata + embeddings]
+
+  user -->|commands · photos| tg
+  tg --> cf
+  cf -->|"/ask · described photo"| agent
+  cf -.->|runs long| queue
+  queue -.-> agent
+  agent <-->|tool calls| tools
+  agent -->|further reading| research
+  agent -->|proposed commands| kv
+  research -->|picked pages| kv
+  kv -->|"/confirm: one commit"| repo
+  cf -->|"/restore · /redo"| restoreJob
+  restoreJob <-->|up to 4 rounds| judge
+  restoreJob -->|image + summary| publishJob
+  publishJob --> branch
+  branch -->|"/approve: replay onto main"| repo
+  repo --> metaAction
+
+  classDef teal fill:#5b8592,stroke:#3f5e69,color:#ffffff
+  classDef gray fill:#e5e7eb,stroke:#9ca3af,color:#374151
+  classDef ext fill:#f3f4f6,stroke:#9ca3af,color:#4b5563
+  class repo,restoreJob,publishJob,metaAction teal
+  class tg,cf,queue,kv,tools,research,branch gray
+  class agent,judge,user ext
+`
+
 const imagePaths = [
   "/images/comicSnaps1.png",
+  "/images/comicSnaps8.png",
   "/images/comicSnaps2.png",
   "/images/comicSnaps3.png",
   "/images/comicSnaps4.png",
@@ -53,11 +97,12 @@ const imagePaths = [
 ]
 
 const integrations: Integration[] = [
-  { name: "Telegram Bot API", url: "https://core.telegram.org/bots/api", provides: "Panel submissions and captions (webhook)", calledFrom: "Cloudflare Worker" },
-  { name: "GitHub API", url: "https://docs.github.com/en/rest", provides: "Commits images and gallery data to the repo", calledFrom: "Cloudflare Worker" },
+  { name: "Telegram Bot API", url: "https://core.telegram.org/bots/api", provides: "Panels, captions, and agent commands in (webhook); replies and restoration before/afters out", calledFrom: "Cloudflare Worker, Restore Action" },
+  { name: "Gemini API", url: "https://ai.google.dev/gemini-api/docs", provides: "/ask answers and change proposals with function calling, captions written from a description, further reading for artists and series, found with Google Search grounding, restoration judging", calledFrom: "Cloudflare Worker, Restore Action" },
+  { name: "GitHub API", url: "https://docs.github.com/en/rest", provides: "Commits images and gallery data to the repo; dispatches the restore workflow and replays approved restorations onto main", calledFrom: "Cloudflare Worker" },
   { name: "MediaWiki API", url: "https://www.mediawiki.org/wiki/API:Main_page", provides: "Artist and series descriptions from Wikipedia", calledFrom: "Metadata Action" },
-  { name: "Comic Vine API", url: "https://comicvine.gamespot.com/api/", provides: "Fallback descriptions, publisher, start year, issue count, artist birth/death years, covers", calledFrom: "Metadata Action" },
-  { name: "Metron API", url: "https://metron.cloud", provides: "Artist and series backfill, per-issue creator credits, series covers", calledFrom: "Metadata Action" },
+  { name: "Comic Vine API", url: "https://comicvine.gamespot.com/api/", provides: "Fallback descriptions, publisher, start year, issue count, artist birth/death years, covers; series lookups for the agent", calledFrom: "Metadata Action, Cloudflare Worker" },
+  { name: "Metron API", url: "https://metron.cloud", provides: "Artist and series backfill, per-issue creator credits, series covers; series lookups for the agent", calledFrom: "Metadata Action, Cloudflare Worker" },
   { name: "Hugging Face Hub", url: "https://huggingface.co", provides: "SigLIP (google/siglip-base-patch16-224) and DINOv2 (facebook/dinov2-small) weights", calledFrom: "Embeddings Action" },
   { name: "PyTorch Hub", url: "https://pytorch.org/vision/stable/models.html", provides: "VGG-16 ImageNet weights for Gram-matrix style embeddings", calledFrom: "Embeddings Action" },
 ]
@@ -65,8 +110,10 @@ const integrations: Integration[] = [
 const stack: StackLayer[] = [
   { layer: "Frontend", tech: "React 19, TypeScript, Vite" },
   { layer: "UI & visualization", tech: "Tailwind CSS 4, React Flow (similarity graph), Recharts (stats), OGL (WebGL), Lucide icons" },
-  { layer: "Ingest", tech: "Telegram bot webhook → Cloudflare Worker (Wrangler)" },
+  { layer: "Ingest & agent", tech: "Telegram bot webhook → Cloudflare Worker (Wrangler), @google/genai (function calling, Google Search grounding)" },
+  { layer: "Queue & state", tech: "Cloudflare Queues (long model calls, /confirm runs), Cloudflare KV (pending proposals, /resp threads, daily limits)" },
   { layer: "Data pipeline", tech: "GitHub Actions, Python 3.12, Pillow, ImageHash (pHash), scikit-image (CIELAB), NumPy" },
+  { layer: "Restoration", tech: "GitHub Actions (workflow_dispatch), Python 3.12, OpenCV, NumPy; Gemini as judge" },
   { layer: "ML models", tech: "PyTorch, torchvision, Hugging Face Transformers, scikit-learn (PCA); SigLIP, DINOv2, VGG-16" },
   { layer: "Storage", tech: "JSON and images committed to the GitHub repo (no database)" },
   { layer: "Hosting", tech: "GitHub Pages" },
@@ -86,7 +133,7 @@ const ComicSnaps: FC = () => {
       />
 
       <Container style={{ fontFamily: "helvetica", fontSize: 14 }}>
-        <SectionNav sections={[{ id: "overview", label: "Overview" }, { id: "architecture", label: "Architecture" }, ...projectSourceSections]} />
+        <SectionNav sections={[{ id: "overview", label: "Overview" }, { id: "architecture", label: "Architecture" }, { id: "agent", label: "Agent" }, ...projectSourceSections]} />
 
         <SectionHeading id="overview" title="Overview" />
         <p>
@@ -119,6 +166,27 @@ const ComicSnaps: FC = () => {
 
         <p>
         The frontend uses these embeddings for sorting and browsing. You can arrange the gallery into greedy nearest-neighbor chains using any of the distance metrics, or open a force-directed similarity graph of the whole collection, where node positions and edge thickness show how close panels are in composition, meaning, or rendering style.
+        </p>
+
+        <SectionHeading id="agent" title="Agent" className="mt-10" />
+        <p>
+        After building the agent for PlantyJ, I ported it back into the Comic Snaps bot. Posting a panel works the same as before, but I can also ask the bot about the collection or describe a change in plain English, like which series never matched Metron, tag every Hellboy panel with mignolaverse, or rename a series that has drifted into two spellings. It answers from a rollup of every panel, series, and artist, can look series up in Metron and Comic Vine, and drafts a numbered list of its own bot commands for the change. Nothing is written until I reply with /confirm, and the confirmed commands land as a single commit. If I don't feel like typing out a caption in the posting format, I can describe the panel instead and the bot writes the caption for me to confirm. Model calls start inline and move to a Cloudflare Queue if they run long, so a slow Gemini call never holds up the webhook.
+        </p>
+
+        <MermaidDiagram chart={agentChart} />
+
+        <TelegramChat chat={comicSnapsChat} className="mb-6 w-full max-w-sm max-md:mx-auto md:float-right md:ml-14 lg:ml-20 xl:ml-24 md:mb-3 md:w-[20rem] lg:w-[21rem]" />
+
+        <p>
+        Most of the artist and series entries came from Comic Vine or Metron, so the only sources behind them were database pages. The bot can go find further reading for an entry: interviews, reviews, essays, the creator's own site. A Gemini call with Google Search turns up candidate pages, the Worker fetches each one itself and drops anything that doesn't load or never names the artist or series, and a second call picks the few worth reading and says in a line what each one is. The description is never touched, and /confirm adds the picks to the entry's sources.
+        </p>
+
+        <p>
+        The bot can also restore panels. Most of mine are phone photos taken under a lamp, so they come in with a warm cast, uneven light, and grey blacks. Sending /restore with a panel ID dispatches a GitHub Action that runs the same restoration scripts I use locally. Gemini only acts as the judge: each round it looks at the source and the result and answers whether to keep it, retry with different settings from a fixed list, or leave the panel alone. The model never runs anything itself, and since it reads text anyone in the chat can write, it runs in a job with read-only access and no credentials. A separate job installs only the restored image on a branch and sends the before and after back to the chat. /approve puts it on the site, and /redo with a note about what went wrong tries again.
+        </p>
+
+        <p>
+        The scrollable chat here starts with a real /restore of a Verbatim panel that I approve. After that come two /ask examples: one adds three interviews to Mike Mignola's sources, and one fixes two series that never matched Metron because their start years were wrong. Both wait for /confirm.
         </p>
 
         <p>
