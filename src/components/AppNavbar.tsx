@@ -12,6 +12,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLinkedin, faGithub } from '@fortawesome/free-brands-svg-icons';
 import classNames from "classnames";
 import { Sling as Hamburger } from 'hamburger-react';
+import { Link } from 'react-router-dom';
 
 interface NavbarState {
   isOpen: boolean;
@@ -88,7 +89,7 @@ const AppNavbar: FC = () => {
 
     // Handle root
     if (href === '/#' || href === '/') {
-      return currentPath === '/' || currentPath === '/#' || currentPath === '';
+      return currentPath === '/' || currentPath === '/#' || currentPath === '/#/' || currentPath === '';
     }
 
     return currentPath === href;
@@ -187,6 +188,17 @@ const AppNavbar: FC = () => {
     }, 50);
   }, [triggerLogoAnimation, updateCurrentPath, updateIndicatorPosition]);
 
+  // The logo routes home through the router instead of a raw href="/#".
+  // As a plain anchor, the browser handled the empty fragment itself:
+  // it jumped the old page to the top before React swapped in Home, which
+  // read as the whole page blinking. Scrolling here, in the same click task
+  // as the route change, lets both land in one paint.
+  const handleBrandClick = useCallback(() => {
+    triggerLogoAnimation('bouncy-animation', 1000);
+    window.scrollTo({ top: 0, behavior: 'instant' });
+    setTimeout(updateCurrentPath, 50);
+  }, [triggerLogoAnimation, updateCurrentPath]);
+
   // Register a nav item ref
   const setNavItemRef = useCallback((href: string, element: HTMLElement | null) => {
     if (element) {
@@ -256,8 +268,9 @@ const AppNavbar: FC = () => {
       >
         <Container className="d-flex justify-content-between">
           <NavbarBrand
-            href="/#"
-            onClick={() => triggerLogoAnimation('bouncy-animation', 1000)}
+            tag={Link}
+            to="/"
+            onClick={handleBrandClick}
           >
             <img
               src="/images/jacob-krch.png"

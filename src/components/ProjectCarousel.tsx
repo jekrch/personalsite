@@ -900,8 +900,12 @@ const ProjectCarousel: FC<ProjectCarouselProps> = ({ projects, backgroundImages 
       {/* Background layer — the rotating photo, tinted by multiplying brand
           teal over it (one layer, so it reads as part of the palette rather
           than dimmed), with this project's other views in a strip along the
-          bottom that slowly marquees through them when there are more than fit. */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none bg-[#3f4e53]">
+          bottom that slowly marquees through them when there are more than fit.
+          `isolate` keeps the multiply blend inside this layer. Without it the
+          blend reaches up to the page root, so when PageTransition's enter
+          animation starts and stops (adding and removing a stacking context)
+          Chromium rebuilds the whole page's layers and it flashes. */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none bg-[#3f4e53] isolate">
         {backgroundImages.length > 0 && (
           <>
             <img
