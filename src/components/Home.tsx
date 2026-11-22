@@ -32,6 +32,7 @@ const projects = [
       "/images/modal2.png",
       "/images/modal3.png",
       "/images/modal4.png",
+      "/images/modal7.png",
       "/images/modal5.png",
       "/images/modal6.png",
     ]

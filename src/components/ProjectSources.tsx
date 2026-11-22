@@ -26,10 +26,11 @@ interface ProjectSourcesProps {
   stack: StackLayer[]
 }
 
-const tableClass = "w-full border-collapse text-left text-[13px] leading-snug"
-const thClass = "bg-jk-teal px-3 py-2 text-[11px] font-semibold uppercase tracking-wider text-white whitespace-nowrap"
-const tdClass = "border-b border-gray-200 px-3 py-1.5 align-top"
-const rowClass = "even:bg-[rgba(91,133,146,0.05)]"
+// shared with other tables on project pages (e.g. SqlQuery results)
+export const tableClass = "w-full border-collapse text-left text-[13px] leading-snug"
+export const thClass = "bg-jk-teal px-3 py-2 text-[11px] font-semibold uppercase tracking-wider text-white whitespace-nowrap"
+export const tdClass = "border-b border-gray-200 px-3 py-1.5 align-top"
+export const rowClass = "even:bg-[rgba(91,133,146,0.05)]"
 
 const ProjectSources: FC<ProjectSourcesProps> = ({ integrations, stack }) => {
   return (

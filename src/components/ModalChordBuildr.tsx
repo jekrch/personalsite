@@ -8,12 +8,15 @@ import ImageCarousel from "./ImageCarousel"
 import PageHeader from "./PageHeader"
 import ProjectSources, { Integration, StackLayer, projectSourceSections } from "./ProjectSources"
 import SectionNav, { SectionHeading } from "./SectionNav"
+import { SqlQueryCard } from "./SqlQuery"
+import { chordDbQueries } from "./chordDbQueries"
 
 const imagePaths = [
   "/images/modal1.png",
   "/images/modal2.png",
   "/images/modal3.png",
   "/images/modal4.png",
+  "/images/modal7.png",
   "/images/modal5.png",
   "/images/modal6.png",
 ]
@@ -29,7 +32,7 @@ const stack: StackLayer[] = [
   { layer: "Frontend", tech: "React 18, TypeScript, Vite" },
   { layer: "UI & state", tech: "Tailwind CSS 4, Zustand, Headless UI, dnd-kit (progression reordering), Heroicons, Lucide icons" },
   { layer: "Music & audio", tech: "Web Audio via soundfont-player, Tonal (chord parsing), VexFlow (staff notation), react-piano, @tonejs/midi (MIDI export), html-to-image (song sheet export)" },
-  { layer: "Theory engine", tech: "PostgreSQL views for chord, scale, and mode relations; voice-leading graph and progression pathfinding in SQL; Flyway migrations" },
+  { layer: "Theory engine", tech: "PostgreSQL views for chord, scale, and mode relations; voice-leading graph and progression pathfinding in SQL; Flyway migrations. The database is open source as chord-db; the rest of the app is closed source" },
   { layer: "API & MCP", tech: "Go, pgx, MCP Go SDK (streamable HTTP and stdio) for prompting progressions from LLM clients" },
   { layer: "Data pipeline", tech: "Python (psycopg2) exports the database views to static JSON for the frontend" },
   { layer: "Hosting", tech: "GitHub Pages, deployed by GitHub Actions; the live site reads the static JSON, so no server is needed" },
@@ -43,12 +46,12 @@ const ChordBuildr: FC = () => {
       <PageHeader
         mainLink="https://modal.chordbuildr.com/"
         mainLinkText="modal.chordbuildr.com"
-        githubLink="https://github.com/jekrch/chord-analyzr"
-        githubText="(github)"
+        githubLink="https://github.com/jekrch/chord-db"
+        githubText="(database on github)"
         startYear={2021}
       />
       <Container style={{ fontFamily: "Helvetica", fontSize: 14 }}>
-        <SectionNav sections={[{ id: "overview", label: "Overview" }, ...projectSourceSections]} />
+        <SectionNav sections={[{ id: "overview", label: "Overview" }, { id: "database", label: "Database" }, ...projectSourceSections]} />
 
         <SectionHeading id="overview" title="Overview" />
         <div className="mb-6">
@@ -88,6 +91,18 @@ const ChordBuildr: FC = () => {
             This was motivated by my own experiences, transcribing chord charts for songs I wanted to learn and perform with others. This kind of work is finicky and intuitive, and having the right tools can make a huge difference. I hope to continue enhancing this with features that I find useful in my own composition process, and that others find useful in theirs.
           </p>
         </div>
+
+        <section className="mt-10">
+          <SectionHeading id="database" title="Database" />
+          <p>
+            The theory engine is a Postgres database of chords, scales, and modes, published as{" "}
+            <a href="https://github.com/jekrch/chord-db" target="_blank" rel="noopener noreferrer">chord-db</a>.
+            A few queries against its views:
+          </p>
+          <div className="grid gap-3 lg:grid-cols-3">
+            {chordDbQueries.map(q => <SqlQueryCard key={q.id} sample={q} />)}
+          </div>
+        </section>
 
         <ProjectSources integrations={integrations} stack={stack} />
       </Container>

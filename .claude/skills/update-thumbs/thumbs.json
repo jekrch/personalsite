@@ -200,6 +200,7 @@
       },
       "fullPage": false,
       "localStorage": {
+        "mcb.patternEditorView": "grid",
         "mcb-song-library": {
           "format": "mcb-song-library",
           "version": 1,
@@ -246,21 +247,25 @@
       "shots": [
         {
           "file": "modal1.png",
-          "note": "Top of the builder: BOTH view with Amaj9 (5 notes) selected and the sequencer playing it on an 8-step up/down pattern set in the URL (8 arpeggio notes on the staff, keys lit), key/mode/voice controls, 7-chord sequence bar (A Lydian progression from the ?s= state URL)",
-          "path": "/?s=v9_d_3_1.2.3.4.5.4.3.2_1o-1-0-0_x_5.Gn9-1-4-8-bkd3%2C2.Gn4-8-b-3-6kd3%2C4s.an8-b-3-6kd3%2C0s.bn1-4-8-b-3kd3%2C3s.20n6-9-b-1-4kd3%2C6.Inb-4-6kd3%2C5.1mn9-1-4-8-3kd3",
-          "waitFor": "text=Amaj7#11",
+          "note": "Top of the builder: Both view with C6 selected and the sequencer playing its 16-step pattern from the ?s= link (double stops; 16 notes on the staff, keys lit), key/mode/voice controls, 4-chord sequence bar C6 · E7sus4 · F6/9 · Bbadd(2) (user-supplied v10 link with per-chord patterns)",
+          "path": "/?s=v10_0_4_1%2B.2.3.4_1f-1-0-8_s----5--7-757_0.2n0-4-7-9k00p1a1%2B.2.2a1%2B.3a1%2B.3%2B.1a4%2B.4.3%2B.1a3.2%2B.2a3.1a4.4a2%2B.3.2.1%2Ba3%2B%2C2.Vn4-9-b-2k00p1a1%2B.2.3.1a4.2%2B.1.4.3.2.1a4.1%2B.3%2B.1a1%2B.3%2B.3.2a4%2C3.dn5-9-0-2-7k00p1.3%2B.2%2B.1a2%2B.3.3%2B.4.1a5.1a4.3.3.4.2a5.5%2B.3%2B.2%2C6f.1ana-0-2-5k04p1a1%2B.1a3.4.1%2B.2%2B.3.1a3.4.2%2B.3.1%2B.1.4.3.1.1",
+          "waitFor": "button:has-text('1C6')",
           "actions": [
             {
               "click": "button:has-text('BOTH')",
               "wait": 1000
             },
             {
-              "click": "button:has-text('Amaj9')",
+              "click": "button:has-text('1C6')",
               "wait": 500
             },
             {
               "click": "button >> text=\"Play\"",
               "wait": 1500
+            },
+            {
+              "eval": "(() => { const n = document.querySelectorAll('.vf-stavenote').length; if (n !== 16) throw new Error('expected 16 staff notes, got ' + n); if (![...document.querySelectorAll('button')].some((e) => e.textContent.trim() === 'Stop')) throw new Error('sequencer is not playing'); })()",
+              "wait": 0
             }
           ],
           "clip": {
@@ -322,9 +327,9 @@
         },
         {
           "file": "modal4.png",
-          "note": "Sequencer panel expanded (SHOW): step pattern, timing, pattern presets, custom pattern",
-          "path": "/?s=v9_d_3_1.2.3.4_1o-1-0-0_x_5.Gn9-1-4-8-bkd3%2C2.Gn4-8-b-3-6kd3%2C4s.an8-b-3-6kd3%2C0s.bn1-4-8-b-3kd3%2C3s.20n6-9-b-1-4kd3%2C6.Inb-4-6kd3%2C5.1mn9-1-4-8-3kd3",
-          "waitFor": "text=Amaj7#11",
+          "note": "Sequencer panel expanded (SHOW) in the default Grid (draw) editor showing C6's 16-step pattern with double stops (from the ?s= link), toolbar, timing, pattern presets",
+          "path": "/?s=v10_0_4_1%2B.2.3.4_1f-1-0-8_s----5--7-757_0.2n0-4-7-9k00p1a1%2B.2.2a1%2B.3a1%2B.3%2B.1a4%2B.4.3%2B.1a3.2%2B.2a3.1a4.4a2%2B.3.2.1%2Ba3%2B%2C2.Vn4-9-b-2k00p1a1%2B.2.3.1a4.2%2B.1.4.3.2.1a4.1%2B.3%2B.1a1%2B.3%2B.3.2a4%2C3.dn5-9-0-2-7k00p1.3%2B.2%2B.1a2%2B.3.3%2B.4.1a5.1a4.3.3.4.2a5.5%2B.3%2B.2%2C6f.1ana-0-2-5k04p1a1%2B.1a3.4.1%2B.2%2B.3.1a3.4.2%2B.3.1%2B.1.4.3.1.1",
+          "waitFor": "button:has-text('1C6')",
           "actions": [
             {
               "click": "button:has-text('BOTH')",
@@ -333,6 +338,14 @@
             {
               "click": "button:has-text('Show')",
               "wait": 1000
+            },
+            {
+              "click": "button:has-text('1C6')",
+              "wait": 500
+            },
+            {
+              "eval": "(() => { const g = document.querySelector(\"[aria-label^='Pattern grid']\"); const b = [...document.querySelectorAll('button')].find((e) => e.textContent.trim() === 'Grid'); if (!g || b?.getAttribute('aria-pressed') !== 'true') throw new Error('sequencer is not in Grid view'); })()",
+              "wait": 0
             },
             {
               "eval": "(() => { const el = [...document.querySelectorAll('h2,h3')].find((e) => e.textContent.trim().toUpperCase() === 'SEQUENCER'); const sc = el.closest('.overflow-y-auto'); sc.scrollTop += el.getBoundingClientRect().top - 64; })()",
@@ -377,6 +390,46 @@
             {
               "click": "button:text-is('Landscape')",
               "wait": 800
+            }
+          ],
+          "clip": {
+            "top": 0,
+            "aspect": 1.36
+          }
+        },
+        {
+          "file": "modal7.png",
+          "note": "New sequencer in use: Score view pinned at the top drawing C6's playing pattern (16 notes with double stops on the staff), Sequencer below in the Grid (draw) editor with the playhead moving (pattern from the ?s= link)",
+          "path": "/?s=v10_0_4_1%2B.2.3.4_1f-1-0-8_s----5--7-757_0.2n0-4-7-9k00p1a1%2B.2.2a1%2B.3a1%2B.3%2B.1a4%2B.4.3%2B.1a3.2%2B.2a3.1a4.4a2%2B.3.2.1%2Ba3%2B%2C2.Vn4-9-b-2k00p1a1%2B.2.3.1a4.2%2B.1.4.3.2.1a4.1%2B.3%2B.1a1%2B.3%2B.3.2a4%2C3.dn5-9-0-2-7k00p1.3%2B.2%2B.1a2%2B.3.3%2B.4.1a5.1a4.3.3.4.2a5.5%2B.3%2B.2%2C6f.1ana-0-2-5k04p1a1%2B.1a3.4.1%2B.2%2B.3.1a3.4.2%2B.3.1%2B.1.4.3.1.1",
+          "waitFor": "button:has-text('1C6')",
+          "actions": [
+            {
+              "click": "button:has-text('Score')",
+              "wait": 800
+            },
+            {
+              "click": "button:has-text('Pin')",
+              "wait": 500
+            },
+            {
+              "click": "button:has-text('Show')",
+              "wait": 800
+            },
+            {
+              "click": "button:has-text('1C6')",
+              "wait": 500
+            },
+            {
+              "click": "button >> text=\"Play\"",
+              "wait": 1200
+            },
+            {
+              "eval": "(() => { const pin = document.querySelector('.mcb-pinned-display'); const el = [...document.querySelectorAll('h2,h3')].find((e) => e.textContent.trim().toUpperCase() === 'SEQUENCER'); const sc = el.closest('.overflow-y-auto'); sc.scrollTop += el.getBoundingClientRect().top - (pin ? pin.getBoundingClientRect().bottom + 12 : 64); })()",
+              "wait": 800
+            },
+            {
+              "eval": "(() => { const g = document.querySelector(\"[aria-label^='Pattern grid']\"); const b = [...document.querySelectorAll('button')]; if (!g || b.find((e) => e.textContent.trim() === 'Grid')?.getAttribute('aria-pressed') !== 'true') throw new Error('sequencer is not in Grid view'); if (!b.some((e) => e.textContent.trim() === 'Stop')) throw new Error('sequencer is not playing'); const n = document.querySelectorAll('.vf-stavenote').length; if (n !== 16) throw new Error('expected 16 staff notes, got ' + n); const pr = document.querySelector('.mcb-pinned-display')?.getBoundingClientRect(); const gr = g.getBoundingClientRect(); if (!pr || gr.top < pr.bottom || gr.bottom > innerHeight) throw new Error('grid not framed below the pinned score'); })()",
+              "wait": 0
             }
           ],
           "clip": {

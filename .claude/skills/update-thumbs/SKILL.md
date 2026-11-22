@@ -106,17 +106,21 @@ source-case text (e.g. `Settings`, not `SETTINGS`). Prefer state in the URL (`?p
 
 Recipes the manifest depends on that aren't obvious from the live site:
 
-- **Modal Chord Buildr (`modal1.png`): notes on the staff need the sequencer playing.**
-  Selecting a chord only draws it as one stacked chord, and the chord bar's own Play button
-  doesn't draw notes. Select a chord in the bottom chord bar, then press the **Sequencer**
-  section's Play (`button >> text="Play"`). While it plays, the staff shows one note per
-  sequencer step. The number of notes is set by the pattern length, not the chord size: the
-  default `1.2.3.4` pattern shows 4 notes for any chord. Use a 5-note chord (`Amaj9`) with an
-  8-step pattern written into the `?s=v9_<key>_<mode>_<pattern>_…` URL. The pattern is dot
-  separated, e.g. `1.2.3.4.5.4.3.2`. Avoid `+` octave steps there, since `+` can decode as a
-  space in a query string. Check it through the DOM: the staff SVG has 8 `.vf-stavenote`
-  elements while it plays, and the button reads "Stop". Lit keys fade about 2s after a
-  chord click, but they stay lit while the sequencer is playing.
+- **Modal Chord Buildr score and sequencer shots (`modal1`, `modal4`, `modal7`):** these use
+  the user's `?s=v10_…` link (C6 · E7sus4 · F6/9 · Bbadd(2)). Each chord carries its own
+  16-step pattern with double stops, so don't click a preset. Select `1C6` in the bottom chord
+  bar. Keep that link unless the user gives a new one.
+- **Notes on the staff need the sequencer playing.** Selecting a chord only draws it as one
+  stacked chord, and the chord bar's own Play button doesn't draw notes. Select a chord, then
+  press the **Sequencer** section's Play (`button >> text="Play"`). While it plays, the staff
+  shows one note (or stacked double stop) per step, so C6 gives 16 `.vf-stavenote` elements
+  and the button reads "Stop". The shots assert both in a final `eval`. Lit keys stay lit
+  while the sequencer plays. In links, `+` octave steps must be written `%2B`.
+- **Sequencer editor view:** sequencer shots use the default **Grid** (draw) editor. The
+  project seeds `mcb.patternEditorView=grid` in localStorage, and each sequencer shot checks
+  that `Grid` is `aria-pressed`. `modal7` clicks **Score** and **Pin** so the staff stays
+  pinned above the grid. It then scrolls the Sequencer heading to just below
+  `.mcb-pinned-display`.
 - **Modal Chord Buildr (`modal5`/`modal6`):** songs live only in localStorage
   (`mcb-song-library`). The manifest seeds public-domain folk songs. Don't seed copyrighted
   lyrics.
