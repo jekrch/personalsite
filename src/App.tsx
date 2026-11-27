@@ -16,12 +16,14 @@ import GbMeter from './components/GbMeter';
 import ComicSnaps from './components/ComicSnaps';
 import PlantyJ from './components/PlantyJ';
 import PageTransition from './components/PageTransition';
+import RouteMeta from './components/RouteMeta';
 
 const rootElement = document.getElementById('root') as Container;
 const root = createRoot(rootElement);
 
 root.render(
   <Router>
+    <RouteMeta />
     <div className="bg-dark pb-[2em] min-h-screen h-full relative app-wrapper bg-white">
       <GeometricBackground />
       
