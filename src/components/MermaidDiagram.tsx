@@ -130,7 +130,7 @@ const MermaidDiagram: FC<MermaidDiagramProps> = ({ chart, title = "Architecture"
         onClick={open}
         disabled={!svg}
         aria-label={`Open ${title} diagram in zoom viewer`}
-        className={`group relative block w-full cursor-zoom-in border-0 p-[1.25rem] sm:p-[1.75rem] ${svg ? "" : "min-h-[12rem]"}`}
+        className={`group relative block w-full cursor-zoom-in border-0 focus-visible:outline-offset-[-4px] p-[1.25rem] sm:p-[1.75rem] ${svg ? "" : "min-h-[12rem]"}`}
         style={DOT_GRID}
       >
         <div

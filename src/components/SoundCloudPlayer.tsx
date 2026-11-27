@@ -447,7 +447,7 @@ const SoundCloudPlayer = () => {
             className={
                 mode === "embed"
                     ? ""
-                    : "relative isolate rounded-sm border border-white bg-jk-teal p-[1.25rem] shadow-[5px_6px_11px_0px_rgba(0,_0,_0,_0.3)] sm:p-8"
+                    : "on-dark relative isolate rounded-sm border border-white bg-jk-teal p-[1.25rem] shadow-[5px_6px_11px_0px_rgba(0,_0,_0,_0.3)] sm:p-8"
             }
         >
             {mode !== "embed" && (

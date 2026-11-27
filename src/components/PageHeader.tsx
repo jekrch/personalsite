@@ -62,7 +62,7 @@ const PageHeader = ({ mainLink, mainLinkText, githubLink, githubText, startYear,
             target="_blank"
             rel="noopener noreferrer"
             className={`
-              text-base mr-3 hover:shadow-sm
+              text-link text-base mr-3 hover:shadow-sm
               transform transition-all duration-500 ease-out
               ${isVisible ? 'translate-x-0 opacity-100' : '-translate-x-full opacity-0'}
             `}>
@@ -74,7 +74,7 @@ const PageHeader = ({ mainLink, mainLinkText, githubLink, githubText, startYear,
               target="_blank"
               rel="noopener noreferrer"
               className={`
-                text-xs
+                text-link text-xs
                 transform transition-all duration-500 ease-out delay-200
                 ${isVisible ? 'translate-x-0 opacity-100' : '-translate-x-full opacity-0'}
               `}>

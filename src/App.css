@@ -28,6 +28,77 @@ body {
 
 :root {
   --jk-teal: #5b8592;
+  /* Lighter and deeper steps of the brand teal (see DESIGN-REFRESH-PLAN.md,
+     3a). 300 is for hairlines and underlines, 700 for teal that has to read
+     on white (6.96:1). */
+  --jk-teal-300: #93b2bc;
+  --jk-teal-700: #3f5e69;
+  /* Keyboard focus ring colour. Teal on the white page; white inside teal
+     or dark surfaces, which opt in with .on-dark. */
+  --focus-ring: var(--jk-teal-700);
+}
+
+.on-dark,
+.carousel,
+.image-carousel-viewer {
+  --focus-ring: #fff;
+}
+
+/* Keyboard focus: one ring for everything that doesn't draw its own. A
+   component with its own treatment opts out with focus-visible:outline-none
+   (a utility, so it outranks this). Outlines follow border-radius, so the
+   ring keeps the site's near-square corners. */
+:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 3px;
+}
+
+/* Bootstrap swaps the outline on its nav links for a blue glow, and drops it
+   on carousel controls. Both of its rules outrank the one above. */
+a.nav-link:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+  box-shadow: none;
+}
+
+/* A carousel control is a full-height strip down the slide's edge, so the
+   ring goes around its arrow rather than the strip. */
+.carousel .carousel-control-prev:focus-visible,
+.carousel .carousel-control-next:focus-visible {
+  outline: none;
+}
+
+.carousel .carousel-control-prev:focus-visible .carousel-control-prev-icon,
+.carousel .carousel-control-next:focus-visible .carousel-control-next-icon {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 6px;
+  border-radius: 2px;
+}
+
+/* Text links: a thin teal-300 underline set a little below the text, going
+   to the link colour on hover. Anchors with no class are the plain links in
+   prose and tables; a classed anchor that wants the same look adds
+   .text-link. Longhands, so Bootstrap's `text-decoration: underline`
+   shorthand (lower specificity) only supplies the line. */
+a:not([class]),
+a.text-link {
+  text-decoration-line: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  text-decoration-color: var(--jk-teal-300);
+}
+
+/* Not on .text-link: a classed anchor may already be transitioning other
+   things (PageHeader's links slide in), and this would replace that. */
+a:not([class]) {
+  transition:
+    color 150ms ease-out,
+    text-decoration-color 150ms ease-out;
+}
+
+a:not([class]):hover,
+a.text-link:hover {
+  text-decoration-color: currentColor;
 }
 
 html {
@@ -324,6 +395,33 @@ body {
     bottom: calc(-1 * var(--frame-peek));
     left: calc(-1 * var(--frame-peek));
   }
+}
+
+/* Keyboard focus peeks the frames out like hover does, in place of the
+   outline ring. The toggle is hamburger-react's focusable div. */
+.menu-toggle .hamburger-react:focus-visible {
+  outline: none;
+}
+
+.menu-toggle:not(.is-open):has(:focus-visible) .menu-toggle__frame {
+  opacity: 0.45;
+  transition-duration: 250ms;
+  transition-timing-function: ease-out;
+  transition-delay: 0ms;
+}
+
+.menu-toggle:not(.is-open):has(:focus-visible) .menu-toggle__frame--up {
+  top: calc(-1 * var(--frame-peek));
+  right: calc(-1 * var(--frame-peek));
+  bottom: var(--frame-peek);
+  left: var(--frame-peek);
+}
+
+.menu-toggle:not(.is-open):has(:focus-visible) .menu-toggle__frame--down {
+  top: var(--frame-peek);
+  right: var(--frame-peek);
+  bottom: calc(-1 * var(--frame-peek));
+  left: calc(-1 * var(--frame-peek));
 }
 
 @media (prefers-reduced-motion: reduce) {

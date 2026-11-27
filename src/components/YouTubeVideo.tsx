@@ -296,7 +296,7 @@ const YouTubeVideo: FC<YouTubeVideoProps> = ({ id, title }) => {
 
             <div ref={slotRef} className="pointer-events-none relative z-[70]">
                 <div
-                    className={`pointer-events-auto rounded-sm border border-white bg-jk-teal p-[1.25rem] sm:p-8 ${playing ? "shadow-[0_24px_60px_0px_rgba(0,_0,_0,_0.55)]" : "shadow-[5px_6px_11px_0px_rgba(0,_0,_0,_0.3)]"}`}
+                    className={`on-dark pointer-events-auto rounded-sm border border-white bg-jk-teal p-[1.25rem] sm:p-8 ${playing ? "shadow-[0_24px_60px_0px_rgba(0,_0,_0,_0.55)]" : "shadow-[5px_6px_11px_0px_rgba(0,_0,_0,_0.3)]"}`}
                     style={{
                         transform: `translate3d(${shift.x}px, ${shift.y}px, 0)`,
                         transition:
@@ -318,7 +318,7 @@ const YouTubeVideo: FC<YouTubeVideoProps> = ({ id, title }) => {
                                 onPointerEnter={preload}
                                 onFocus={preload}
                                 aria-label={`Play ${title}`}
-                                className="absolute inset-0 block w-full"
+                                className="absolute inset-0 block w-full focus-visible:outline-offset-[-4px]"
                             >
                                 <img
                                     src={`https://i.ytimg.com/vi/${id}/maxresdefault.jpg`}

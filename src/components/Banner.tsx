@@ -134,7 +134,7 @@ const Banner: FC<BannerProps> = ({
             ref={ref}
             href={href}
             onClick={handleClick}
-            className={`group reveal relative block no-underline hover:no-underline ${visible ? "is-visible" : ""} ${className}`}
+            className={`group reveal relative block no-underline hover:no-underline focus-visible:outline-none ${visible ? "is-visible" : ""} ${className}`}
             style={{ ["--reveal-delay" as string]: `${revealDelay}ms` } as CSSProperties}
         >
             {/* --pad drives the card padding, the visual area's pull back out to

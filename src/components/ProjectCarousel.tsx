@@ -928,7 +928,7 @@ const ProjectCarousel: FC<ProjectCarouselProps> = ({ projects, backgroundImages 
       <div className="relative z-[5] flex flex-col items-center justify-start h-[460px] sm:h-[520px] min-h-[340px] px-8 pb-8 pointer-events-none">
         <a
           href={project.pageLink || '#'}
-          className="group cursor-pointer no-underline hover:no-underline flex flex-col items-center pointer-events-auto h-full sm:h-auto"
+          className="group cursor-pointer no-underline hover:no-underline focus-visible:outline-none flex flex-col items-center pointer-events-auto h-full sm:h-auto"
           onClick={(e) => {
             // If it's an external URL without pageLink, open in new tab
             if (!project.pageLink && project.url) {
@@ -994,7 +994,7 @@ const ProjectCarousel: FC<ProjectCarouselProps> = ({ projects, backgroundImages 
 
 
   return (
-    <div className="group/card relative w-full select-none">
+    <div className="group/card on-dark relative w-full select-none">
       {/* No shadow here: it sits on the carousel and, separately, on the
           strip's slanted shape (.tab-band__shape). One box-shadow around both
           would trace a rectangle past the strip's slanted ends. */}

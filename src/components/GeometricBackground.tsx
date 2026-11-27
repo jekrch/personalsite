@@ -1,108 +1,111 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
+
+interface Pose {
+  x: number;
+  y: number;
+  rotate: number;
+}
+
+// Ambient floating motion for each layer: sine waves at different
+// frequencies, in px and degrees, over `t` seconds.
+const ambient = (t: number): Pose[] => [
+  {
+    x: Math.sin(t * 0.3) * 8 + Math.cos(t * 0.17) * 4,
+    y: Math.cos(t * 0.23) * 6 + Math.sin(t * 0.11) * 3,
+    rotate: Math.sin(t * 0.09) * 0.3,
+  },
+  {
+    x: Math.cos(t * 0.27) * 10 + Math.sin(t * 0.13) * 5,
+    y: Math.sin(t * 0.19) * 8 + Math.cos(t * 0.31) * 4,
+    rotate: Math.cos(t * 0.07) * 0.4,
+  },
+  {
+    x: Math.sin(t * 0.21) * 6 + Math.cos(t * 0.29) * 3,
+    y: Math.cos(t * 0.17) * 5 + Math.sin(t * 0.23) * 4,
+    rotate: Math.sin(t * 0.11) * 0.25,
+  },
+];
+
+// How far each layer moves per px of page scroll
+const PARALLAX = [
+  { x: 0.06, y: 0.04 },
+  { x: -0.02, y: 0.065 },
+  { x: 0.01, y: 0.025 },
+];
+
+// Share of the remaining distance to the target each layer covers per
+// frame, as tuned at 60fps. Scaled by frame time below, so the layers glide
+// at the same speed on 120Hz screens and through dropped frames.
+const EASE = [0.03, 0.02, 0.04];
+
+// Longest frame the easing will account for. A longer gap (a stalled main
+// thread, or a tab coming back into view) eases on from where it stopped
+// instead of jumping.
+const MAX_FRAME_S = 0.1;
 
 const GeometricBackground: React.FC = () => {
-  const [positions, setPositions] = useState({
-    layer1: { x: 0, y: 0, rotate: 0 },
-    layer2: { x: 0, y: 0, rotate: 0 },
-    layer3: { x: 0, y: 0, rotate: 0 },
-  });
+  const layers = useRef<(SVGGElement | null)[]>([]);
 
-  const scrollY = useRef(0);
-  const startTime = useRef(Date.now());
-  const currentPositions = useRef({
-    layer1: { x: 0, y: 0, rotate: 0 },
-    layer2: { x: 0, y: 0, rotate: 0 },
-    layer3: { x: 0, y: 0, rotate: 0 },
-  });
-  const animationFrameId = useRef<number>();
-
+  // Transforms are written straight to the three layers each frame. This used
+  // to go through React state, which re-rendered the component 60 times a
+  // second for as long as the page was open.
   useEffect(() => {
+    const isLocked = () => 'scrollLocked' in document.documentElement.dataset;
+    let scrollY = isLocked() ? 0 : window.scrollY;
+    const current: Pose[] = PARALLAX.map(() => ({ x: 0, y: 0, rotate: 0 }));
+    // Seconds of ambient motion. Only advances while frames are drawn, so
+    // the drift picks up where it left off when the tab is shown again.
+    let clock = 0;
+    let last: number | null = null;
+    let frame = 0;
+
     const handleScroll = () => {
       // A modal pinning the page drops window.scrollY to 0 without the page
       // actually moving; ignore that so the shapes don't drift.
-      if ('scrollLocked' in document.documentElement.dataset) return;
-      scrollY.current = window.scrollY;
+      if (isLocked()) return;
+      scrollY = window.scrollY;
     };
 
-    const lerp = (current: number, target: number, ease: number) => {
-      return current + (target - current) * ease;
-    };
+    const tick = (now: number) => {
+      const dt = last === null ? 1 / 60 : Math.min((now - last) / 1000, MAX_FRAME_S);
+      last = now;
+      clock += dt;
+      const drift = ambient(clock);
 
-    const animate = () => {
-      const scroll = scrollY.current;
-      const elapsed = (Date.now() - startTime.current) / 1000;
-
-      // Ambient floating motion using sine waves at different frequencies
-      const ambient = {
-        layer1: {
-          x: Math.sin(elapsed * 0.3) * 8 + Math.cos(elapsed * 0.17) * 4,
-          y: Math.cos(elapsed * 0.23) * 6 + Math.sin(elapsed * 0.11) * 3,
-          rotate: Math.sin(elapsed * 0.09) * 0.3,
-        },
-        layer2: {
-          x: Math.cos(elapsed * 0.27) * 10 + Math.sin(elapsed * 0.13) * 5,
-          y: Math.sin(elapsed * 0.19) * 8 + Math.cos(elapsed * 0.31) * 4,
-          rotate: Math.cos(elapsed * 0.07) * 0.4,
-        },
-        layer3: {
-          x: Math.sin(elapsed * 0.21) * 6 + Math.cos(elapsed * 0.29) * 3,
-          y: Math.cos(elapsed * 0.17) * 5 + Math.sin(elapsed * 0.23) * 4,
-          rotate: Math.sin(elapsed * 0.11) * 0.25,
-        },
-      };
-
-      // Combine scroll parallax with ambient motion
-      const targets = {
-        layer1: {
-          x: scroll * 0.06 + ambient.layer1.x,
-          y: scroll * 0.04 + ambient.layer1.y,
-          rotate: ambient.layer1.rotate,
-        },
-        layer2: {
-          x: scroll * -0.02 + ambient.layer2.x,
-          y: scroll * 0.065 + ambient.layer2.y,
-          rotate: ambient.layer2.rotate,
-        },
-        layer3: {
-          x: scroll * 0.01 + ambient.layer3.x,
-          y: scroll * 0.025 + ambient.layer3.y,
-          rotate: ambient.layer3.rotate,
-        },
-      };
-
-      const ease1 = 0.03;
-      const ease2 = 0.02;
-      const ease3 = 0.04;
-
-      const current = currentPositions.current;
-
-      current.layer1.x = lerp(current.layer1.x, targets.layer1.x, ease1);
-      current.layer1.y = lerp(current.layer1.y, targets.layer1.y, ease1);
-      current.layer1.rotate = lerp(current.layer1.rotate, targets.layer1.rotate, ease1);
-      current.layer2.x = lerp(current.layer2.x, targets.layer2.x, ease2);
-      current.layer2.y = lerp(current.layer2.y, targets.layer2.y, ease2);
-      current.layer2.rotate = lerp(current.layer2.rotate, targets.layer2.rotate, ease2);
-      current.layer3.x = lerp(current.layer3.x, targets.layer3.x, ease3);
-      current.layer3.y = lerp(current.layer3.y, targets.layer3.y, ease3);
-      current.layer3.rotate = lerp(current.layer3.rotate, targets.layer3.rotate, ease3);
-
-      setPositions({
-        layer1: { ...current.layer1 },
-        layer2: { ...current.layer2 },
-        layer3: { ...current.layer3 },
+      current.forEach((pose, i) => {
+        const k = 1 - Math.pow(1 - EASE[i], dt * 60);
+        pose.x += (scrollY * PARALLAX[i].x + drift[i].x - pose.x) * k;
+        pose.y += (scrollY * PARALLAX[i].y + drift[i].y - pose.y) * k;
+        pose.rotate += (drift[i].rotate - pose.rotate) * k;
+        const g = layers.current[i];
+        if (g) g.style.transform = `translate(${pose.x}px, ${pose.y}px) rotate(${pose.rotate}deg)`;
       });
 
-      animationFrameId.current = requestAnimationFrame(animate);
+      frame = requestAnimationFrame(tick);
     };
 
+    const start = () => {
+      if (frame) return;
+      last = null;
+      frame = requestAnimationFrame(tick);
+    };
+
+    const stop = () => {
+      cancelAnimationFrame(frame);
+      frame = 0;
+    };
+
+    // Browsers mostly stop rAF in hidden tabs already; this makes it certain.
+    const handleVisibility = () => (document.hidden ? stop() : start());
+
     window.addEventListener('scroll', handleScroll, { passive: true });
-    animationFrameId.current = requestAnimationFrame(animate);
+    document.addEventListener('visibilitychange', handleVisibility);
+    if (!document.hidden) start();
 
     return () => {
       window.removeEventListener('scroll', handleScroll);
-      if (animationFrameId.current) {
-        cancelAnimationFrame(animationFrameId.current);
-      }
+      document.removeEventListener('visibilitychange', handleVisibility);
+      stop();
     };
   }, []);
 
@@ -122,11 +125,8 @@ const GeometricBackground: React.FC = () => {
       >
         {/* Large diagonal parallelogram */}
         <g
-          style={{
-            transform: `translate(${positions.layer1.x}px, ${positions.layer1.y}px) rotate(${positions.layer1.rotate}deg)`,
-            transformOrigin: '750px 450px',
-            willChange: 'transform',
-          }}
+          ref={(el) => { layers.current[0] = el; }}
+          style={{ transformOrigin: '750px 450px', willChange: 'transform' }}
         >
           <polygon
             points="200,-50 1500,400 300,950 0,500"
@@ -141,11 +141,8 @@ const GeometricBackground: React.FC = () => {
 
         {/* Secondary smaller parallelogram - floatiest */}
         <g
-          style={{
-            transform: `translate(${positions.layer2.x}px, ${positions.layer2.y}px) rotate(${positions.layer2.rotate}deg)`,
-            transformOrigin: '950px 110px',
-            willChange: 'transform',
-          }}
+          ref={(el) => { layers.current[1] = el; }}
+          style={{ transformOrigin: '950px 110px', willChange: 'transform' }}
         >
           <polygon
             points="800,-80 1200,100 1100,300 700,120"
@@ -158,11 +155,8 @@ const GeometricBackground: React.FC = () => {
 
         {/* Third element - lower left */}
         <g
-          style={{
-            transform: `translate(${positions.layer3.x}px, ${positions.layer3.y}px) rotate(${positions.layer3.rotate}deg)`,
-            transformOrigin: '100px 775px',
-            willChange: 'transform',
-          }}
+          ref={(el) => { layers.current[2] = el; }}
+          style={{ transformOrigin: '100px 775px', willChange: 'transform' }}
         >
           <polygon
             points="-100,600 400,750 300,950 -200,800"

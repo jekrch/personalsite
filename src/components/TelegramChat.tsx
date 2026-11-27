@@ -220,7 +220,7 @@ const TelegramChat: FC<TelegramChatProps> = ({ chat, className }) => {
 
   return (
     <div
-      className={`overflow-hidden rounded-xl bg-[#0e1621] shadow-[5px_6px_11px_0px_rgba(0,_0,_0,_0.35)] ${
+      className={`on-dark overflow-hidden rounded-xl bg-[#0e1621] shadow-[5px_6px_11px_0px_rgba(0,_0,_0,_0.35)] ${
         className ?? "mx-auto w-full max-w-md"
       }`}
       style={{ fontFamily: "helvetica, arial, sans-serif" }}
@@ -302,7 +302,7 @@ const TelegramChat: FC<TelegramChatProps> = ({ chat, className }) => {
       <button
         type="button"
         onClick={() => setExpanded((v) => !v)}
-        className="flex w-full items-center justify-center gap-1.5 border-t border-white/5 bg-[#17212b] py-1.5 text-[11px] text-white/55 transition-colors hover:text-white/85"
+        className="flex w-full items-center justify-center gap-1.5 border-t border-white/5 bg-[#17212b] py-1.5 text-[11px] text-white/55 transition-colors hover:text-white/85 focus-visible:text-white/85 focus-visible:outline-offset-[-4px]"
       >
         {expanded ? "Collapse" : "Expand"}
         <svg

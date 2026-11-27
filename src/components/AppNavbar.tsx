@@ -260,7 +260,7 @@ const AppNavbar: FC = () => {
   };
 
   return (
-    <div className="bg-jk-teal">
+    <div className="bg-jk-teal on-dark">
       <Navbar
         dark
         expand={false}
