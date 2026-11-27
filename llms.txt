@@ -18,7 +18,7 @@ A garden journal driven from a Telegram group with an LLM agent built in. Photos
 - Source: https://github.com/jekrch/plantyJ
 - Started: 2026
 - Tech: React 19, TypeScript, Cloudflare Workers, Cloudflare KV, Gemini, Telegram Bot API, GitHub Actions, Python, PyTorch, BioCLIP, D3
-- Write-up: https://www.jacobkrch.com/#plantyj
+- Write-up: https://www.jacobkrch.com/plantyj
 
 ### Modal ChordBuildr
 
@@ -28,7 +28,7 @@ A songwriting tool that generates chords for any mode and key, with a sequencer,
 - Source: https://github.com/jekrch/chord-db (chord-db (the open-source theory database))
 - Started: 2021
 - Tech: React, TypeScript, Zustand, Web Audio, VexFlow, PostgreSQL, Go, MCP, Python, Docker Compose
-- Write-up: https://www.jacobkrch.com/#modal-chordbuildr
+- Write-up: https://www.jacobkrch.com/modal-chordbuildr
 
 ### Eurovision Ranker
 
@@ -38,7 +38,7 @@ A web app for ranking Eurovision contestants from every contest since 1956, with
 - Source: https://github.com/jekrch/eurovision-ranker
 - Started: 2022
 - Tech: React, TypeScript, Redux Toolkit, Go, PostgreSQL, JWT, Docker, Terraform, DigitalOcean, GitHub Actions, Scrapy, PWA
-- Write-up: https://www.jacobkrch.com/#eurovision-ranker
+- Write-up: https://www.jacobkrch.com/eurovision-ranker
 
 ### Comic Snaps
 
@@ -48,7 +48,7 @@ A zero-cost gallery of comic panels posted through a Telegram bot and a Cloudfla
 - Source: https://github.com/jekrch/comic-snaps
 - Started: 2025
 - Tech: React 19, TypeScript, Cloudflare Workers, Cloudflare Queues, Gemini, GitHub Actions, Python, PyTorch, Hugging Face Transformers, OpenCV, WebGL
-- Write-up: https://www.jacobkrch.com/#comic-snaps
+- Write-up: https://www.jacobkrch.com/comic-snaps
 
 ### Criterion Club
 
@@ -58,7 +58,7 @@ The site for a film club running since 2020: upcoming picks, where to stream the
 - Source: https://github.com/jekrch/film-club
 - Started: 2023
 - Tech: React 19, TypeScript, Cloudflare Workers, Google sign-in, JWT, GitHub Actions, Python, pandas, Highcharts, PWA
-- Write-up: https://www.jacobkrch.com/#criterion-club
+- Write-up: https://www.jacobkrch.com/criterion-club
 
 ### JuxtaGlobe
 
@@ -68,7 +68,7 @@ Two linked 3D globes for exploring the point on the opposite side of the Earth, 
 - Source: https://github.com/jekrch/juxtaglobe
 - Started: 2025
 - Tech: React 19, TypeScript, Three.js, react-globe.gl, Tailwind CSS, PWA
-- Write-up: https://www.jacobkrch.com/#juxtaglobe
+- Write-up: https://www.jacobkrch.com/juxtaglobe
 
 ### GB Meter
 
@@ -78,7 +78,7 @@ A client-side analytics tool that parses Green Button XML and CSV utility export
 - Source: https://github.com/jekrch/energy-meter
 - Started: 2025
 - Tech: React 19, TypeScript, Recharts, IndexedDB, Google Drive API, Open-Meteo
-- Write-up: https://www.jacobkrch.com/#gb-meter
+- Write-up: https://www.jacobkrch.com/gb-meter
 
 ### ChordBuildr
 
@@ -88,10 +88,10 @@ A browser tool for building, playing and sharing chord progressions, with guitar
 - Source: https://github.com/jekrch/chord-buildr
 - Started: 2020
 - Tech: React 19, TypeScript, Tone.js, Tonal, shadcn/ui, Vitest, GitHub Actions
-- Write-up: https://www.jacobkrch.com/#chordbuildr
+- Write-up: https://www.jacobkrch.com/chordbuildr
 
 ## Also here
 
-- [Logic Lectures](https://www.jacobkrch.com/#logiclectures): Lecture slides and syllabus from the introductory symbolic logic course Jacob designed and taught as a graduate student at the University of Wisconsin–Madison.
-- [Music](https://www.jacobkrch.com/#music): Short songs Jacob has recorded between bands.
+- [Logic Lectures](https://www.jacobkrch.com/logiclectures): Lecture slides and syllabus from the introductory symbolic logic course Jacob designed and taught as a graduate student at the University of Wisconsin–Madison.
+- [Music](https://www.jacobkrch.com/music): Short songs Jacob has recorded between bands.
 - [My top 10 comics of 2025](https://comics.jacobkrch.com)
