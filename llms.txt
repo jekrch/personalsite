@@ -1,0 +1,97 @@
+# Jacob Krch
+
+> Software engineer and architect in Minneapolis. Web projects with write-ups on how they're built, logic lecture slides, and music.
+
+I'm a software engineer and architect based in Minneapolis who's interested in technology, music, and philosophy. Check out the links to see some of my current and past projects.
+
+- Website: https://www.jacobkrch.com/
+- LinkedIn: https://www.linkedin.com/in/jacob-krch-60541a61
+- GitHub: https://github.com/jekrch
+
+## Projects
+
+### PlantyJ
+
+A garden journal driven from a Telegram group with an LLM agent built in. Photos and captions are committed to the repo by a Cloudflare Worker; questions and plain-English change requests go through a KV-backed job queue drained by a cron Worker that calls Gemini, and every proposed change waits for /confirm. A GitHub Actions pipeline runs BioCLIP for species prediction and embeddings and enriches records from GBIF, POWO and Wikipedia.
+
+- Live: https://plantyj.com
+- Source: https://github.com/jekrch/plantyJ
+- Started: 2026
+- Tech: React 19, TypeScript, Cloudflare Workers, Cloudflare KV, Gemini, Telegram Bot API, GitHub Actions, Python, PyTorch, BioCLIP, D3
+- Write-up: https://www.jacobkrch.com/#plantyj
+
+### Modal ChordBuildr
+
+A songwriting tool that generates chords for any mode and key, with a sequencer, MIDI export, staff notation, and song sheets saved locally or to Google Drive. The music-theory engine is a PostgreSQL database of chords, scales and modes with voice-leading pathfinding in SQL, exported to static JSON, plus a Go API and MCP server for prompting progressions from LLM clients.
+
+- Live: https://modal.chordbuildr.com
+- Source: https://github.com/jekrch/chord-db (chord-db (the open-source theory database))
+- Started: 2021
+- Tech: React, TypeScript, Zustand, Web Audio, VexFlow, PostgreSQL, Go, MCP, Python, Docker Compose
+- Write-up: https://www.jacobkrch.com/#modal-chordbuildr
+
+### Eurovision Ranker
+
+A web app for ranking Eurovision contestants from every contest since 1956, with rankings encoded in the URL so they can be shared without an account. Contest data is scraped from Wikipedia with Scrapy; optional accounts are served by a Go API on PostgreSQL 16, deployed as a Docker image from GitHub Actions to a Terraform-provisioned DigitalOcean droplet behind Caddy.
+
+- Live: https://eurovision-ranker.com
+- Source: https://github.com/jekrch/eurovision-ranker
+- Started: 2022
+- Tech: React, TypeScript, Redux Toolkit, Go, PostgreSQL, JWT, Docker, Terraform, DigitalOcean, GitHub Actions, Scrapy, PWA
+- Write-up: https://www.jacobkrch.com/#eurovision-ranker
+
+### Comic Snaps
+
+A zero-cost gallery of comic panels posted through a Telegram bot and a Cloudflare Worker that commits straight to GitHub. A Python pipeline in GitHub Actions computes SigLIP, DINOv2 and VGG-16 style embeddings, perceptual hashes and colour features for similarity browsing, and an LLM agent (Gemini with function calling, Cloudflare Queues) answers questions, proposes edits behind /confirm, and judges automated photo restorations.
+
+- Live: https://snaps.jacobkrch.com
+- Source: https://github.com/jekrch/comic-snaps
+- Started: 2025
+- Tech: React 19, TypeScript, Cloudflare Workers, Cloudflare Queues, Gemini, GitHub Actions, Python, PyTorch, Hugging Face Transformers, OpenCV, WebGL
+- Write-up: https://www.jacobkrch.com/#comic-snaps
+
+### Criterion Club
+
+The site for a film club running since 2020: upcoming picks, where to stream them, every member's scores and reviews, and stats on the club's taste. Members sign in with Google and edit on the site; a Cloudflare Worker verifies the token and commits changes through the GitHub API, and a GitHub Actions pipeline enriches films from OMDb and TMDb and rebuilds the static site.
+
+- Live: https://www.criterionclub.org
+- Source: https://github.com/jekrch/film-club
+- Started: 2023
+- Tech: React 19, TypeScript, Cloudflare Workers, Google sign-in, JWT, GitHub Actions, Python, pandas, Highcharts, PWA
+- Write-up: https://www.jacobkrch.com/#criterion-club
+
+### JuxtaGlobe
+
+Two linked 3D globes for exploring the point on the opposite side of the Earth, comparing the scale of any two places, and viewing prehistoric maps from Pangea to the present. View state lives in the URL for sharing.
+
+- Live: https://juxtaglobe.com
+- Source: https://github.com/jekrch/juxtaglobe
+- Started: 2025
+- Tech: React 19, TypeScript, Three.js, react-globe.gl, Tailwind CSS, PWA
+- Write-up: https://www.jacobkrch.com/#juxtaglobe
+
+### GB Meter
+
+A client-side analytics tool that parses Green Button XML and CSV utility exports, joins hourly usage with Open-Meteo temperature data, and answers questions about usage patterns through flexible aggregations and charts. Everything runs in the browser with IndexedDB and optional Google Drive storage.
+
+- Live: https://gbmeter.com
+- Source: https://github.com/jekrch/energy-meter
+- Started: 2025
+- Tech: React 19, TypeScript, Recharts, IndexedDB, Google Drive API, Open-Meteo
+- Write-up: https://www.jacobkrch.com/#gb-meter
+
+### ChordBuildr
+
+A browser tool for building, playing and sharing chord progressions, with guitar and ukulele diagrams, Roman numeral analysis, synth playback, and PNG chart export. Progressions are encoded in the URL, so it needs no backend.
+
+- Live: https://chordbuildr.com
+- Source: https://github.com/jekrch/chord-buildr
+- Started: 2020
+- Tech: React 19, TypeScript, Tone.js, Tonal, shadcn/ui, Vitest, GitHub Actions
+- Write-up: https://www.jacobkrch.com/#chordbuildr
+
+## Also here
+
+- [Logic Lectures](https://www.jacobkrch.com/#logiclectures): Lecture slides and syllabus from the introductory symbolic logic course Jacob designed and taught as a graduate student at the University of Wisconsin–Madison.
+- [Music](https://www.jacobkrch.com/#music): Short songs Jacob has recorded between bands.
+- [My top 10 comics of 2025](https://comics.jacobkrch.com)

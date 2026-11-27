@@ -1,3 +1,7 @@
 # https://www.robotstxt.org/robotstxt.html
+# Everything is public, including to AI crawlers. A Markdown summary of the
+# profile and projects is at /llms.txt.
 User-agent: *
-Disallow:
+Allow: /
+
+Sitemap: https://www.jacobkrch.com/sitemap.xml

@@ -8,12 +8,344 @@
     <link rel="apple-touch-icon" href="./apple-touch-icon.png">
     <link rel="manifest" href="./manifest.json">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <title>Jacob Krch</title>
+    <title>Jacob Krch | Software Engineer and Architect</title>
+    <meta name="description" content="Software engineer and architect in Minneapolis. Web projects with write-ups on how they're built, logic lecture slides, and music.">
+    <meta name="author" content="Jacob Krch">
+    <meta name="robots" content="index, follow, max-image-preview:large">
+    <link rel="canonical" href="https://www.jacobkrch.com/">
+    <link rel="alternate" type="text/markdown" href="/llms.txt" title="Jacob Krch (Markdown)">
+    <link rel="me" href="https://github.com/jekrch">
+    <link rel="me" href="https://www.linkedin.com/in/jacob-krch-60541a61">
+    <meta property="og:type" content="profile">
+    <meta property="og:site_name" content="Jacob Krch">
+    <meta property="og:title" content="Jacob Krch | Software Engineer and Architect">
+    <meta property="og:description" content="Software engineer and architect in Minneapolis. Web projects with write-ups on how they're built, logic lecture slides, and music.">
+    <meta property="og:url" content="https://www.jacobkrch.com/">
+    <meta property="og:image" content="https://www.jacobkrch.com/icon-512.png">
+    <meta property="og:image:alt" content="Jacob Krch logo">
+    <meta property="og:locale" content="en_US">
+    <meta property="profile:first_name" content="Jacob">
+    <meta property="profile:last_name" content="Krch">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Jacob Krch | Software Engineer and Architect">
+    <meta name="twitter:description" content="Software engineer and architect in Minneapolis. Web projects with write-ups on how they're built, logic lecture slides, and music.">
+    <meta name="twitter:image" content="https://www.jacobkrch.com/icon-512.png">
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Person",
+      "@id": "https://www.jacobkrch.com/#person",
+      "name": "Jacob Krch",
+      "url": "https://www.jacobkrch.com/",
+      "jobTitle": "Software Engineer and Architect",
+      "description": "I'm a software engineer and architect based in Minneapolis who's interested in technology, music, and philosophy. Check out the links to see some of my current and past projects.",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Minneapolis",
+        "addressRegion": "MN",
+        "addressCountry": "US"
+      },
+      "sameAs": [
+        "https://www.linkedin.com/in/jacob-krch-60541a61",
+        "https://github.com/jekrch"
+      ]
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://www.jacobkrch.com/#website",
+      "url": "https://www.jacobkrch.com/",
+      "name": "Jacob Krch",
+      "inLanguage": "en",
+      "publisher": {
+        "@id": "https://www.jacobkrch.com/#person"
+      }
+    },
+    {
+      "@type": "ProfilePage",
+      "@id": "https://www.jacobkrch.com/#profile",
+      "url": "https://www.jacobkrch.com/",
+      "name": "Jacob Krch | Software Engineer and Architect",
+      "description": "Software engineer and architect in Minneapolis. Web projects with write-ups on how they're built, logic lecture slides, and music.",
+      "isPartOf": {
+        "@id": "https://www.jacobkrch.com/#website"
+      },
+      "mainEntity": {
+        "@id": "https://www.jacobkrch.com/#person"
+      },
+      "hasPart": [
+        {
+          "@id": "https://www.jacobkrch.com/#plantyj"
+        },
+        {
+          "@id": "https://www.jacobkrch.com/#modal-chordbuildr"
+        },
+        {
+          "@id": "https://www.jacobkrch.com/#eurovision-ranker"
+        },
+        {
+          "@id": "https://www.jacobkrch.com/#comic-snaps"
+        },
+        {
+          "@id": "https://www.jacobkrch.com/#criterion-club"
+        },
+        {
+          "@id": "https://www.jacobkrch.com/#juxtaglobe"
+        },
+        {
+          "@id": "https://www.jacobkrch.com/#gb-meter"
+        },
+        {
+          "@id": "https://www.jacobkrch.com/#chordbuildr"
+        }
+      ]
+    },
+    {
+      "@type": "WebApplication",
+      "@id": "https://www.jacobkrch.com/#plantyj",
+      "name": "PlantyJ",
+      "url": "https://plantyj.com",
+      "description": "A garden journal driven from a Telegram group with an LLM agent built in. Photos and captions are committed to the repo by a Cloudflare Worker; questions and plain-English change requests go through a KV-backed job queue drained by a cron Worker that calls Gemini, and every proposed change waits for /confirm. A GitHub Actions pipeline runs BioCLIP for species prediction and embeddings and enriches records from GBIF, POWO and Wikipedia.",
+      "applicationCategory": "WebApplication",
+      "operatingSystem": "Any (web browser)",
+      "dateCreated": "2026",
+      "keywords": "React 19, TypeScript, Cloudflare Workers, Cloudflare KV, Gemini, Telegram Bot API, GitHub Actions, Python, PyTorch, BioCLIP, D3",
+      "creator": {
+        "@id": "https://www.jacobkrch.com/#person"
+      },
+      "isBasedOn": {
+        "@type": "SoftwareSourceCode",
+        "codeRepository": "https://github.com/jekrch/plantyJ",
+        "author": {
+          "@id": "https://www.jacobkrch.com/#person"
+        }
+      }
+    },
+    {
+      "@type": "WebApplication",
+      "@id": "https://www.jacobkrch.com/#modal-chordbuildr",
+      "name": "Modal ChordBuildr",
+      "url": "https://modal.chordbuildr.com",
+      "description": "A songwriting tool that generates chords for any mode and key, with a sequencer, MIDI export, staff notation, and song sheets saved locally or to Google Drive. The music-theory engine is a PostgreSQL database of chords, scales and modes with voice-leading pathfinding in SQL, exported to static JSON, plus a Go API and MCP server for prompting progressions from LLM clients.",
+      "applicationCategory": "WebApplication",
+      "operatingSystem": "Any (web browser)",
+      "dateCreated": "2021",
+      "keywords": "React, TypeScript, Zustand, Web Audio, VexFlow, PostgreSQL, Go, MCP, Python, Docker Compose",
+      "creator": {
+        "@id": "https://www.jacobkrch.com/#person"
+      },
+      "isBasedOn": {
+        "@type": "SoftwareSourceCode",
+        "codeRepository": "https://github.com/jekrch/chord-db",
+        "author": {
+          "@id": "https://www.jacobkrch.com/#person"
+        }
+      }
+    },
+    {
+      "@type": "WebApplication",
+      "@id": "https://www.jacobkrch.com/#eurovision-ranker",
+      "name": "Eurovision Ranker",
+      "url": "https://eurovision-ranker.com",
+      "description": "A web app for ranking Eurovision contestants from every contest since 1956, with rankings encoded in the URL so they can be shared without an account. Contest data is scraped from Wikipedia with Scrapy; optional accounts are served by a Go API on PostgreSQL 16, deployed as a Docker image from GitHub Actions to a Terraform-provisioned DigitalOcean droplet behind Caddy.",
+      "applicationCategory": "WebApplication",
+      "operatingSystem": "Any (web browser)",
+      "dateCreated": "2022",
+      "keywords": "React, TypeScript, Redux Toolkit, Go, PostgreSQL, JWT, Docker, Terraform, DigitalOcean, GitHub Actions, Scrapy, PWA",
+      "creator": {
+        "@id": "https://www.jacobkrch.com/#person"
+      },
+      "isBasedOn": {
+        "@type": "SoftwareSourceCode",
+        "codeRepository": "https://github.com/jekrch/eurovision-ranker",
+        "author": {
+          "@id": "https://www.jacobkrch.com/#person"
+        }
+      }
+    },
+    {
+      "@type": "WebApplication",
+      "@id": "https://www.jacobkrch.com/#comic-snaps",
+      "name": "Comic Snaps",
+      "url": "https://snaps.jacobkrch.com",
+      "description": "A zero-cost gallery of comic panels posted through a Telegram bot and a Cloudflare Worker that commits straight to GitHub. A Python pipeline in GitHub Actions computes SigLIP, DINOv2 and VGG-16 style embeddings, perceptual hashes and colour features for similarity browsing, and an LLM agent (Gemini with function calling, Cloudflare Queues) answers questions, proposes edits behind /confirm, and judges automated photo restorations.",
+      "applicationCategory": "WebApplication",
+      "operatingSystem": "Any (web browser)",
+      "dateCreated": "2025",
+      "keywords": "React 19, TypeScript, Cloudflare Workers, Cloudflare Queues, Gemini, GitHub Actions, Python, PyTorch, Hugging Face Transformers, OpenCV, WebGL",
+      "creator": {
+        "@id": "https://www.jacobkrch.com/#person"
+      },
+      "isBasedOn": {
+        "@type": "SoftwareSourceCode",
+        "codeRepository": "https://github.com/jekrch/comic-snaps",
+        "author": {
+          "@id": "https://www.jacobkrch.com/#person"
+        }
+      }
+    },
+    {
+      "@type": "WebApplication",
+      "@id": "https://www.jacobkrch.com/#criterion-club",
+      "name": "Criterion Club",
+      "url": "https://www.criterionclub.org",
+      "description": "The site for a film club running since 2020: upcoming picks, where to stream them, every member's scores and reviews, and stats on the club's taste. Members sign in with Google and edit on the site; a Cloudflare Worker verifies the token and commits changes through the GitHub API, and a GitHub Actions pipeline enriches films from OMDb and TMDb and rebuilds the static site.",
+      "applicationCategory": "WebApplication",
+      "operatingSystem": "Any (web browser)",
+      "dateCreated": "2023",
+      "keywords": "React 19, TypeScript, Cloudflare Workers, Google sign-in, JWT, GitHub Actions, Python, pandas, Highcharts, PWA",
+      "creator": {
+        "@id": "https://www.jacobkrch.com/#person"
+      },
+      "isBasedOn": {
+        "@type": "SoftwareSourceCode",
+        "codeRepository": "https://github.com/jekrch/film-club",
+        "author": {
+          "@id": "https://www.jacobkrch.com/#person"
+        }
+      }
+    },
+    {
+      "@type": "WebApplication",
+      "@id": "https://www.jacobkrch.com/#juxtaglobe",
+      "name": "JuxtaGlobe",
+      "url": "https://juxtaglobe.com",
+      "description": "Two linked 3D globes for exploring the point on the opposite side of the Earth, comparing the scale of any two places, and viewing prehistoric maps from Pangea to the present. View state lives in the URL for sharing.",
+      "applicationCategory": "WebApplication",
+      "operatingSystem": "Any (web browser)",
+      "dateCreated": "2025",
+      "keywords": "React 19, TypeScript, Three.js, react-globe.gl, Tailwind CSS, PWA",
+      "creator": {
+        "@id": "https://www.jacobkrch.com/#person"
+      },
+      "isBasedOn": {
+        "@type": "SoftwareSourceCode",
+        "codeRepository": "https://github.com/jekrch/juxtaglobe",
+        "author": {
+          "@id": "https://www.jacobkrch.com/#person"
+        }
+      }
+    },
+    {
+      "@type": "WebApplication",
+      "@id": "https://www.jacobkrch.com/#gb-meter",
+      "name": "GB Meter",
+      "url": "https://gbmeter.com",
+      "description": "A client-side analytics tool that parses Green Button XML and CSV utility exports, joins hourly usage with Open-Meteo temperature data, and answers questions about usage patterns through flexible aggregations and charts. Everything runs in the browser with IndexedDB and optional Google Drive storage.",
+      "applicationCategory": "WebApplication",
+      "operatingSystem": "Any (web browser)",
+      "dateCreated": "2025",
+      "keywords": "React 19, TypeScript, Recharts, IndexedDB, Google Drive API, Open-Meteo",
+      "creator": {
+        "@id": "https://www.jacobkrch.com/#person"
+      },
+      "isBasedOn": {
+        "@type": "SoftwareSourceCode",
+        "codeRepository": "https://github.com/jekrch/energy-meter",
+        "author": {
+          "@id": "https://www.jacobkrch.com/#person"
+        }
+      }
+    },
+    {
+      "@type": "WebApplication",
+      "@id": "https://www.jacobkrch.com/#chordbuildr",
+      "name": "ChordBuildr",
+      "url": "https://chordbuildr.com",
+      "description": "A browser tool for building, playing and sharing chord progressions, with guitar and ukulele diagrams, Roman numeral analysis, synth playback, and PNG chart export. Progressions are encoded in the URL, so it needs no backend.",
+      "applicationCategory": "WebApplication",
+      "operatingSystem": "Any (web browser)",
+      "dateCreated": "2020",
+      "keywords": "React 19, TypeScript, Tone.js, Tonal, shadcn/ui, Vitest, GitHub Actions",
+      "creator": {
+        "@id": "https://www.jacobkrch.com/#person"
+      },
+      "isBasedOn": {
+        "@type": "SoftwareSourceCode",
+        "codeRepository": "https://github.com/jekrch/chord-buildr",
+        "author": {
+          "@id": "https://www.jacobkrch.com/#person"
+        }
+      }
+    }
+  ]
+}
+</script>
+    <style>#static-profile{display:none}</style>
+    <noscript><style>#static-profile{display:block;max-width:46rem;margin:2rem auto;padding:1.5rem 2rem;background:#fff;color:#1f2933;font:16px/1.55 Helvetica,Arial,sans-serif}#static-profile a{color:#3d6470}#static-profile h2{margin-top:2rem;font-size:1.15rem}#static-profile ul{list-style:disc;padding-left:1.5rem}</style></noscript>
     <script defer src="https://analytics.jacobkrch.com/script.js" data-website-id="b4ee91e0-1292-45a4-a3b6-3fcdf5367eb9"></script>
-    <script type="module" crossorigin src="./assets/index-DvGzKRRN.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-CVeY6gLB.css">
+    <script type="module" crossorigin src="./assets/index-CE9JOezU.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-B5d0yj_y.css">
   </head>
   <body style="background-color: #5b8592;">
-    <div id="root"></div>
+    <div id="root">
+      <main id="static-profile">
+        <header>
+          <h1>Jacob Krch</h1>
+          <p>I'm a software engineer and architect based in Minneapolis who's interested in technology, music, and philosophy. Check out the links to see some of my current and past projects.</p>
+          <p><a href="https://www.linkedin.com/in/jacob-krch-60541a61">LinkedIn</a> · <a href="https://github.com/jekrch">GitHub</a> · <a href="/llms.txt">This page in Markdown</a></p>
+        </header>
+        <section>
+          <h2>Projects</h2>
+        <article>
+          <h3><a href="https://plantyj.com">PlantyJ</a></h3>
+          <p>A garden journal driven from a Telegram group with an LLM agent built in. Photos and captions are committed to the repo by a Cloudflare Worker; questions and plain-English change requests go through a KV-backed job queue drained by a cron Worker that calls Gemini, and every proposed change waits for /confirm. A GitHub Actions pipeline runs BioCLIP for species prediction and embeddings and enriches records from GBIF, POWO and Wikipedia.</p>
+          <p><strong>Tech:</strong> React 19, TypeScript, Cloudflare Workers, Cloudflare KV, Gemini, Telegram Bot API, GitHub Actions, Python, PyTorch, BioCLIP, D3</p>
+          <p>Live: <a href="https://plantyj.com">plantyj.com</a> · Source: <a href="https://github.com/jekrch/plantyJ">github.com/jekrch/plantyJ</a> · Since 2026 · <a href="/#plantyj">Project write-up</a></p>
+        </article>
+        <article>
+          <h3><a href="https://modal.chordbuildr.com">Modal ChordBuildr</a></h3>
+          <p>A songwriting tool that generates chords for any mode and key, with a sequencer, MIDI export, staff notation, and song sheets saved locally or to Google Drive. The music-theory engine is a PostgreSQL database of chords, scales and modes with voice-leading pathfinding in SQL, exported to static JSON, plus a Go API and MCP server for prompting progressions from LLM clients.</p>
+          <p><strong>Tech:</strong> React, TypeScript, Zustand, Web Audio, VexFlow, PostgreSQL, Go, MCP, Python, Docker Compose</p>
+          <p>Live: <a href="https://modal.chordbuildr.com">modal.chordbuildr.com</a> · Source: <a href="https://github.com/jekrch/chord-db">github.com/jekrch/chord-db</a> · Since 2021 · <a href="/#modal-chordbuildr">Project write-up</a></p>
+        </article>
+        <article>
+          <h3><a href="https://eurovision-ranker.com">Eurovision Ranker</a></h3>
+          <p>A web app for ranking Eurovision contestants from every contest since 1956, with rankings encoded in the URL so they can be shared without an account. Contest data is scraped from Wikipedia with Scrapy; optional accounts are served by a Go API on PostgreSQL 16, deployed as a Docker image from GitHub Actions to a Terraform-provisioned DigitalOcean droplet behind Caddy.</p>
+          <p><strong>Tech:</strong> React, TypeScript, Redux Toolkit, Go, PostgreSQL, JWT, Docker, Terraform, DigitalOcean, GitHub Actions, Scrapy, PWA</p>
+          <p>Live: <a href="https://eurovision-ranker.com">eurovision-ranker.com</a> · Source: <a href="https://github.com/jekrch/eurovision-ranker">github.com/jekrch/eurovision-ranker</a> · Since 2022 · <a href="/#eurovision-ranker">Project write-up</a></p>
+        </article>
+        <article>
+          <h3><a href="https://snaps.jacobkrch.com">Comic Snaps</a></h3>
+          <p>A zero-cost gallery of comic panels posted through a Telegram bot and a Cloudflare Worker that commits straight to GitHub. A Python pipeline in GitHub Actions computes SigLIP, DINOv2 and VGG-16 style embeddings, perceptual hashes and colour features for similarity browsing, and an LLM agent (Gemini with function calling, Cloudflare Queues) answers questions, proposes edits behind /confirm, and judges automated photo restorations.</p>
+          <p><strong>Tech:</strong> React 19, TypeScript, Cloudflare Workers, Cloudflare Queues, Gemini, GitHub Actions, Python, PyTorch, Hugging Face Transformers, OpenCV, WebGL</p>
+          <p>Live: <a href="https://snaps.jacobkrch.com">snaps.jacobkrch.com</a> · Source: <a href="https://github.com/jekrch/comic-snaps">github.com/jekrch/comic-snaps</a> · Since 2025 · <a href="/#comic-snaps">Project write-up</a></p>
+        </article>
+        <article>
+          <h3><a href="https://www.criterionclub.org">Criterion Club</a></h3>
+          <p>The site for a film club running since 2020: upcoming picks, where to stream them, every member's scores and reviews, and stats on the club's taste. Members sign in with Google and edit on the site; a Cloudflare Worker verifies the token and commits changes through the GitHub API, and a GitHub Actions pipeline enriches films from OMDb and TMDb and rebuilds the static site.</p>
+          <p><strong>Tech:</strong> React 19, TypeScript, Cloudflare Workers, Google sign-in, JWT, GitHub Actions, Python, pandas, Highcharts, PWA</p>
+          <p>Live: <a href="https://www.criterionclub.org">www.criterionclub.org</a> · Source: <a href="https://github.com/jekrch/film-club">github.com/jekrch/film-club</a> · Since 2023 · <a href="/#criterion-club">Project write-up</a></p>
+        </article>
+        <article>
+          <h3><a href="https://juxtaglobe.com">JuxtaGlobe</a></h3>
+          <p>Two linked 3D globes for exploring the point on the opposite side of the Earth, comparing the scale of any two places, and viewing prehistoric maps from Pangea to the present. View state lives in the URL for sharing.</p>
+          <p><strong>Tech:</strong> React 19, TypeScript, Three.js, react-globe.gl, Tailwind CSS, PWA</p>
+          <p>Live: <a href="https://juxtaglobe.com">juxtaglobe.com</a> · Source: <a href="https://github.com/jekrch/juxtaglobe">github.com/jekrch/juxtaglobe</a> · Since 2025 · <a href="/#juxtaglobe">Project write-up</a></p>
+        </article>
+        <article>
+          <h3><a href="https://gbmeter.com">GB Meter</a></h3>
+          <p>A client-side analytics tool that parses Green Button XML and CSV utility exports, joins hourly usage with Open-Meteo temperature data, and answers questions about usage patterns through flexible aggregations and charts. Everything runs in the browser with IndexedDB and optional Google Drive storage.</p>
+          <p><strong>Tech:</strong> React 19, TypeScript, Recharts, IndexedDB, Google Drive API, Open-Meteo</p>
+          <p>Live: <a href="https://gbmeter.com">gbmeter.com</a> · Source: <a href="https://github.com/jekrch/energy-meter">github.com/jekrch/energy-meter</a> · Since 2025 · <a href="/#gb-meter">Project write-up</a></p>
+        </article>
+        <article>
+          <h3><a href="https://chordbuildr.com">ChordBuildr</a></h3>
+          <p>A browser tool for building, playing and sharing chord progressions, with guitar and ukulele diagrams, Roman numeral analysis, synth playback, and PNG chart export. Progressions are encoded in the URL, so it needs no backend.</p>
+          <p><strong>Tech:</strong> React 19, TypeScript, Tone.js, Tonal, shadcn/ui, Vitest, GitHub Actions</p>
+          <p>Live: <a href="https://chordbuildr.com">chordbuildr.com</a> · Source: <a href="https://github.com/jekrch/chord-buildr">github.com/jekrch/chord-buildr</a> · Since 2020 · <a href="/#chordbuildr">Project write-up</a></p>
+        </article>
+        </section>
+        <section>
+          <h2>Also here</h2>
+          <ul>
+            <li><a href="/#logiclectures">Logic Lectures</a>: Lecture slides and syllabus from the introductory symbolic logic course Jacob designed and taught as a graduate student at the University of Wisconsin–Madison.</li>
+            <li><a href="/#music">Music</a>: Short songs Jacob has recorded between bands.</li>
+            <li><a href="https://comics.jacobkrch.com">My top 10 comics of 2025</a></li>
+          </ul>
+        </section>
+      </main>
+    </div>
   </body>
 </html>
