@@ -6,8 +6,53 @@ import {
 import "bootstrap/dist/css/bootstrap.min.css"
 import ImageCarousel from "./ImageCarousel"
 import PageHeader from "./PageHeader"
+import MermaidDiagram from "./MermaidDiagram"
 import ProjectSources, { Integration, StackLayer, projectSourceSections } from "./ProjectSources"
 import SectionNav, { SectionHeading } from "./SectionNav"
+
+const architectureChart = `flowchart TD
+  utility([Utility portal])
+  file[Green Button XML · CSV]
+  parse[Parser: DOMParser · PapaParse]
+  readings[Readings in memory]
+  gis[Google sign-in]
+  agg[Aggregation: chunked on idle]
+  worker[Web Worker: rankings]
+  charts[Charts · insights · tables]
+  export[CSV · JSON export]
+  zip([ZIP code])
+  geo[Open-Meteo geocoding]
+  weather[Open-Meteo historical weather]
+  wcache[(IndexedDB: weather cache)]
+
+  subgraph saved[Saved datasets]
+    local[(IndexedDB: five recent)]
+    drive[(Your Google Drive folder)]
+  end
+
+  utility -->|download| file
+  file -->|import| parse
+  parse --> readings
+  readings <-->|"save · reopen · merge"| saved
+  gis -->|drive.file token| drive
+  readings --> agg
+  readings --> worker
+  readings --> export
+  export -.->|re-import| parse
+  agg --> charts
+  worker --> charts
+  zip --> geo
+  geo -->|coordinates| weather
+  weather -->|hourly temps| wcache
+  wcache -->|"overlay · temp filters"| agg
+
+  classDef teal fill:#5b8592,stroke:#3f5e69,color:#ffffff
+  classDef gray fill:#e5e7eb,stroke:#9ca3af,color:#374151
+  classDef ext fill:#f3f4f6,stroke:#9ca3af,color:#4b5563
+  class parse,readings,agg teal
+  class local,wcache,worker,charts,export gray
+  class utility,file,drive,gis,zip,geo,weather ext
+`
 
 const imagePaths = [
   "/images/gbmeter1.png",
@@ -46,7 +91,7 @@ const GbMeter: FC = () => {
         startYear={2025}
       />
       <Container style={{ fontFamily: "Helvetica", fontSize: 14 }}>
-        <SectionNav sections={[{ id: "overview", label: "Overview" }, ...projectSourceSections]} />
+        <SectionNav sections={[{ id: "overview", label: "Overview" }, { id: "architecture", label: "Architecture" }, ...projectSourceSections]} />
 
         <SectionHeading id="overview" title="Overview" />
         <div className="mb-6">
@@ -75,6 +120,21 @@ const GbMeter: FC = () => {
             I'm still actively developing GB Meter and am open to feedback and suggestions. My hope is that it can serve as a useful tool for other homeowners like myself who are looking to better understand and manage their energy consumption.
           </p>
         </div>
+
+        <SectionHeading id="architecture" title="Architecture" className="mt-10" />
+        <p>
+          GB Meter is a static React app on GitHub Pages with no backend. Hourly usage data says a lot about when a household is home, asleep, or away, so I didn't want it passing through a server of mine. Every import, merge, and aggregation happens in the browser, and the only places a dataset is saved are the browser's own IndexedDB and, if you sign in, a folder in your own Google Drive.
+        </p>
+        <p>
+          A Green Button export is ESPI XML, which the browser's DOMParser reads directly. CSV exports go through PapaParse, with the date, usage, and unit columns detected automatically, since every utility lays these out a little differently. Both end up as the same list of readings, and that list is what gets saved, merged, charted, and exported.
+        </p>
+        <MermaidDiagram chart={architectureChart} />
+        <p>
+          A few years of fifteen minute readings is a few hundred thousand rows, and every filter change re-aggregates all of them. The analysis runs in chunks scheduled with requestIdleCallback, so the page keeps responding to input while it works, and the top rankings are computed in a Web Worker because sorting every bucket blocked the UI on large datasets.
+        </p>
+        <p>
+          The weather overlay sends Open-Meteo a ZIP code for geocoding and then the coordinates and date range for hourly temperatures. It never sends any usage data. Temperatures are cached in IndexedDB so reopening a dataset doesn't fetch them again. Drive sync uses the drive.file scope, which only gives the app access to files it created, and Drive datasets are cached locally by their modifiedTime, so reopening one makes no network request unless it was changed on another device.
+        </p>
 
         <ProjectSources integrations={integrations} stack={stack} />
       </Container>

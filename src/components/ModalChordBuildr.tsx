@@ -6,10 +6,52 @@ import {
 import "bootstrap/dist/css/bootstrap.min.css"
 import ImageCarousel from "./ImageCarousel"
 import PageHeader from "./PageHeader"
+import MermaidDiagram from "./MermaidDiagram"
 import ProjectSources, { Integration, StackLayer, projectSourceSections } from "./ProjectSources"
 import SectionNav, { SectionHeading } from "./SectionNav"
 import { SqlQueryCard } from "./SqlQuery"
 import { chordDbQueries } from "./chordDbQueries"
+
+const architectureChart = `flowchart TD
+  user([Browser])
+  json[(Static JSON: modes · chords · scales)]
+  deploy[GitHub Action: build · deploy]
+  pages[GitHub Pages]
+  sf[MIDI.js soundfonts]
+  ls[(localStorage: song library)]
+  drive[(Google Drive JSON file)]
+  gis[Google sign-in]
+  llm([LLM clients])
+
+  subgraph compose[Docker Compose · local]
+    flyway[Flyway migrations]
+    db[(Postgres: chord-db views · voice-leading)]
+    gen[Python exporter]
+    api[Go API]
+    mcp[MCP server]
+  end
+
+  flyway -->|"schema · seed · views"| db
+  db -->|query views| gen
+  gen -->|commit| json
+  json --> deploy
+  deploy --> pages
+  pages -->|"app + JSON"| user
+  sf -->|samples| user
+  user <-->|autosave| ls
+  user <-->|"save · load"| drive
+  gis -->|drive.file token| drive
+  db --> api
+  db --> mcp
+  mcp -->|progressions| llm
+
+  classDef teal fill:#5b8592,stroke:#3f5e69,color:#ffffff
+  classDef gray fill:#e5e7eb,stroke:#9ca3af,color:#374151
+  classDef ext fill:#f3f4f6,stroke:#9ca3af,color:#4b5563
+  class db,gen,json teal
+  class flyway,api,mcp,deploy,pages,ls gray
+  class user,sf,drive,gis,llm ext
+`
 
 const imagePaths = [
   "/images/modal1.png",
@@ -51,7 +93,7 @@ const ChordBuildr: FC = () => {
         startYear={2021}
       />
       <Container style={{ fontFamily: "Helvetica", fontSize: 14 }}>
-        <SectionNav sections={[{ id: "overview", label: "Overview" }, { id: "database", label: "Database" }, ...projectSourceSections]} />
+        <SectionNav sections={[{ id: "overview", label: "Overview" }, { id: "architecture", label: "Architecture" }, { id: "database", label: "Database" }, ...projectSourceSections]} />
 
         <SectionHeading id="overview" title="Overview" />
         <div className="mb-6">
@@ -91,6 +133,22 @@ const ChordBuildr: FC = () => {
             This was motivated by my own experiences, transcribing chord charts for songs I wanted to learn and perform with others. This kind of work is finicky and intuitive, and having the right tools can make a huge difference. I hope to continue enhancing this with features that I find useful in my own composition process, and that others find useful in theirs.
           </p>
         </div>
+
+        <SectionHeading id="architecture" title="Architecture" className="mt-10" />
+        <p>
+          The music theory lives in Postgres. Flyway builds the schema of notes, chord types, scales, and modes, then a set of views works out which chords fit each key and mode. That database is open source as{" "}
+          <a href="https://github.com/jekrch/chord-db" target="_blank" rel="noopener noreferrer">chord-db</a>.
+        </p>
+        <p>
+          The live site doesn't talk to the database at all. A Python script queries the views and writes the results out as static JSON, one file of chords and one of scales per mode, and those files are committed alongside the frontend. A GitHub Action builds the React app with that JSON bundled in and deploys it to GitHub Pages, so there's no server to run or pay for. Chords beyond what the views produce are generated in the browser from the same scale data, so they get correct note names.
+        </p>
+        <MermaidDiagram chart={architectureChart} />
+        <p>
+          Everything else runs client-side too. Instrument samples come from the MIDI.js soundfonts and play through Web Audio. The song library autosaves to localStorage, and signing in with Google adds a copy as a JSON file in your own Drive.
+        </p>
+        <p>
+          The same Docker Compose setup also runs a Go API and an MCP server over the database. These expose the voice-leading engine, a SQL function that searches for the smoothest progression from a starting chord, so I can prompt for progressions from an LLM client. They only run locally for now.
+        </p>
 
         <section className="mt-10">
           <SectionHeading id="database" title="Database" />
